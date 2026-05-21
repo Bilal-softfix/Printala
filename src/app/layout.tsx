@@ -101,7 +101,7 @@ export default function RootLayout({
 }) {
   return (
     <html
-      lang="en"
+      lang="en-IN"
       className={`${syne.variable} ${inter.variable} ${bangers.variable}`}
     >
       <head>

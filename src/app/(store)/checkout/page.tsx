@@ -148,7 +148,7 @@ export default function CheckoutPage() {
                     {item.quantity}
                   </span>
                   <span className="flex-shrink-0">
-                    $
+                    ₹
                     {(
                       (item.product.price + item.selectedSize.priceModifier) *
                       item.quantity
@@ -160,7 +160,7 @@ export default function CheckoutPage() {
             <div className="border-t border-white/5 pt-4 space-y-2 text-sm mb-6">
               <div className="flex justify-between text-text-secondary">
                 <span>Subtotal</span>
-                <span>${subtotal.toFixed(2)}</span>
+                <span>₹{subtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-text-secondary">
                 <span>Shipping</span>
@@ -168,13 +168,13 @@ export default function CheckoutPage() {
                   {shipping === 0 ? (
                     <span className="text-green-400">Free</span>
                   ) : (
-                    `$${shipping.toFixed(2)}`
+                    `₹${shipping.toFixed(2)}`
                   )}
                 </span>
               </div>
               <div className="flex justify-between font-display text-xl font-bold pt-3 border-t border-white/5">
                 <span>Total</span>
-                <span>${total.toFixed(2)}</span>
+                <span>₹{total.toFixed(2)}</span>
               </div>
             </div>
             <button
@@ -183,7 +183,7 @@ export default function CheckoutPage() {
               className="btn-primary w-full disabled:opacity-50"
             >
               <span>
-                {loading ? "Processing..." : `Pay $${total.toFixed(2)}`}
+                {loading ? "Processing..." : `Pay ₹${total.toFixed(2)}`}
               </span>
             </button>
           </motion.div>

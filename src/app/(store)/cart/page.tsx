@@ -76,7 +76,7 @@ export default function CartPage() {
               <div className="space-y-3 text-sm mb-6">
                 <div className="flex justify-between text-text-secondary">
                   <span>Subtotal</span>
-                  <span>${subtotal.toFixed(2)}</span>
+                  <span>₹{subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-text-secondary">
                   <span>Shipping</span>
@@ -84,7 +84,7 @@ export default function CartPage() {
                     {shipping === 0 ? (
                       <span className="text-green-400">Free</span>
                     ) : (
-                      `$${shipping.toFixed(2)}`
+                      `₹${shipping.toFixed(2)}`
                     )}
                   </span>
                 </div>
@@ -92,7 +92,7 @@ export default function CartPage() {
                   <p className="text-xs text-text-muted">
                     Add{" "}
                     <span className="text-accent font-medium">
-                      ${(50 - subtotal).toFixed(2)}
+                      ₹{(50 - subtotal).toFixed(2)}
                     </span>{" "}
                     more for free shipping
                   </p>
@@ -100,7 +100,7 @@ export default function CartPage() {
                 <div className="border-t border-white/5 pt-3">
                   <div className="flex justify-between font-display text-xl font-bold">
                     <span>Total</span>
-                    <span>${total.toFixed(2)}</span>
+                    <span>₹{total.toFixed(2)}</span>
                   </div>
                 </div>
               </div>

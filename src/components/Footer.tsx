@@ -1,4 +1,6 @@
+import Image from "next/image";
 import Link from "next/link";
+import logo from "../app/assets/logo.png";
 
 const FOOTER_LINKS = {
   Categories: [
@@ -33,14 +35,13 @@ export default function Footer() {
           {/* Brand */}
           <div className="col-span-2">
             <Link href="/" className="inline-flex items-center gap-2 mb-6">
-              <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center border-2 border-white/20"
-                style={{
-                  background: "linear-gradient(135deg, #E10F80, #5FAAC6)",
-                }}
-              >
-                <span className="font-comic text-white text-xl">P</span>
-              </div>
+              <Image
+                src={logo}
+                alt="logo"
+                className="h-10 w-10 border rounded-2xl"
+                width={40}
+                height={40}
+              />
               <span className="font-display text-2xl font-bold">
                 PRINT<span className="text-magenta-light">ALA</span>
               </span>

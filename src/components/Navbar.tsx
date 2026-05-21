@@ -7,6 +7,8 @@ import { HiOutlineShoppingBag, HiOutlineSearch } from "react-icons/hi";
 import { HiOutlineBars2, HiXMark } from "react-icons/hi2";
 import { useCartStore } from "@/store/cartStore";
 import { useRouter } from "next/navigation";
+import logo from "../app/assets/logo.png";
+import Image from "next/image";
 
 const NAV_LINKS = [
   { href: "/shop", label: "Shop" },
@@ -64,7 +66,7 @@ export default function Navbar() {
             aria-label="Printala Home"
           >
             {/* Ribbon "P" icon placeholder */}
-            <div
+            {/* <div
               className="w-10 h-10 rounded-xl flex items-center justify-center
                             border-3 border-charcoal shadow-[3px_3px_0_#2F3542]
                             group-hover:shadow-[4px_4px_0_#E10F80] group-hover:border-magenta
@@ -74,7 +76,15 @@ export default function Navbar() {
               }}
             >
               <span className="font-comic text-white text-xl font-bold">P</span>
-            </div>
+            </div> */}
+
+            <Image
+              src={logo}
+              alt="logo"
+              className="h-10 w-10 border rounded-2xl"
+              width={40}
+              height={40}
+            />
             <span className="font-display text-xl font-bold tracking-tight text-charcoal">
               PRINT<span className="text-gradient">ALA</span>
             </span>
