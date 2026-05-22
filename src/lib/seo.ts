@@ -54,7 +54,7 @@ export function generateOrganizationJsonLd(baseUrl: string) {
     ],
     contactPoint: {
       "@type": "ContactPoint",
-      email: "hello@printala.com",
+      email: "hancysaksham@gmail.com",
       contactType: "customer service",
     },
   };
@@ -76,4 +76,4 @@ export function generateBreadcrumbJsonLd(
   };
 }
 
-export const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://printala.com";
+export const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://printala.in";

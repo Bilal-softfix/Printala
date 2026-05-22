@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/checkout", "/api/"],
       },
     ],
-    sitemap: "https://printala.com/sitemap.xml",
+    sitemap: "https://printala.in/sitemap.xml",
   };
 }
