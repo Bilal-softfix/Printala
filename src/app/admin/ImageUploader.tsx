@@ -131,11 +131,11 @@ export default function ImageUploader({
             className="relative group"
           >
             <div className="relative aspect-[3/4] max-w-[280px] rounded-2xl overflow-hidden border-2 border-white/10">
-              <img
+              <Image
                 src={value || imageUrl}
                 alt="Product image"
-                // fill
-                className="absolute inset-0 w-full h-full object-cover"
+                fill
+                className="object-cover"
                 sizes="280px"
               />
 

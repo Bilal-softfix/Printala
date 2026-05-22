@@ -222,12 +222,12 @@ export default function ProductPage() {
                 </div>
               ) : (
                 <div className="relative aspect-[3/4] poster-frame shadow-[6px_6px_0_#2F3542]">
-                  <img
+                  <Image
                     src={product.image}
-                    alt={`${product.name} — ${product.category} poster by Printala 8520`}
-                    // fill
-                    className="absolute inset-0 w-full h-full object-cover"
-                    // priority
+                    alt={`${product.name} — ${product.category} poster by Printala`}
+                    fill
+                    className="object-cover"
+                    priority
                     sizes="(max-width: 1024px) 100vw, 50vw"
                   />
                   {product.bestseller && (

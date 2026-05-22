@@ -47,13 +47,12 @@ export default function ProductCard({
         {/* Image */}
         <div className="comic-card mb-4 overflow-hidden">
           <div className="relative aspect-[3/4] overflow-hidden rounded-t-[calc(1.25rem-3px)]">
-            <img
+            <Image
               src={product.image}
               alt={product.name}
-              // fill
-              className="card-image absolute inset-0 w-full h-full object-cover"
+              fill
+              className="card-image object-cover"
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-              // priority={priority}
             />
 
             <div className="card-overlay" />

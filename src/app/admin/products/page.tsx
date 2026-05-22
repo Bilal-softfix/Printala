@@ -123,11 +123,11 @@ export default function AdminProductsPage() {
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <div className="relative w-12 h-16 rounded-lg overflow-hidden bg-white/5 shrink-0">
-                            <img
+                            <Image
                               src={product.image}
-                              alt={""}
-                              // fill
-                              className="absolute inset-0 w-full h-full object-cover"
+                              alt={product.name}
+                              fill
+                              className="object-cover"
                               sizes="48px"
                             />
                           </div>
