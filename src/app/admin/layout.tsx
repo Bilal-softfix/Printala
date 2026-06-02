@@ -126,7 +126,7 @@ export default function AdminLayout({
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium
                            transition-all duration-200 ${
                              isActive
-                               ? "bg-magenta/10 text-magenta border border-magenta/20"
+                               ? "bg-magenta/10 text-magenta border border-magenta/20 text-white"
                                : "text-white/50 hover:text-white hover:bg-white/5"
                            }`}
               >

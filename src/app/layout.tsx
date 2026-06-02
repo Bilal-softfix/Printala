@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Syne, Inter, Bangers } from "next/font/google";
+import { Syne, Inter } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import {
   generateWebsiteJsonLd,
@@ -22,14 +22,6 @@ const inter = Inter({
   preload: true,
 });
 
-const bangers = Bangers({
-  weight: "400",
-  subsets: ["latin"],
-  variable: "--font-bangers",
-  display: "swap",
-  preload: true,
-});
-
 export const viewport: Viewport = {
   themeColor: "#E10F80",
   width: "device-width",
@@ -41,11 +33,11 @@ export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
     default:
-      "Printala — Anime, Gaming, Cars & Split Posters | Premium Wall Art",
+      "Printala — Premium Posters, Split Wall Art & More | Free Shipping in India",
     template: "%s | Printala",
   },
   description:
-    "India ka apna premium poster shop. Anime, gaming, supercars, cricket, Bollywood & split posters. 300gsm matte paper, ₹149 se start, all India delivery, COD available.",
+    "Shop premium posters and split wall art online. Anime, gaming, supercars, cricket, Bollywood & more. 300gsm matte paper, vivid colors, fast delivery across India. Starting at ₹149. COD available.",
   keywords: [
     "anime posters india",
     "gaming posters",
@@ -56,6 +48,7 @@ export const metadata: Metadata = {
     "printala",
     "premium posters india",
     "buy posters online india",
+    "poster shop india",
   ],
   authors: [{ name: "Printala" }],
   creator: "Printala",
@@ -63,20 +56,26 @@ export const metadata: Metadata = {
   formatDetection: { telephone: false },
   openGraph: {
     type: "website",
-    locale: "en_US",
+    locale: "en_IN",
     url: BASE_URL,
     siteName: "Printala",
-    title: "Printala — Anime, Gaming, Cars & Split Posters",
-    description: "Premium posters for anime fans, gamers, car lovers & more.",
+    title: "Printala — Premium Posters & Split Wall Art",
+    description:
+      "India's premium poster store. Anime, gaming, supercars, cricket & more.",
     images: [
-      { url: "/og-image.jpg", width: 1200, height: 630, alt: "Printala" },
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Printala — Premium Posters",
+      },
     ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Printala — Premium Posters & Split Wall Art",
-    description: "Anime, gaming, cars, cricket & split posters.",
-    creator: "@printala",
+    description:
+      "India's premium poster store. Anime, gaming, cars, cricket & split posters.",
     images: ["/og-image.jpg"],
   },
   robots: {
@@ -100,10 +99,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html
-      lang="en-IN"
-      className={`${syne.variable} ${inter.variable} ${bangers.variable}`}
-    >
+    <html lang="en" className={`${syne.variable} ${inter.variable}`}>
       <head>
         <script
           type="application/ld+json"
@@ -124,12 +120,11 @@ export default function RootLayout({
           toastOptions={{
             duration: 3000,
             style: {
-              background: "#2F3542",
+              background: "#111827",
               color: "#FAFAFA",
-              border: "3px solid #2F3542",
-              borderRadius: "1rem",
+              borderRadius: "0.75rem",
               fontWeight: 600,
-              boxShadow: "4px 4px 0 #2F3542",
+              fontSize: "0.875rem",
             },
           }}
         />

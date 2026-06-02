@@ -15,6 +15,16 @@ const nextConfig: NextConfig = {
         hostname: "printala-api.onrender.com",
         pathname: "/uploads/**",
       },
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+        // pathname: "/uploads/**",
+      },
+       {
+        protocol: 'http',
+        hostname: 'printala-api.onrender.com',
+        pathname: '/uploads/**',
+      },
       
       {
         protocol: "http",

@@ -130,7 +130,7 @@ export default function ProductPage() {
     if (!selectedSize) return;
     addItem(product, selectedSize, quantity);
     toast.success(
-      `"${product.name}" (${selectedSize.label}) cart mein add ho gaya! 🔥`,
+      `"${product.name}" (${selectedSize.label}) added to cart! 🔥`,
     );
   };
 
@@ -262,7 +262,7 @@ export default function ProductPage() {
                 )}
               </div>
 
-              <h1 className="font-display text-3xl md:text-5xl font-bold leading-tight mb-4 text-charcoal">
+              <h1 className="font-display text-3xl md:text-5xl font-bold leading-tight mb-4 text-charcoal capitalize">
                 {product.name}
               </h1>
 
@@ -370,7 +370,7 @@ export default function ProductPage() {
                 >
                   <span>
                     {product.inStock
-                      ? `Cart Mein Daalo — ${formatPrice(unitPrice * quantity)}`
+                      ? `Add To Cart — ${formatPrice(unitPrice * quantity)}`
                       : "Sold Out 😭"}
                   </span>
                 </motion.button>
@@ -424,7 +424,7 @@ export default function ProductPage() {
                   id="related-heading"
                   className="font-display text-3xl md:text-4xl font-bold mb-10 text-charcoal"
                 >
-                  Ye Bhi <span className="text-gradient">Dekho</span>
+                  Check Out <span className="text-gradient">These</span>
                 </h2>
               </AnimateIn>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
