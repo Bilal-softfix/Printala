@@ -17,7 +17,6 @@ export default function CategoryShowcase() {
       try {
         const result = await fetchCategories();
         if (result.data && result.data.length > 0) {
-          // Merge API counts with our static category data (which has images/descriptions)
           const merged = FALLBACK_CATEGORIES.map((fallbackCat) => {
             const apiCat = result.data.find(
               (c: { name: string; count: number }) =>

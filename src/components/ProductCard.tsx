@@ -22,6 +22,8 @@ export default function ProductCard({
 }: Props) {
   const addItem = useCartStore((s) => s.addItem);
 
+  const isSplit = product?.type === "split-poster";
+
   const handleQuickAdd = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -35,6 +37,7 @@ export default function ProductCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.4, delay: index * 0.06 }}
+      className={`${isSplit && "col-span-2"}`}
     >
       <Link
         href={`/product/${product._id}`}
@@ -42,72 +45,108 @@ export default function ProductCard({
         aria-label={`View ${product.name} — ${formatPrice(product.price)}`}
       >
         {/* Image */}
-        <div className="relative aspect-[3/4] overflow-hidden rounded-t-[calc(1.25rem-1px)]">
-          <Image
-            src={product.image}
-            alt={product.name}
-            fill
-            className="card-image object-cover"
-            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-            priority={priority}
-          />
-
-          <div className="card-overlay" />
-
-          {/* Badges */}
-          <div className="card-badge">
-            {product.bestseller && (
-              <span className="badge-bestseller">Bestseller</span>
-            )}
-            {product.isNew && <span className="badge-new">New</span>}
-            {product.comparePrice && (
-              <span className="badge-sale">
-                {Math.round(
-                  ((product.comparePrice - product.price) /
-                    product.comparePrice) *
-                    100,
-                )}
-                % OFF
-              </span>
-            )}
-            {product.type === "split-poster" && (
-              <span className="badge-split">{product.panels} Panel</span>
-            )}
+        {isSplit ? (
+          <div className="relative">
+            <div
+              className="flex gap-2 border-3 border-charcoal rounded-2xl overflow-hidden shadow-[6px_6px_0_#2F3542]"
+              style={{
+                aspectRatio: product.panels === 5 ? "2/1" : "1.8/1",
+              }}
+            >
+              {Array.from({ length: product.panels || 3 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="relative overflow-hidden bg-bg-tertiary"
+                  style={{
+                    flex: i === Math.floor((product.panels || 3) / 2) ? 1.3 : 1,
+                  }}
+                >
+                  <Image
+                    src={product.image}
+                    alt={`${product.name} panel ${i + 1}`}
+                    fill
+                    className="object-cover"
+                    style={{
+                      objectPosition: `${(i / ((product.panels || 3) - 1)) * 100}% center`,
+                    }}
+                    priority
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                  />
+                </div>
+              ))}
+            </div>
+            <span className="absolute top-4 right-4 badge-split text-sm px-4 py-2">
+              {product.panels} Panel Set
+            </span>
           </div>
+        ) : (
+          <div className="relative aspect-[3/4] overflow-hidden rounded-t-[calc(1.25rem-1px)]">
+            <Image
+              src={product.image}
+              alt={product.name}
+              fill
+              className="card-image object-cover"
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              priority={priority}
+            />
 
-          {/* Quick Add */}
-          <button
-            onClick={handleQuickAdd}
-            className="card-quick-add w-10 h-10 bg-white text-primary rounded-xl
+            <div className="card-overlay" />
+
+            {/* Badges */}
+            <div className="card-badge">
+              {product.bestseller && (
+                <span className="badge-bestseller">Bestseller</span>
+              )}
+              {product.isNew && <span className="badge-new">New</span>}
+              {product.comparePrice && (
+                <span className="badge-sale">
+                  {Math.round(
+                    ((product.comparePrice - product.price) /
+                      product.comparePrice) *
+                      100,
+                  )}
+                  % OFF
+                </span>
+              )}
+              {product.type === "split-poster" && (
+                <span className="badge-split">{product.panels} Panel</span>
+              )}
+            </div>
+
+            {/* Quick Add */}
+            <button
+              onClick={handleQuickAdd}
+              className="card-quick-add w-10 h-10 bg-white text-primary rounded-xl
                        flex items-center justify-center shadow-lg
                        hover:bg-primary hover:text-white transition-colors"
-            aria-label={`Quick add ${product.name}`}
-          >
-            <HiOutlineShoppingBag size={16} />
-          </button>
+              aria-label={`Quick add ${product.name}`}
+            >
+              <HiOutlineShoppingBag size={16} />
+            </button>
 
-          {/* Hover Actions */}
-          <div className="card-actions">
-            <div className="flex items-center justify-between text-white">
-              <div className="min-w-0">
-                <p className="text-[10px] uppercase tracking-widest text-white/70 font-semibold">
-                  {product.category === "split-poster"
-                    ? `${product.panels}-Panel Split`
-                    : product.category}
-                </p>
-                <h3 className="text-sm font-bold mt-0.5 truncate">
-                  {product.name}
-                </h3>
-              </div>
-              <div
-                className="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center shrink-0
+            {/* Hover Actions */}
+            <div className="card-actions">
+              <div className="flex items-center justify-between text-white">
+                <div className="min-w-0">
+                  <p className="text-[10px] uppercase tracking-widest text-white/70 font-semibold">
+                    {product.category === "split-poster"
+                      ? `${product.panels}-Panel Split`
+                      : product.category}
+                  </p>
+                  <h3 className="text-sm font-bold mt-0.5 truncate">
+                    {product.name}
+                  </h3>
+                </div>
+                <div
+                  className="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center shrink-0
                               group-hover:bg-white group-hover:text-primary transition-all"
-              >
-                <HiOutlineArrowRight size={14} color="black" />
+                >
+                  <HiOutlineArrowRight size={14} color="black" />
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Info */}
         <div className="p-3.5">

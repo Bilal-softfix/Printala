@@ -201,9 +201,7 @@ export default function ProductPage() {
                         }}
                       >
                         <Image
-                          src={
-                            "http://localhost:5000/uploads/products/poster-1776325119148.webp"
-                          }
+                          src={product.image}
                           alt={`${product.name} panel ${i + 1}`}
                           fill
                           className="object-cover"
@@ -221,7 +219,7 @@ export default function ProductPage() {
                   </span>
                 </div>
               ) : (
-                <div className="relative aspect-[3/4] poster-frame shadow-[6px_6px_0_#2F3542]">
+                <div className="relative aspect-3/4 poster-frame shadow-[6px_6px_0_#2F3542]">
                   <Image
                     src={product.image}
                     alt={`${product.name} — ${product.category} poster by Printala`}

@@ -192,10 +192,10 @@ function ShopContent() {
               >
                 <p className="text-5xl mb-4">😔</p>
                 <p className="font-display text-3xl font-bold text-text-muted mb-3">
-                  Kuch nahi mila
+                  No result found
                 </p>
                 <p className="text-text-secondary text-sm mb-6">
-                  Koi aur category ya search try karo
+                  Try a different category or search
                 </p>
                 <button
                   onClick={() => {

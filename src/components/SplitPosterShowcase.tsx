@@ -114,41 +114,44 @@ export default function SplitPosterShowcase() {
                               group-hover:translate-x-[-2px] group-hover:translate-y-[-2px]
                               transition-all duration-300"
                 >
-                  <div
-                    className="flex gap-1"
-                    style={{
-                      aspectRatio: poster.panels === 5 ? "2.5/1" : "2/1",
-                    }}
-                  >
-                    {Array.from({ length: poster.panels || 3 }).map(
-                      (_, panelIdx) => (
-                        <div
-                          key={panelIdx}
-                          className="relative overflow-hidden bg-charcoal"
-                          style={{
-                            flex:
-                              panelIdx === Math.floor((poster.panels || 3) / 2)
-                                ? 1.3
-                                : 1,
-                          }}
-                        >
-                          <Image
-                            src={poster.image}
-                            alt=""
-                            fill
-                            className="object-cover transition-transform duration-700 group-hover:scale-110"
+                  <div className="relative">
+                    <div
+                      className="flex gap-2 border-3 border-charcoal rounded-2xl overflow-hidden shadow-[6px_6px_0_#2F3542]"
+                      style={{
+                        aspectRatio: poster.panels === 5 ? "2/1" : "1.8/1",
+                      }}
+                    >
+                      {Array.from({ length: poster.panels || 3 }).map(
+                        (_, i) => (
+                          <div
+                            key={i}
+                            className="relative overflow-hidden bg-bg-tertiary"
                             style={{
-                              objectPosition: `${(panelIdx / ((poster.panels || 3) - 1)) * 100}% center`,
+                              flex:
+                                i === Math.floor((poster.panels || 3) / 2)
+                                  ? 1.3
+                                  : 1,
                             }}
-                            sizes="250px"
-                          />
-                        </div>
-                      ),
-                    )}
+                          >
+                            <Image
+                              src={poster.image}
+                              alt={`${poster.name} panel ${i + 1}`}
+                              fill
+                              className="object-cover"
+                              style={{
+                                objectPosition: `${(i / ((poster.panels || 3) - 1)) * 100}% center`,
+                              }}
+                              priority
+                              sizes="(max-width: 1024px) 100vw, 50vw"
+                            />
+                          </div>
+                        ),
+                      )}
+                    </div>
+                    <span className="absolute top-4 right-4 badge-split text-sm px-4 py-2">
+                      {poster.panels} Panel Set
+                    </span>
                   </div>
-                  <span className="absolute top-3 right-3 badge-split">
-                    {poster.panels} Panels
-                  </span>
                 </div>
 
                 <div className="flex items-start justify-between">
