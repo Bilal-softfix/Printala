@@ -4,27 +4,33 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import AnimateIn from "@/components/AnimateIn";
+import SectionHeading from "@/components/ui/SectionHeading";
 import { sendContactMessage } from "@/lib/api";
 
+const INFO = [
+  { label: "Email", value: "hello@printala.com", href: "mailto:hello@printala.com" },
+  { label: "Response time", value: "Within 24 hours" },
+  { label: "Hours", value: "Mon – Fri, 9am – 6pm EST" },
+];
+
 export default function ContactPage() {
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
-  });
+  const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
   const [loading, setLoading] = useState(false);
+
+  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+    setForm({ ...form, [k]: e.target.value });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
       const result = await sendContactMessage(form);
-      toast.success(result.message || "Message bhej diya! 💌");
+      toast.success(result.message || "Message bhej diya!");
       setForm({ name: "", email: "", subject: "", message: "" });
-    } catch (err: any) {
+    } catch (err) {
       const msg =
-        err?.response?.data?.message || "Message nahi gaya. Try again!";
+        (err as { response?: { data?: { message?: string } } })?.response?.data
+          ?.message || "Message nahi gaya. Try again!";
       toast.error(msg);
     } finally {
       setLoading(false);
@@ -32,120 +38,59 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="pt-28 pb-20">
-      <div className="container-main">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 max-w-5xl mx-auto">
-          {/* Left */}
-          <AnimateIn>
-            <p className="text-xs uppercase tracking-[0.3em] text-accent font-medium mb-3">
-              Get in Touch
+    <div className="min-h-screen bg-paper pt-28 pb-24 text-ink-text md:pt-36">
+      <div className="container-main grid gap-16 lg:grid-cols-[1fr_1.1fr] lg:gap-24">
+        <div>
+          <SectionHeading as="h1" index="—" eyebrow="Get in touch" lines={["Let's", "talk."]} />
+          <AnimateIn delay={0.15}>
+            <p className="mt-8 max-w-md text-[15px] leading-relaxed text-ink-text/70">
+              Questions about an order? Want to collaborate? Just want to say hi?
+              We&apos;d love to hear from you.
             </p>
-            <h1 className="font-display text-5xl md:text-6xl font-bold leading-tight mb-6">
-              Let&apos;s
-              <br />
-              <span className="text-text-muted">Talk</span>
-            </h1>
-            <p className="text-text-secondary leading-relaxed mb-10 max-w-md">
-              Questions about an order? Want to collaborate? Just want to say
-              hi? We&apos;d love to hear from you.
-            </p>
-
-            <div className="space-y-6">
-              {[
-                { label: "Email", value: "hello@printala.com" },
-                { label: "Response Time", value: "Within 24 hours" },
-                { label: "Hours", value: "Mon – Fri, 9am – 6pm EST" },
-              ].map((item) => (
-                <div key={item.label}>
-                  <p className="text-xs uppercase tracking-wider text-text-muted font-bold">
-                    {item.label}
-                  </p>
-                  <p className="text-lg mt-1">{item.value}</p>
+            <dl className="mt-12 border-t border-black/10">
+              {INFO.map((item) => (
+                <div key={item.label} className="flex items-baseline justify-between gap-6 border-b border-black/10 py-5">
+                  <dt className="text-[10.5px] uppercase tracking-[0.26em] text-ink-text/55">{item.label}</dt>
+                  <dd className="text-right">
+                    {item.href ? (
+                      <a href={item.href} className="transition-colors hover:text-accent">
+                        {item.value}
+                      </a>
+                    ) : (
+                      item.value
+                    )}
+                  </dd>
                 </div>
               ))}
-            </div>
-          </AnimateIn>
-
-          {/* Form */}
-          <AnimateIn delay={0.2}>
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div>
-                <label
-                  htmlFor="name"
-                  className="block text-xs uppercase tracking-wider text-text-muted font-bold mb-2"
-                >
-                  Name
-                </label>
-                <input
-                  id="name"
-                  value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  required
-                  className="input-dark"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-xs uppercase tracking-wider text-text-muted font-bold mb-2"
-                >
-                  Email
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  required
-                  className="input-dark"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="subject"
-                  className="block text-xs uppercase tracking-wider text-text-muted font-bold mb-2"
-                >
-                  Subject
-                </label>
-                <input
-                  id="subject"
-                  value={form.subject}
-                  onChange={(e) =>
-                    setForm({ ...form, subject: e.target.value })
-                  }
-                  required
-                  className="input-dark"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="message"
-                  className="block text-xs uppercase tracking-wider text-text-muted font-bold mb-2"
-                >
-                  Message
-                </label>
-                <textarea
-                  id="message"
-                  value={form.message}
-                  onChange={(e) =>
-                    setForm({ ...form, message: e.target.value })
-                  }
-                  required
-                  rows={6}
-                  className="input-dark resize-none"
-                />
-              </div>
-              <motion.button
-                whileTap={{ scale: 0.95 }}
-                type="submit"
-                disabled={loading}
-                className="btn-primary w-full"
-              >
-                <span>{loading ? "Sending..." : "Send Message"}</span>
-              </motion.button>
-            </form>
+            </dl>
           </AnimateIn>
         </div>
+
+        <AnimateIn delay={0.2}>
+          <form onSubmit={handleSubmit} className="space-y-8 bg-paper-2 p-8 md:p-12">
+            <div className="grid gap-8 md:grid-cols-2">
+              <div>
+                <label htmlFor="name" className="field-label">Name</label>
+                <input id="name" value={form.name} onChange={set("name")} required autoComplete="name" className="field" />
+              </div>
+              <div>
+                <label htmlFor="email" className="field-label">Email</label>
+                <input id="email" type="email" value={form.email} onChange={set("email")} required autoComplete="email" className="field" />
+              </div>
+            </div>
+            <div>
+              <label htmlFor="subject" className="field-label">Subject</label>
+              <input id="subject" value={form.subject} onChange={set("subject")} required className="field" />
+            </div>
+            <div>
+              <label htmlFor="message" className="field-label">Message</label>
+              <textarea id="message" value={form.message} onChange={set("message")} required rows={6} className="field resize-none" />
+            </div>
+            <motion.button whileTap={{ scale: 0.97 }} type="submit" disabled={loading} className="btn-ink w-full">
+              {loading ? "Sending…" : "Send message"}
+            </motion.button>
+          </form>
+        </AnimateIn>
       </div>
     </div>
   );

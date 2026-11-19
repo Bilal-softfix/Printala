@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect, useMemo, Suspense, useCallback } from "react";
+import { useState, useEffect, Suspense, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import ProductCard from "@/components/ProductCard";
-import AnimateIn from "@/components/AnimateIn";
+import SectionHeading from "@/components/ui/SectionHeading";
 import { ProductGridSkeleton } from "@/components/Skeleton";
 import { fetchProducts } from "@/lib/api";
 import { PRODUCTS as FALLBACK_PRODUCTS, CATEGORIES } from "@/lib/data";
@@ -15,12 +15,13 @@ function ShopContent() {
   const categoryParam = searchParams.get("category");
   const searchQuery = searchParams.get("search");
   const typeParam = searchParams.get("type");
+  const sortParam = searchParams.get("sort");
 
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState(categoryParam || "all");
   const [activeType, setActiveType] = useState(typeParam || "all");
-  const [sortBy, setSortBy] = useState("newest");
+  const [sortBy, setSortBy] = useState(sortParam || "newest");
 
   // Fetch products from API
   const loadProducts = useCallback(async () => {
@@ -61,7 +62,8 @@ function ShopContent() {
   useEffect(() => {
     if (categoryParam) setActiveCategory(categoryParam);
     if (typeParam) setActiveType(typeParam);
-  }, [categoryParam, typeParam]);
+    if (sortParam) setSortBy(sortParam);
+  }, [categoryParam, typeParam, sortParam]);
 
   const handleCategoryClick = (slug: string) => {
     setActiveCategory(slug);
@@ -81,103 +83,75 @@ function ShopContent() {
     }
   };
 
+  const TYPES = [
+    { value: "all", label: "All" },
+    { value: "poster", label: "Single posters" },
+    { value: "split-poster", label: "Split posters" },
+  ];
+
   return (
-    <div className="pt-28 pb-20 bg-bg-primary min-h-screen">
+    <div className="min-h-screen bg-paper pt-28 pb-24 text-ink-text md:pt-36">
       <div className="container-main">
-        {/* Header */}
-        <AnimateIn className="mb-12">
-          <p className="text-xs uppercase tracking-[0.3em] text-magenta font-medium mb-3">
-            {searchQuery ? "Search Results" : "Full Collection"}
-          </p>
-          <h1 className="font-display text-5xl md:text-7xl font-bold leading-none text-charcoal">
-            {searchQuery ? (
-              <>
-                Results for &ldquo;
-                <span className="text-gradient">{searchQuery}</span>&rdquo;
-              </>
-            ) : (
-              <>
-                All <span className="text-text-muted">Posters</span>
-              </>
-            )}
-          </h1>
-        </AnimateIn>
-
-        {/* Type Toggle */}
-        <div className="flex gap-2 mb-6">
-          {[
-            { value: "all", label: "All" },
-            { value: "poster", label: "🖼️ Single Posters" },
-            { value: "split-poster", label: "🖼️🖼️🖼️ Split Posters" },
-          ].map((t) => (
-            <button
-              key={t.value}
-              onClick={() => handleTypeClick(t.value)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                activeType === t.value
-                  ? "bg-charcoal text-white border-3 border-charcoal shadow-[3px_3px_0_#E10F80]"
-                  : "bg-white text-text-secondary border-2 border-charcoal/20 hover:border-charcoal"
-              }`}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Category Chips */}
-        <div
-          className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide mb-8"
-          role="tablist"
-        >
-          <button
-            onClick={() => handleCategoryClick("all")}
-            className={`px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap
-                        transition-all duration-300 shrink-0 border-2 ${
-                          activeCategory === "all"
-                            ? "bg-magenta text-white border-charcoal shadow-[3px_3px_0_#2F3542]"
-                            : "bg-white text-text-secondary border-charcoal/20 hover:border-charcoal"
-                        }`}
-          >
-            All
-          </button>
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat.slug}
-              onClick={() => handleCategoryClick(cat.slug)}
-              className={`px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap
-                          transition-all duration-300 shrink-0 border-2 ${
-                            activeCategory === cat.slug
-                              ? "bg-magenta text-white border-charcoal shadow-[3px_3px_0_#2F3542]"
-                              : "bg-white text-text-secondary border-charcoal/20 hover:border-charcoal"
-                          }`}
-            >
-              {cat.name}
-            </button>
-          ))}
-        </div>
-
-        {/* Sort + Count */}
-        <div className="flex items-center justify-between mb-8">
-          <span className="text-sm text-text-muted font-bold">
+        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <SectionHeading
+            as="h1"
+            index="—"
+            eyebrow={searchQuery ? "Search results" : "Full collection"}
+            lines={searchQuery ? [<>&ldquo;{searchQuery}&rdquo;</>] : ["All posters."]}
+          />
+          <p className="text-sm text-ink-text/55 md:pb-3" aria-live="polite">
             {loading
-              ? "Loading..."
-              : `${products.length} poster${products.length !== 1 ? "s" : ""} found`}
-          </span>
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            className="bg-white text-text-secondary text-sm rounded-xl px-4 py-2.5
-                       border-2 border-charcoal/20 focus:outline-none focus:border-magenta transition-colors font-bold"
-          >
-            <option value="newest">Newest</option>
-            <option value="bestseller">Bestsellers</option>
-            <option value="price-asc">Price: Low → High</option>
-            <option value="price-desc">Price: High → Low</option>
-            <option value="name">Name: A → Z</option>
-          </select>
+              ? "Loading…"
+              : `${products.length} ${products.length === 1 ? "poster" : "posters"}`}
+          </p>
         </div>
+      </div>
 
-        {/* Grid */}
+      {/* Filter bar — stays under the nav while browsing */}
+      <div className="sticky top-20 z-30 mt-10 border-y border-black/10 bg-paper/90 backdrop-blur-xl">
+        <div className="container-main flex flex-col gap-3 py-3 lg:flex-row lg:items-center lg:gap-6">
+          <div className="flex shrink-0 items-center justify-between gap-3">
+            <div className="flex gap-1.5" role="group" aria-label="Poster type">
+              {TYPES.map((t) => (
+                <button
+                  key={t.value}
+                  aria-pressed={activeType === t.value}
+                  onClick={() => handleTypeClick(t.value)}
+                  className="chip"
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+            <label className="lg:hidden">
+              <span className="sr-only">Sort by</span>
+              <SortSelect value={sortBy} onChange={setSortBy} />
+            </label>
+          </div>
+
+          <span className="hidden h-6 w-px bg-black/15 lg:block" />
+
+          <div className="-mx-5 flex min-w-0 flex-1 gap-1.5 overflow-x-auto px-5 scrollbar-hide lg:mx-0 lg:px-0" role="group" aria-label="Category">
+            {[{ slug: "all", name: "All" }, ...CATEGORIES].map((cat) => (
+              <button
+                key={cat.slug}
+                aria-pressed={activeCategory === cat.slug}
+                onClick={() => handleCategoryClick(cat.slug)}
+                className="chip shrink-0"
+              >
+                {cat.name}
+              </button>
+            ))}
+          </div>
+
+          <label className="hidden shrink-0 lg:block">
+            <span className="sr-only">Sort by</span>
+            <SortSelect value={sortBy} onChange={setSortBy} />
+          </label>
+        </div>
+      </div>
+
+      <div className="container-main mt-12">
         {loading ? (
           <ProductGridSkeleton count={8} />
         ) : (
@@ -188,23 +162,20 @@ function ShopContent() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="text-center py-32"
+                className="py-28"
               >
-                <p className="text-5xl mb-4">😔</p>
-                <p className="font-display text-3xl font-bold text-text-muted mb-3">
-                  No result found
+                <p className="font-display text-4xl font-bold uppercase tracking-[-0.04em] md:text-6xl">
+                  Nothing on this wall.
                 </p>
-                <p className="text-text-secondary text-sm mb-6">
-                  Try a different category or search
-                </p>
+                <p className="mt-4 text-[15px] text-ink-text/65">Try a different category or search.</p>
                 <button
                   onClick={() => {
                     setActiveCategory("all");
                     setActiveType("all");
                   }}
-                  className="btn-outline text-sm"
+                  className="btn-ink mt-8"
                 >
-                  Reset Filters
+                  Reset filters
                 </button>
               </motion.div>
             ) : (
@@ -214,7 +185,7 @@ function ShopContent() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
-                className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6"
+                className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 md:gap-x-6 md:gap-y-14 xl:grid-cols-4"
               >
                 {products.map((product, i) => (
                   <ProductCard key={product._id} product={product} index={i} />
@@ -228,13 +199,29 @@ function ShopContent() {
   );
 }
 
+function SortSelect({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  return (
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="cursor-pointer rounded-full border border-black/15 bg-transparent px-4 py-2 text-[13px] text-ink-text/80 transition-colors hover:border-ink-text focus:border-accent focus:outline-none"
+    >
+      <option value="newest">Newest</option>
+      <option value="bestseller">Bestsellers</option>
+      <option value="price-asc">Price: Low → High</option>
+      <option value="price-desc">Price: High → Low</option>
+      <option value="name">Name: A → Z</option>
+    </select>
+  );
+}
+
 export default function ShopPage() {
   return (
     <Suspense
       fallback={
-        <div className="container-main pt-28 pb-20">
+        <div className="min-h-screen bg-paper pt-36 pb-20"><div className="container-main">
           <ProductGridSkeleton />
-        </div>
+        </div></div>
       }
     >
       <ShopContent />

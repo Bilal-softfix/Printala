@@ -2,15 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { HiMinus, HiPlus, HiOutlineHeart } from "react-icons/hi";
-import {
-  HiOutlineTruck,
-  HiOutlineArrowUturnLeft,
-  HiOutlineShieldCheck,
-} from "react-icons/hi2";
+import { AnimatePresence, motion } from "framer-motion";
+import { HiMinus, HiPlus } from "react-icons/hi";
+import { HiCheck, HiOutlineShoppingBag } from "react-icons/hi2";
 import { useCartStore } from "@/store/cartStore";
 import { fetchProductById, fetchRelatedProducts } from "@/lib/api";
 import { PRODUCTS as FALLBACK } from "@/lib/data";
@@ -22,8 +17,17 @@ import {
   BASE_URL,
 } from "@/lib/seo";
 import ProductCard from "@/components/ProductCard";
-import AnimateIn from "@/components/AnimateIn";
+import ProductGallery from "@/components/product/ProductGallery";
+import SectionHeading from "@/components/ui/SectionHeading";
+import { EASE } from "@/lib/motion";
 import toast from "react-hot-toast";
+
+/* Store-wide terms already shown on this page before the redesign. */
+const TRUST = [
+  { title: "Free shipping", text: "On orders of ₹499 and above" },
+  { title: "Easy returns", text: "7-day return policy" },
+  { title: "Cash on Delivery", text: "Pay when your poster arrives" },
+];
 
 export default function ProductPage() {
   const { id } = useParams();
@@ -32,32 +36,26 @@ export default function ProductPage() {
   const [loading, setLoading] = useState(true);
   const [selectedSize, setSelectedSize] = useState<Size | null>(null);
   const [quantity, setQuantity] = useState(1);
+  const [added, setAdded] = useState(false);
   const addItem = useCartStore((s) => s.addItem);
 
   useEffect(() => {
     const load = async () => {
       setLoading(true);
       try {
-        // Fetch product from API
         const result = await fetchProductById(id as string);
-
         if (result.data) {
           setProduct(result.data);
           setSelectedSize(result.data.sizes[1] || result.data.sizes[0]);
-
-          // Fetch related products
           try {
             const relatedResult = await fetchRelatedProducts(id as string);
-            if (relatedResult.data) {
-              setRelated(relatedResult.data);
-            }
+            if (relatedResult.data) setRelated(relatedResult.data);
           } catch {
             // Related products failed — not critical
           }
         }
       } catch (err) {
         console.log("ProductPage: Using fallback", err);
-        // Fallback to static data
         const found = FALLBACK.find((p) => p._id === id);
         if (found) {
           setProduct(found);
@@ -75,52 +73,52 @@ export default function ProductPage() {
     load();
   }, [id]);
 
-  // Loading skeleton
   if (loading) {
     return (
-      <div className="pt-28 pb-20 container-main bg-bg-primary min-h-screen">
-        <div className="animate-pulse grid grid-cols-1 lg:grid-cols-2 gap-16">
-          <div className="aspect-[3/4] bg-bg-tertiary rounded-2xl border-3 border-charcoal/10" />
-          <div className="space-y-4 pt-10">
-            <div className="h-4 bg-bg-tertiary rounded w-24" />
-            <div className="h-12 bg-bg-tertiary rounded w-3/4" />
-            <div className="h-8 bg-bg-tertiary rounded w-32" />
-            <div className="h-20 bg-bg-tertiary rounded w-full mt-8" />
-            <div className="flex gap-3 mt-6">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="h-16 w-20 bg-bg-tertiary rounded-xl" />
-              ))}
-            </div>
+      <div className="min-h-screen bg-paper pt-28 pb-20">
+        <div className="container-main grid animate-pulse gap-12 lg:grid-cols-[1.15fr_1fr] lg:gap-16">
+          <div className="aspect-[4/5] bg-paper-2" />
+          <div className="space-y-5 pt-6">
+            <div className="h-3 w-28 bg-paper-2" />
+            <div className="h-14 w-4/5 bg-paper-2" />
+            <div className="h-8 w-32 bg-paper-2" />
+            <div className="h-24 w-full bg-paper-2" />
+            <div className="h-14 w-full bg-paper-2" />
           </div>
         </div>
       </div>
     );
   }
 
-  // Product not found
   if (!product) {
     return (
-      <div className="pt-28 pb-20 container-main bg-bg-primary min-h-screen text-center">
-        <p className="text-6xl mb-4">😢</p>
-        <h1 className="font-display text-3xl font-bold text-charcoal mb-4">
+      <div className="flex min-h-screen flex-col items-center justify-center bg-paper px-5 pt-28 pb-20 text-center text-ink-text">
+        <p className="text-[10.5px] uppercase tracking-[0.3em] text-ink-text/55">404</p>
+        <h1 className="mt-4 font-display text-4xl font-bold uppercase tracking-[-0.04em] md:text-6xl">
           Product nahi mila
         </h1>
-        <Link href="/shop" className="btn-primary">
-          <span>Shop pe jao →</span>
+        <Link
+          href="/shop"
+          className="mt-8 inline-flex rounded-full bg-ink-text px-7 py-3.5 text-sm font-medium text-cream transition-colors hover:bg-accent"
+        >
+          Shop pe jao →
         </Link>
       </div>
     );
   }
 
-  const unitPrice = product.price + (selectedSize?.priceModifier || 0);
+  const modifier = selectedSize?.priceModifier || 0;
+  const unitPrice = product.price + modifier;
   const isSplit = product.type === "split-poster";
+  const categoryLabel = isSplit
+    ? "Split poster"
+    : product.category.replace("-", " ");
 
   const breadcrumbs = [
     { name: "Home", url: "/" },
     { name: "Shop", url: "/shop" },
     {
-      name:
-        product.category.charAt(0).toUpperCase() + product.category.slice(1),
+      name: product.category.charAt(0).toUpperCase() + product.category.slice(1),
       url: `/shop?category=${product.category}`,
     },
     { name: product.name, url: `/product/${product._id}` },
@@ -129,9 +127,9 @@ export default function ProductPage() {
   const handleAddToCart = () => {
     if (!selectedSize) return;
     addItem(product, selectedSize, quantity);
-    toast.success(
-      `"${product.name}" (${selectedSize.label}) added to cart! 🔥`,
-    );
+    toast.success(`"${product.name}" (${selectedSize.label}) added to cart!`);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1800);
   };
 
   return (
@@ -145,287 +143,242 @@ export default function ProductPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(
-            generateBreadcrumbJsonLd(breadcrumbs, BASE_URL),
-          ),
+          __html: JSON.stringify(generateBreadcrumbJsonLd(breadcrumbs, BASE_URL)),
         }}
       />
 
-      <article className="pt-28 pb-20 bg-bg-primary min-h-screen">
+      <article className="min-h-screen bg-paper pt-24 pb-24 text-ink-text md:pt-28">
         <div className="container-main">
-          {/* Breadcrumb */}
-          <nav className="mb-10 text-sm" aria-label="Breadcrumb">
-            <ol className="flex items-center gap-2 text-text-muted flex-wrap">
+          <nav aria-label="Breadcrumb" className="mb-8 md:mb-10">
+            <ol className="flex flex-wrap items-center gap-2 text-xs text-ink-text/55">
               {breadcrumbs.map((bc, i) => (
                 <li key={bc.url} className="flex items-center gap-2">
-                  {i > 0 && <span>/</span>}
+                  {i > 0 && <span aria-hidden="true">/</span>}
                   {i < breadcrumbs.length - 1 ? (
-                    <Link
-                      href={bc.url}
-                      className="hover:text-magenta transition-colors font-medium"
-                    >
+                    <Link href={bc.url} className="capitalize transition-colors hover:text-ink-text">
                       {bc.name}
                     </Link>
                   ) : (
-                    <span className="text-charcoal font-bold">{bc.name}</span>
+                    <span aria-current="page" className="max-w-[16rem] truncate text-ink-text">
+                      {bc.name}
+                    </span>
                   )}
                 </li>
               ))}
             </ol>
           </nav>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
-            {/* Image */}
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              {isSplit ? (
-                <div className="relative">
-                  <div
-                    className="flex gap-2 border-3 border-charcoal rounded-2xl overflow-hidden shadow-[6px_6px_0_#2F3542]"
-                    style={{
-                      aspectRatio: product.panels === 5 ? "2/1" : "1.8/1",
-                    }}
-                  >
-                    {Array.from({ length: product.panels || 3 }).map((_, i) => (
-                      <div
-                        key={i}
-                        className="relative overflow-hidden bg-bg-tertiary"
-                        style={{
-                          flex:
-                            i === Math.floor((product.panels || 3) / 2)
-                              ? 1.3
-                              : 1,
-                        }}
-                      >
-                        <Image
-                          src={product.image}
-                          alt={`${product.name} panel ${i + 1}`}
-                          fill
-                          className="object-cover"
-                          style={{
-                            objectPosition: `${(i / ((product.panels || 3) - 1)) * 100}% center`,
-                          }}
-                          priority
-                          sizes="(max-width: 1024px) 100vw, 50vw"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                  <span className="absolute top-4 right-4 badge-split text-sm px-4 py-2">
-                    {product.panels} Panel Set
-                  </span>
-                </div>
-              ) : (
-                <div className="relative aspect-3/4 poster-frame shadow-[6px_6px_0_#2F3542]">
-                  <Image
-                    src={product.image}
-                    alt={`${product.name} — ${product.category} poster by Printala`}
-                    fill
-                    className="object-cover"
-                    priority
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                  />
-                  {product.bestseller && (
-                    <span className="absolute top-4 left-4 badge-bestseller text-sm px-3 py-1.5">
-                      Bestseller
-                    </span>
-                  )}
-                  {product.isNew && (
-                    <span className="absolute top-4 left-4 badge-new text-sm px-3 py-1.5">
-                      New!
-                    </span>
-                  )}
-                </div>
-              )}
-            </motion.div>
+          <div className="grid gap-12 lg:grid-cols-[1.15fr_1fr] lg:gap-16 xl:gap-24">
+            <ProductGallery product={product} />
 
-            {/* Details */}
+            {/* Details — pinned beside the artwork on desktop */}
             <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="flex flex-col justify-center"
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: EASE, delay: 0.1 }}
+              className="lg:sticky lg:top-28 lg:self-start"
             >
-              <div className="flex items-center gap-2 mb-3">
-                <p className="text-xs uppercase tracking-[0.25em] text-magenta font-black">
-                  {product.category === "split-poster"
-                    ? "Split Poster"
-                    : product.category}
-                </p>
+              <p className="flex flex-wrap items-center gap-3 text-[10.5px] font-medium uppercase tracking-[0.3em] text-ink-text/55">
+                <span className="capitalize text-accent">{categoryLabel}</span>
                 {isSplit && (
-                  <span className="badge-split">{product.panels} Panels</span>
+                  <>
+                    <span className="h-px w-6 bg-black/20" />
+                    {product.panels || 3} panels
+                  </>
                 )}
-              </div>
+                {product.bestseller && (
+                  <>
+                    <span className="h-px w-6 bg-black/20" />
+                    Bestseller
+                  </>
+                )}
+              </p>
 
-              <h1 className="font-display text-3xl md:text-5xl font-bold leading-tight mb-4 text-charcoal capitalize">
+              <h1 className="mt-4 font-display text-[clamp(2rem,4vw,3.4rem)] font-bold leading-[1] tracking-[-0.04em]">
                 {product.name}
               </h1>
 
-              <div className="flex items-baseline gap-3 mb-6 flex-wrap">
-                <span className="font-comic text-4xl text-magenta">
-                  {formatPrice(unitPrice)}
-                </span>
+              <div className="mt-6 flex flex-wrap items-baseline gap-3">
+                <AnimatePresence mode="popLayout" initial={false}>
+                  <motion.span
+                    key={unitPrice}
+                    initial={{ y: 12, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: -12, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: EASE }}
+                    className="font-display text-3xl font-bold tracking-[-0.03em]"
+                  >
+                    {formatPrice(unitPrice)}
+                  </motion.span>
+                </AnimatePresence>
                 {product.comparePrice && (
-                  <span className="text-text-muted line-through text-lg">
-                    {formatPrice(
-                      product.comparePrice + (selectedSize?.priceModifier || 0),
-                    )}
-                  </span>
-                )}
-                {product.comparePrice && (
-                  <span className="badge-sale text-sm px-3 py-1">
-                    {formatPrice(product.comparePrice - product.price)} OFF!
-                  </span>
+                  <>
+                    <span className="text-lg text-ink-text/45 line-through">
+                      {formatPrice(product.comparePrice + modifier)}
+                    </span>
+                    <span className="bg-accent px-2 py-1 text-[10.5px] font-semibold uppercase tracking-[0.16em] text-white">
+                      Save {formatPrice(product.comparePrice - product.price)}
+                    </span>
+                  </>
                 )}
               </div>
 
-              <p className="text-text-secondary leading-relaxed mb-8 max-w-lg">
+              <p className="mt-6 max-w-lg text-[15px] leading-relaxed text-ink-text/70">
                 {product.description}
               </p>
 
-              {/* Tags */}
-              {product.tags && product.tags.length > 0 && (
-                <div className="flex flex-wrap gap-2 mb-8">
-                  {product.tags.map((tag) => (
-                    <Link
-                      key={tag}
-                      href={`/shop?search=${tag}`}
-                      className="px-3 py-1 bg-bg-tertiary text-text-muted text-xs rounded-full font-bold
-                                 hover:text-magenta hover:bg-magenta/10 border-2 border-transparent
-                                 hover:border-magenta/30 transition-all"
-                    >
-                      #{tag}
-                    </Link>
-                  ))}
-                </div>
-              )}
-
-              {/* Size Selection */}
-              <div className="mb-8">
-                <h2 className="text-xs uppercase tracking-[0.2em] text-text-muted font-black mb-4">
-                  {isSplit ? "Set Size" : "Select Size"}
-                </h2>
-                <div className="flex flex-wrap gap-3">
-                  {product.sizes.map((size) => (
-                    <button
-                      key={size.label}
-                      onClick={() => setSelectedSize(size)}
-                      className={`px-5 py-3 rounded-xl border-2 text-sm font-bold transition-all duration-300
-                        ${
-                          selectedSize?.label === size.label
-                            ? "border-magenta bg-magenta/10 text-magenta shadow-[3px_3px_0_#E10F80]"
-                            : "border-charcoal/20 text-text-secondary hover:border-charcoal"
+              {/* Size */}
+              <fieldset className="mt-9">
+                <legend className="text-[10.5px] uppercase tracking-[0.26em] text-ink-text/55">
+                  {isSplit ? "Set size" : "Size"}
+                  {selectedSize && (
+                    <span className="ml-2 normal-case tracking-normal text-ink-text">
+                      — {selectedSize.label} · {selectedSize.dimensions}
+                    </span>
+                  )}
+                </legend>
+                <div role="radiogroup" className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                  {product.sizes.map((size) => {
+                    const on = selectedSize?.label === size.label;
+                    return (
+                      <button
+                        key={size.label}
+                        type="button"
+                        role="radio"
+                        aria-checked={on}
+                        onClick={() => setSelectedSize(size)}
+                        className={`relative border px-3 py-3 text-left transition-colors duration-300 ${
+                          on
+                            ? "border-ink-text bg-ink-text text-cream"
+                            : "border-black/15 hover:border-ink-text"
                         }`}
-                    >
-                      <span className="font-black">{size.label}</span>
-                      <span className="block text-xs mt-0.5 opacity-60">
-                        {size.dimensions}
-                      </span>
-                      {size.priceModifier > 0 && (
-                        <span className="block text-[10px] mt-0.5 text-magenta font-black">
-                          +{formatPrice(size.priceModifier)}
+                      >
+                        <span className="block text-sm font-semibold">{size.label}</span>
+                        <span className={`mt-0.5 block text-[11px] ${on ? "text-cream/70" : "text-ink-text/55"}`}>
+                          {size.dimensions}
                         </span>
-                      )}
-                    </button>
-                  ))}
+                        {size.priceModifier > 0 && (
+                          <span className={`mt-1 block text-[11px] font-medium ${on ? "text-cream" : "text-accent"}`}>
+                            +{formatPrice(size.priceModifier)}
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
-              </div>
+              </fieldset>
 
-              {/* Quantity */}
-              <div className="mb-8">
-                <h2 className="text-xs uppercase tracking-[0.2em] text-text-muted font-black mb-4">
-                  Quantity
-                </h2>
-                <div className="inline-flex items-center border-3 border-charcoal rounded-xl overflow-hidden shadow-[3px_3px_0_#2F3542]">
+              {/* Quantity + add to cart */}
+              <div className="mt-8 flex gap-3">
+                <div className="flex items-center border border-black/15">
                   <button
+                    type="button"
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="p-3 bg-white hover:bg-sky hover:text-white transition-colors"
+                    aria-label="Decrease quantity"
+                    className="grid h-14 w-11 place-items-center transition-colors hover:bg-paper-2"
                   >
-                    <HiMinus size={16} />
+                    <HiMinus size={14} />
                   </button>
-                  <span className="w-14 text-center font-black text-lg border-x-3 border-charcoal py-2 bg-white">
+                  <span aria-live="polite" aria-label={`Quantity ${quantity}`} className="w-8 text-center text-sm font-semibold tabular-nums">
                     {quantity}
                   </span>
                   <button
+                    type="button"
                     onClick={() => setQuantity(quantity + 1)}
-                    className="p-3 bg-white hover:bg-sky hover:text-white transition-colors"
+                    aria-label="Increase quantity"
+                    className="grid h-14 w-11 place-items-center transition-colors hover:bg-paper-2"
                   >
-                    <HiPlus size={16} />
+                    <HiPlus size={14} />
                   </button>
                 </div>
-              </div>
 
-              {/* Add to Cart */}
-              <div className="flex gap-3 mb-10">
                 <motion.button
-                  whileTap={{ scale: 0.95 }}
+                  type="button"
+                  whileTap={{ scale: 0.97 }}
                   onClick={handleAddToCart}
                   disabled={!product.inStock}
-                  className="btn-primary flex-1 text-base"
+                  className={`relative flex h-14 flex-1 items-center justify-center gap-3 overflow-hidden text-sm font-medium text-cream transition-colors duration-500 disabled:cursor-not-allowed disabled:bg-ink-text/40 ${
+                    added ? "bg-accent" : "bg-ink-text hover:bg-accent"
+                  }`}
                 >
-                  <span>
-                    {product.inStock
-                      ? `Add To Cart — ${formatPrice(unitPrice * quantity)}`
-                      : "Sold Out 😭"}
-                  </span>
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.span
+                      key={added ? "added" : "add"}
+                      initial={{ y: 18, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      exit={{ y: -18, opacity: 0 }}
+                      transition={{ duration: 0.3, ease: EASE }}
+                      className="flex items-center gap-2.5"
+                    >
+                      {!product.inStock ? (
+                        "Sold out"
+                      ) : added ? (
+                        <>
+                          <HiCheck size={18} aria-hidden="true" /> Added to bag
+                        </>
+                      ) : (
+                        <>
+                          <HiOutlineShoppingBag size={18} aria-hidden="true" />
+                          Add to bag — {formatPrice(unitPrice * quantity)}
+                        </>
+                      )}
+                    </motion.span>
+                  </AnimatePresence>
                 </motion.button>
-                <button
-                  className="w-14 h-14 rounded-xl border-3 border-charcoal shadow-[3px_3px_0_#2F3542]
-                             flex items-center justify-center bg-white
-                             text-text-muted hover:text-magenta hover:border-magenta
-                             hover:shadow-[3px_3px_0_#E10F80] transition-all"
-                  aria-label="Wishlist mein daalo"
-                >
-                  <HiOutlineHeart size={22} />
-                </button>
               </div>
 
-              {/* Trust Badges */}
-              <div className="grid grid-cols-3 gap-3">
+              {/* Trust */}
+              <ul className="mt-8 grid grid-cols-3 border-y border-black/10">
+                {TRUST.map((t, i) => (
+                  <li key={t.title} className={`py-4 pr-3 ${i ? "border-l border-black/10 pl-4" : ""}`}>
+                    <p className="text-xs font-semibold">{t.title}</p>
+                    <p className="mt-1 text-[11px] leading-snug text-ink-text/55">{t.text}</p>
+                  </li>
+                ))}
+              </ul>
+
+              {/* Specifications */}
+              <dl className="mt-8 grid grid-cols-2 gap-x-6 gap-y-5 text-sm">
                 {[
-                  {
-                    icon: HiOutlineTruck,
-                    label: "Free Shipping",
-                    sub: "₹499+ orders",
-                  },
-                  {
-                    icon: HiOutlineArrowUturnLeft,
-                    label: "Easy Returns",
-                    sub: "7-day policy",
-                  },
-                  {
-                    icon: HiOutlineShieldCheck,
-                    label: "COD Available",
-                    sub: "Cash on Delivery",
-                  },
-                ].map(({ icon: Icon, label, sub }) => (
-                  <div key={label} className="text-center p-3 comic-card">
-                    <Icon className="mx-auto mb-1 text-magenta" size={20} />
-                    <p className="text-[11px] font-bold text-charcoal">
-                      {label}
-                    </p>
-                    <p className="text-[10px] text-text-muted">{sub}</p>
+                  ["Paper", "300gsm matte art paper"],
+                  ["Format", isSplit ? `${product.panels || 3}-panel split set` : "Single poster"],
+                  ["Sizes", `${product.sizes.length} options`],
+                  ["Ships in", "Rigid cardboard tube"],
+                ].map(([k, v]) => (
+                  <div key={k}>
+                    <dt className="text-[10.5px] uppercase tracking-[0.26em] text-ink-text/55">{k}</dt>
+                    <dd className="mt-1.5">{v}</dd>
                   </div>
                 ))}
-              </div>
+              </dl>
+
+              {product.tags && product.tags.length > 0 && (
+                <ul className="mt-8 flex flex-wrap gap-2">
+                  {product.tags.map((tag) => (
+                    <li key={tag}>
+                      <Link
+                        href={`/shop?search=${tag}`}
+                        className="inline-flex rounded-full border border-black/15 px-3 py-1.5 text-xs text-ink-text/70 transition-colors hover:border-ink-text hover:text-ink-text"
+                      >
+                        #{tag}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </motion.div>
           </div>
 
-          {/* Related Products */}
           {related.length > 0 && (
-            <section className="mt-28" aria-labelledby="related-heading">
-              <AnimateIn>
-                <h2
-                  id="related-heading"
-                  className="font-display text-3xl md:text-4xl font-bold mb-10 text-charcoal"
-                >
-                  Check Out <span className="text-gradient">These</span>
-                </h2>
-              </AnimateIn>
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+            <section aria-labelledby="related-heading" className="mt-28 border-t border-black/10 pt-20 md:mt-36">
+              <SectionHeading
+                id="related-heading"
+                index="—"
+                eyebrow="Keep exploring"
+                size="sm"
+                lines={["You may", "also like."]}
+              />
+              <div className="mt-12 grid grid-cols-2 gap-x-4 gap-y-10 md:gap-x-6 lg:grid-cols-4">
                 {related.map((p, i) => (
                   <ProductCard key={p._id} product={p} index={i} />
                 ))}

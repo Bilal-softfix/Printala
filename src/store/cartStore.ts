@@ -32,8 +32,9 @@ export const useCartStore = create<CartStore>()(
           (i) => i.product._id === product._id && i.selectedSize.label === size.label
         );
         if (idx > -1) {
-          const updated = [...items];
-          updated[idx].quantity += quantity;
+          const updated = items.map((it, i) =>
+            i === idx ? { ...it, quantity: it.quantity + quantity } : it
+          );
           set({ items: updated, isOpen: true });
         } else {
           set({
@@ -69,6 +70,10 @@ export const useCartStore = create<CartStore>()(
           0
         ),
     }),
-    { name: "printala-cart" }
+    {
+      name: "printala-cart",
+      // Persist only the cart contents, never UI state (sidebar would reopen on reload)
+      partialize: (s) => ({ items: s.items }),
+    }
   )
 );

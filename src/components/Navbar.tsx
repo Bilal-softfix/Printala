@@ -1,36 +1,75 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import Image from "next/image";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { HiOutlineShoppingBag, HiOutlineSearch } from "react-icons/hi";
-import { HiOutlineBars2, HiXMark } from "react-icons/hi2";
+import { HiChevronDown } from "react-icons/hi2";
 import { useCartStore } from "@/store/cartStore";
-import { useRouter } from "next/navigation";
 import logo from "../app/assets/logo.png";
-import Image from "next/image";
+import CollectionsMenu from "./nav/CollectionsMenu";
+import SearchOverlay from "./nav/SearchOverlay";
+import MobileMenu from "./nav/MobileMenu";
 
-const NAV_LINKS = [
+const LINKS_LEFT = [{ href: "/shop", label: "Shop" }];
+const LINKS_RIGHT = [
+  { href: "/shop?sort=bestseller", label: "Trending" },
+  { href: "/about", label: "About" },
+];
+const MOBILE_LINKS = [
   { href: "/shop", label: "Shop" },
+  { href: "/#collections", label: "Collections" },
+  { href: "/shop?sort=bestseller", label: "Trending" },
   { href: "/shop?category=split-poster", label: "Split Posters" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];
 
 export default function Navbar() {
+  const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
+  // Pathname whose data-nav-theme="dark" section is under the bar (keyed by
+  // path so it resets on navigation; defaults to home so SSR paints dark).
+  const [darkOn, setDarkOn] = useState<string | null>(
+    pathname === "/" ? "/" : null,
+  );
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const totalItems = useCartStore((s) => s.totalItems());
   const openCart = useCartStore((s) => s.openCart);
-  const router = useRouter();
+
+  const dark = darkOn === pathname || mobileOpen || menuOpen;
+  const solid = scrolled || menuOpen;
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50);
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    const els = document.querySelectorAll('[data-nav-theme="dark"]');
+    if (!els.length) return;
+    const under = new Set<Element>();
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) under.add(e.target);
+          else under.delete(e.target);
+        }
+        setDarkOn(under.size > 0 ? pathname : null);
+      },
+      { rootMargin: "0px 0px -92% 0px" }, // only the band the bar covers
+    );
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, [pathname]);
 
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "";
@@ -39,219 +78,200 @@ export default function Navbar() {
     };
   }, [mobileOpen]);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/shop?search=${encodeURIComponent(searchQuery.trim())}`);
-      setSearchQuery("");
-      setSearchOpen(false);
-      setMobileOpen(false);
-    }
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setMenuOpen(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [menuOpen]);
+
+  // Hover intent for the mega-menu: open now, close after a short grace period.
+  const openMenu = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    setMenuOpen(true);
   };
+  const scheduleClose = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    closeTimer.current = setTimeout(() => setMenuOpen(false), 160);
+  };
+  const closeAll = useCallback(() => {
+    setMenuOpen(false);
+    setMobileOpen(false);
+  }, []);
+  const closeSearch = useCallback(() => setSearchOpen(false), []);
+
+  const linkCls = `relative py-1 text-[11px] font-medium uppercase tracking-[0.22em] transition-colors duration-300
+    after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:bg-accent
+    after:origin-right after:scale-x-0 after:transition-transform after:duration-500
+    hover:after:origin-left hover:after:scale-x-100 focus-visible:after:scale-x-100 ${
+      dark ? "text-cream/70 hover:text-cream" : "text-ink-text/70 hover:text-ink-text"
+    }`;
+  const iconCls = `relative grid h-10 w-10 place-items-center rounded-full transition-colors duration-300 ${
+    dark ? "text-cream/85 hover:text-cream hover:bg-white/[0.08]" : "text-ink-text hover:bg-black/[0.05]"
+  }`;
 
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled
-            ? "bg-white/90 backdrop-blur-xl shadow-[0_4px_0_#2F3542] border-b-3 border-charcoal"
-            : "bg-white/70 backdrop-blur-md"
+        onPointerLeave={menuOpen ? scheduleClose : undefined}
+        className={`nav-reveal fixed inset-x-0 top-0 z-50 transition-[background-color,border-color] duration-500 ${
+          dark
+            ? solid || mobileOpen
+              ? "border-b border-white/10 bg-ink-2/85 backdrop-blur-xl"
+              : "border-b border-transparent bg-transparent"
+            : solid
+              ? "border-b border-black/10 bg-paper/85 backdrop-blur-xl"
+              : "border-b border-transparent bg-paper"
         }`}
       >
-        <nav className="container-main flex items-center justify-between h-20">
-          {/* Logo */}
+        <nav
+          aria-label="Main"
+          className="container-main grid h-20 grid-cols-[1fr_auto] items-center lg:grid-cols-[1fr_auto_1fr]"
+        >
+          {/* Wordmark */}
           <Link
             href="/"
-            className="relative z-10 group flex items-center gap-2"
-            aria-label="Printala Home"
+            onClick={closeAll}
+            className="flex items-center gap-2.5 justify-self-start"
+            aria-label="Printala home"
           >
-            {/* Ribbon "P" icon placeholder */}
-            {/* <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center
-                            border-3 border-charcoal shadow-[3px_3px_0_#2F3542]
-                            group-hover:shadow-[4px_4px_0_#E10F80] group-hover:border-magenta
-                            transition-all"
-              style={{
-                background: "linear-gradient(135deg, #E10F80, #5FAAC6)",
-              }}
+            <Image src={logo} alt="" width={36} height={36} className="h-9 w-9 rounded-xl" />
+            <span
+              className={`font-display text-base font-extrabold tracking-[0.02em] transition-colors duration-500 sm:text-lg sm:tracking-[0.08em] ${
+                dark ? "text-cream" : "text-ink-text"
+              }`}
             >
-              <span className="font-comic text-white text-xl font-bold">P</span>
-            </div> */}
-
-            <Image
-              src={logo}
-              alt="logo"
-              className="h-10 w-10 border rounded-2xl"
-              width={40}
-              height={40}
-            />
-            <span className="font-display text-xl font-bold tracking-tight text-charcoal">
-              PRINT<span className="text-gradient">ALA</span>
+              PRINTALA<span className="text-accent">.</span>
             </span>
           </Link>
 
-          {/* Desktop Links */}
-          <div className="hidden md:flex items-center gap-8">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="relative text-sm font-bold uppercase tracking-wider text-charcoal-light
-                           hover:text-magenta transition-colors duration-300
-                           after:absolute after:bottom-[-4px] after:left-0 after:h-[3px]
-                           after:w-0 after:bg-magenta after:rounded-full after:transition-all after:duration-300
-                           hover:after:w-full"
-              >
-                {link.label}
-              </Link>
+          {/* Desktop links */}
+          <ul className="hidden items-center gap-10 lg:flex">
+            {LINKS_LEFT.map((l) => (
+              <li key={l.href}>
+                <Link href={l.href} className={linkCls}>
+                  {l.label}
+                </Link>
+              </li>
             ))}
-          </div>
+            <li onPointerEnter={openMenu} onPointerLeave={scheduleClose}>
+              <button
+                type="button"
+                onClick={() => setMenuOpen((o) => !o)}
+                aria-expanded={menuOpen}
+                aria-controls="collections-menu"
+                className={`${linkCls} inline-flex items-center gap-1.5 ${menuOpen ? "text-cream after:scale-x-100" : ""}`}
+              >
+                Collections
+                <HiChevronDown
+                  aria-hidden="true"
+                  size={12}
+                  className={`transition-transform duration-300 ${menuOpen ? "rotate-180" : ""}`}
+                />
+              </button>
+            </li>
+            {LINKS_RIGHT.map((l) => (
+              <li key={l.href}>
+                <Link href={l.href} className={linkCls}>
+                  {l.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
 
-          {/* Desktop Actions */}
-          <div className="hidden md:flex items-center gap-3">
+          {/* Actions */}
+          <div className="flex items-center gap-1 justify-self-end">
             <button
-              onClick={() => setSearchOpen(!searchOpen)}
-              className="w-10 h-10 rounded-xl border-2 border-charcoal flex items-center justify-center
-                         text-charcoal hover:bg-sky hover:text-white hover:border-sky
-                         transition-all shadow-[2px_2px_0_#2F3542] hover:shadow-[3px_3px_0_#2F3542]"
-              aria-label="Toggle search"
+              onClick={() => {
+                closeAll();
+                setSearchOpen(true);
+              }}
+              className={iconCls}
+              aria-label="Search"
             >
-              <HiOutlineSearch size={18} />
+              <HiOutlineSearch size={19} />
             </button>
 
             <button
-              onClick={openCart}
-              className="relative w-10 h-10 rounded-xl border-2 border-charcoal flex items-center justify-center
-                         text-charcoal hover:bg-magenta hover:text-white hover:border-magenta
-                         transition-all shadow-[2px_2px_0_#2F3542] hover:shadow-[3px_3px_0_#2F3542]"
-              aria-label={`Cart with ${totalItems} items`}
+              onClick={() => {
+                closeAll();
+                openCart();
+              }}
+              className={iconCls}
+              aria-label={`Shopping bag, ${totalItems} items`}
             >
-              <HiOutlineShoppingBag size={18} />
+              {/* Re-keyed on count so the bag nudges whenever the cart changes */}
+              <motion.span
+                key={`bag-${totalItems}`}
+                animate={{ rotate: [0, -14, 10, -4, 0] }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+                className="flex"
+              >
+                <HiOutlineShoppingBag size={19} />
+              </motion.span>
               {totalItems > 0 && (
                 <motion.span
-                  initial={{ scale: 0 }}
+                  key={totalItems}
+                  initial={{ scale: 0.4 }}
                   animate={{ scale: 1 }}
-                  className="absolute -top-2 -right-2 w-6 h-6 bg-yellow text-charcoal
-                             text-[10px] font-black rounded-full flex items-center justify-center
-                             border-2 border-charcoal"
+                  transition={{ type: "spring", stiffness: 500, damping: 15 }}
+                  className="absolute right-0.5 top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-accent px-1 text-[10px] font-semibold text-white"
                 >
                   {totalItems}
                 </motion.span>
               )}
             </button>
-          </div>
 
-          {/* Mobile */}
-          <div className="flex md:hidden items-center gap-2">
             <button
-              onClick={openCart}
-              className="relative p-2 text-charcoal"
-              aria-label={`Cart ${totalItems} items`}
+              onClick={() => setMobileOpen((o) => !o)}
+              className={`${iconCls} lg:hidden`}
+              aria-label={mobileOpen ? "Close menu" : "Open menu"}
+              aria-expanded={mobileOpen}
+              aria-controls="mobile-menu"
             >
-              <HiOutlineShoppingBag size={22} />
-              {totalItems > 0 && (
+              <span aria-hidden="true" className="relative block h-3 w-5">
                 <span
-                  className="absolute -top-1 -right-1 w-5 h-5 bg-yellow text-charcoal
-                                 text-[10px] font-black rounded-full flex items-center justify-center
-                                 border-2 border-charcoal"
-                >
-                  {totalItems}
-                </span>
-              )}
-            </button>
-            <button
-              onClick={() => setMobileOpen(!mobileOpen)}
-              className="p-2 text-charcoal"
-              aria-label="Menu"
-            >
-              {mobileOpen ? (
-                <HiXMark size={26} />
-              ) : (
-                <HiOutlineBars2 size={26} />
-              )}
+                  className={`absolute left-0 h-[1.5px] w-full bg-current transition-transform duration-500 ${
+                    mobileOpen ? "top-1/2 rotate-45" : "top-0"
+                  }`}
+                />
+                <span
+                  className={`absolute left-0 h-[1.5px] w-full bg-current transition-transform duration-500 ${
+                    mobileOpen ? "top-1/2 -rotate-45" : "top-full"
+                  }`}
+                />
+              </span>
             </button>
           </div>
         </nav>
 
-        {/* Search Dropdown */}
         <AnimatePresence>
-          {searchOpen && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="overflow-hidden border-t-3 border-charcoal bg-white"
-            >
-              <form onSubmit={handleSearch} className="container-main py-4">
-                <div className="relative max-w-2xl mx-auto">
-                  <HiOutlineSearch
-                    className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted"
-                    size={20}
-                  />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search anime, cars, gaming, cricket..."
-                    autoFocus
-                    className="w-full pl-12 pr-4 py-3 border-3 border-charcoal rounded-xl
-                               font-medium focus:outline-none focus:border-magenta
-                               focus:shadow-[4px_4px_0_#E10F80] transition-all"
-                  />
-                </div>
-              </form>
-            </motion.div>
+          {menuOpen && (
+            <CollectionsMenu
+              id="collections-menu"
+              onNavigate={closeAll}
+              onPointerEnter={openMenu}
+              onPointerLeave={scheduleClose}
+            />
           )}
         </AnimatePresence>
       </header>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
         {mobileOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-bg-primary flex flex-col items-center justify-center halftone"
-          >
-            <nav className="flex flex-col items-center gap-6">
-              {[{ href: "/", label: "Home" }, ...NAV_LINKS].map((link, i) => (
-                <motion.div
-                  key={link.href}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.08 }}
-                >
-                  <Link
-                    href={link.href}
-                    onClick={() => setMobileOpen(false)}
-                    className="comic-text-solid text-4xl md:text-5xl font-display font-bold
-                               hover:text-magenta transition-colors"
-                  >
-                    {link.label}
-                  </Link>
-                </motion.div>
-              ))}
-
-              <motion.form
-                onSubmit={handleSearch}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
-                className="mt-4 w-72"
-              >
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search..."
-                  className="input-field text-center"
-                />
-              </motion.form>
-            </nav>
-          </motion.div>
+          <MobileMenu
+            links={MOBILE_LINKS}
+            onClose={closeAll}
+            onSearch={() => {
+              closeAll();
+              setSearchOpen(true);
+            }}
+          />
         )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {searchOpen && <SearchOverlay onClose={closeSearch} />}
       </AnimatePresence>
     </>
   );

@@ -268,7 +268,7 @@ export const PRODUCTS: Product[] = [
     name: "MS Dhoni — Helicopter Shot",
     slug: "dhoni-helicopter-shot",
     description:
-      "Thala for a reason! Captain Cool's legendary helicopter shot frozen in time. The shot that made Ranchi famous. Every CSK and India fan needs this on their wall. Whistle Podu! 🦁",
+      "Thala for a reason! Captain Cool's legendary helicopter shot frozen in time. The shot that made Ranchi famous. Every CSK and India fan needs this on their wall. Whistle Podu!",
     price: 149,
     image: "https://images.unsplash.com/photo-1624526267942-ab0ff8a3e972?w=800&q=80",
     category: "cricket",
@@ -302,7 +302,7 @@ export const PRODUCTS: Product[] = [
     name: "World Cup 2011 — Dhoni's Winning Six",
     slug: "world-cup-2011-winning-six",
     description:
-      "\"Dhoni finishes off in style! India lift the World Cup after 28 years!\" The moment that made 1.4 billion people cry happy tears. Wankhede erupting. Pure goosebumps. 🏆",
+      "\"Dhoni finishes off in style! India lift the World Cup after 28 years!\" The moment that made 1.4 billion people cry happy tears. Wankhede erupting. Pure goosebumps.",
     price: 199,
     comparePrice: 349,
     image: "https://images.unsplash.com/photo-1587280501635-a19de238d1eb?w=800&q=80",
@@ -322,7 +322,7 @@ export const PRODUCTS: Product[] = [
     name: "Lamborghini Aventador — Matte Black Beast",
     slug: "lamborghini-aventador-black",
     description:
-      "The Aventador in matte black — every car lover's desktop wallpaper, now on your wall. Supercar dreams in poster form. Apni room ko garage feel do, bhai! 🔥",
+      "The Aventador in matte black — every car lover's desktop wallpaper, now on your wall. Supercar dreams in poster form. Apni room ko garage feel do, bhai!",
     price: 199,
     comparePrice: 349,
     image: "https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=800&q=80",
@@ -357,7 +357,7 @@ export const PRODUCTS: Product[] = [
     name: "Mahindra Thar — Off-Road King",
     slug: "mahindra-thar-offroad",
     description:
-      "The Thar in its natural habitat — mud, mountains, and pure desi engineering. India's favourite off-roader looking absolutely menacing. Perfect for every Thar lover's room! 🇮🇳",
+      "The Thar in its natural habitat — mud, mountains, and pure desi engineering. India's favourite off-roader looking absolutely menacing. Perfect for every Thar lover's room!",
     price: 149,
     image: "https://images.unsplash.com/photo-1614162118016-5c9b5b44b8b0?w=800&q=80",
     category: "cars",
@@ -374,7 +374,7 @@ export const PRODUCTS: Product[] = [
     name: "Royal Enfield Bullet — Classic 350",
     slug: "royal-enfield-bullet",
     description:
-      "Dug-dug-dug. The sound that echoes through every Indian highway. The Bullet in all its glory against a mountain backdrop. Every RE rider's wall needs this. Ride karna, poster lagana. 🏍️",
+      "Dug-dug-dug. The sound that echoes through every Indian highway. The Bullet in all its glory against a mountain backdrop. Every RE rider's wall needs this. Ride karna, poster lagana.",
     price: 149,
     image: "https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=800&q=80",
     category: "cars",
@@ -393,7 +393,7 @@ export const PRODUCTS: Product[] = [
     name: "KGF — Rocky Bhai",
     slug: "kgf-rocky-bhai",
     description:
-      "\"Violence... violence... violence.\" Rocky Bhai in his iconic gold mine scene. The poster that screams mass. Perfect for every KGF fan who thinks they're Rocky Bhai. Saalaam Rocky Bhai! 🔥",
+      "\"Violence... violence... violence.\" Rocky Bhai in his iconic gold mine scene. The poster that screams mass. Perfect for every KGF fan who thinks they're Rocky Bhai. Saalaam Rocky Bhai!",
     price: 199,
     comparePrice: 349,
     image: "https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=800&q=80",
@@ -411,7 +411,7 @@ export const PRODUCTS: Product[] = [
     name: "Pushpa — Jhukega Nahi",
     slug: "pushpa-jhukega-nahi",
     description:
-      "\"Pushpa... naam sunke flower samajhta hai kya?\" Allu Arjun as Pushpa Raj in the most iconic pose of 2023. Srivalli playing in the background. Jhukega nahi sala! 🌿",
+      "\"Pushpa... naam sunke flower samajhta hai kya?\" Allu Arjun as Pushpa Raj in the most iconic pose of 2023. Srivalli playing in the background. Jhukega nahi sala!",
     price: 149,
     image: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800&q=80",
     category: "bollywood",
@@ -430,7 +430,7 @@ export const PRODUCTS: Product[] = [
     name: "Messi — World Cup Trophy Lift",
     slug: "messi-world-cup-trophy",
     description:
-      "Leo Messi lifting the World Cup. The moment that settled the GOAT debate forever. Every football fan remembers where they were during that final. Messi supremacy poster for your wall. 🐐",
+      "Leo Messi lifting the World Cup. The moment that settled the GOAT debate forever. Every football fan remembers where they were during that final. Messi supremacy poster for your wall.",
     price: 199,
     image: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=800&q=80",
     category: "football",
@@ -447,7 +447,7 @@ export const PRODUCTS: Product[] = [
     name: "Cristiano Ronaldo — SIUUUU",
     slug: "ronaldo-siuu-celebration",
     description:
-      "SIUUUUUU! CR7 in his legendary celebration. The most copied celebration on every Indian football ground. Whether you're team Messi or CR7 — this poster is 🔥",
+      "SIUUUUUU! CR7 in his legendary celebration. The most copied celebration on every Indian football ground. Whether you're team Messi or CR7 — this poster is",
     price: 199,
     image: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&q=80",
     category: "football",
@@ -466,7 +466,7 @@ export const PRODUCTS: Product[] = [
     name: "Zero Two — Darling in the Franxx",
     slug: "zero-two-darling",
     description:
-      "Darling~ Zero Two in her iconic cherry blossom scene. The ultimate waifu poster for your room. Aesthetic anime art that looks gorgeous on any wall. Your room's about to go full weeb mode. 💕",
+      "Darling~ Zero Two in her iconic cherry blossom scene. The ultimate waifu poster for your room. Aesthetic anime art that looks gorgeous on any wall. Your room's about to go full weeb mode.",
     price: 199,
     image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&q=80",
     category: "anime-girls",
@@ -486,7 +486,7 @@ export const PRODUCTS: Product[] = [
     name: "Himalayan Sunrise — 5 Panel Split",
     slug: "himalayan-sunrise-5-panel",
     description:
-      "The mighty Himalayas at golden hour, spanning 5 panels. Transform your drawing room wall into a window to the mountains. Mummy bhi impress, dost bhi impress. Sab khush! 🏔️",
+      "The mighty Himalayas at golden hour, spanning 5 panels. Transform your drawing room wall into a window to the mountains. Mummy bhi impress, dost bhi impress. Sab khush!",
     price: 999,
     comparePrice: 1799,
     image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80",
@@ -505,7 +505,7 @@ export const PRODUCTS: Product[] = [
     name: "Mumbai Skyline Night — 3 Panel Split",
     slug: "mumbai-skyline-3-panel",
     description:
-      "Maximum City at midnight! Mumbai's stunning skyline with Marine Drive lights, split across 3 panels. The city that never sleeps, now on your wall. Aamchi Mumbai! 🌃",
+      "Maximum City at midnight! Mumbai's stunning skyline with Marine Drive lights, split across 3 panels. The city that never sleeps, now on your wall. Aamchi Mumbai!",
     price: 799,
     comparePrice: 1299,
     image: "https://images.unsplash.com/photo-1514565131-fce0801e5785?w=800&q=80",
@@ -524,7 +524,7 @@ export const PRODUCTS: Product[] = [
     name: "Anime Battle Scene — 5 Panel Split",
     slug: "anime-battle-5-panel",
     description:
-      "An epic anime battle scene spanning your entire wall. 5 panels of pure action — explosions, energy blasts, and main character energy. Your room is basically an anime now. Sugoi! ⚡",
+      "An epic anime battle scene spanning your entire wall. 5 panels of pure action — explosions, energy blasts, and main character energy. Your room is basically an anime now. Sugoi!",
     price: 1199,
     comparePrice: 1999,
     image: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=800&q=80",
@@ -544,7 +544,7 @@ export const PRODUCTS: Product[] = [
     name: "Goa Beach Sunset — 3 Panel Split",
     slug: "goa-sunset-3-panel",
     description:
-      "Goan sunset vibes across 3 panels. Palm trees, orange sky, calm waves — Goa ka feeling ghar mein. Perfect for your living room or that accent wall you've been planning. 🌴",
+      "Goan sunset vibes across 3 panels. Palm trees, orange sky, calm waves — Goa ka feeling ghar mein. Perfect for your living room or that accent wall you've been planning.",
     price: 799,
     image: "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=800&q=80",
     category: "split-poster",
@@ -561,7 +561,7 @@ export const PRODUCTS: Product[] = [
     name: "Northern Lights — 5 Panel Split",
     slug: "northern-lights-5-panel",
     description:
-      "Aurora Borealis dancing across the Arctic sky. Greens, purples, and blues spanning 5 panels. Basically Ladakh at night but make it extra. Your wall, but make it cosmic. 🌌",
+      "Aurora Borealis dancing across the Arctic sky. Greens, purples, and blues spanning 5 panels. Basically Ladakh at night but make it extra. Your wall, but make it cosmic.",
     price: 1099,
     image: "https://images.unsplash.com/photo-1483347756197-71ef80e95f73?w=800&q=80",
     category: "split-poster",
@@ -578,7 +578,7 @@ export const PRODUCTS: Product[] = [
     name: "Supercar Collection — 3 Panel Split",
     slug: "supercar-garage-3-panel",
     description:
-      "Dream garage goals across 3 panels. Lambos, Ferraris, and GT-Rs all in one frame. Apna time aayega — tab tak poster se kaam chalao! 🏎️",
+      "Dream garage goals across 3 panels. Lambos, Ferraris, and GT-Rs all in one frame. Apna time aayega — tab tak poster se kaam chalao!",
     price: 899,
     image: "https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=800&q=80",
     category: "split-poster",
@@ -602,7 +602,7 @@ export const TESTIMONIALS: Testimonial[] = [
     id: "1",
     name: "Arjun Sharma",
     location: "Delhi, India",
-    text: "Bhai kya mast quality hai! Naruto aur JJK poster liya — 300gsm paper ekdum solid feel hota hai. Hostel room pura anime setup ban gaya. 10/10 recommend karta hoon. 🔥",
+    text: "Bhai kya mast quality hai! Naruto aur JJK poster liya — 300gsm paper ekdum solid feel hota hai. Hostel room pura anime setup ban gaya. 10/10 recommend karta hoon.",
     rating: 5,
     avatar: "AS",
   },
@@ -626,7 +626,7 @@ export const TESTIMONIALS: Testimonial[] = [
     id: "4",
     name: "Sneha Reddy",
     location: "Hyderabad, India",
-    text: "Got the KGF Rocky Bhai and Zero Two posters — my room has both mass AND class now 😂 Paper quality is genuinely premium, not like those ₹50 wale cheap posters. Worth every rupee!",
+    text: "Got the KGF Rocky Bhai and Zero Two posters — my room has both mass AND class now Paper quality is genuinely premium, not like those ₹50 wale cheap posters. Worth every rupee!",
     rating: 5,
     avatar: "SR",
   },
@@ -634,7 +634,7 @@ export const TESTIMONIALS: Testimonial[] = [
     id: "5",
     name: "Karthik Menon",
     location: "Chennai, India",
-    text: "Ordered 8 posters — anime, cars, cricket sab kuch. Tube packaging mein aaya, ekdum flat and perfect. 4 din mein deliver ho gaya. Dost log jealous ho gaye. Best poster shop in India! 💪",
+    text: "Ordered 8 posters — anime, cars, cricket sab kuch. Tube packaging mein aaya, ekdum flat and perfect. 4 din mein deliver ho gaya. Dost log jealous ho gaye. Best poster shop in India!",
     rating: 5,
     avatar: "KM",
   },
@@ -642,7 +642,7 @@ export const TESTIMONIALS: Testimonial[] = [
     id: "6",
     name: "Aisha Khan",
     location: "Pune, India",
-    text: "Boyfriend ke birthday pe 3-panel Mumbai skyline split poster gift kiya — he literally screamed! The quality is so good, it looks like a canvas painting. Printala is my go-to now. ❤️",
+    text: "Boyfriend ke birthday pe 3-panel Mumbai skyline split poster gift kiya — he literally screamed! The quality is so good, it looks like a canvas painting. Printala is my go-to now.",
     rating: 5,
     avatar: "AK",
   },

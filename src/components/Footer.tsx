@@ -1,15 +1,16 @@
-import Image from "next/image";
 import Link from "next/link";
-import logo from "../app/assets/logo.png";
+import { FaInstagram, FaXTwitter, FaPinterestP } from "react-icons/fa6";
+import Newsletter from "./Newsletter";
+import { CATEGORIES } from "@/lib/data";
 
-const FOOTER_LINKS = {
-  Categories: [
-    { label: "Anime", href: "/shop?category=anime" },
-    { label: "Gaming", href: "/shop?category=gaming" },
-    { label: "Cars", href: "/shop?category=cars" },
-    { label: "Cricket", href: "/shop?category=cricket" },
-    { label: "Movies", href: "/shop?category=movies" },
-    { label: "Split Posters", href: "/shop?category=split-poster" },
+/* Existing placeholder links ("#") are kept until real pages exist. */
+const COLUMNS = {
+  Collections: CATEGORIES.map((c) => ({ label: c.name, href: `/shop?category=${c.slug}` })),
+  Shop: [
+    { label: "All posters", href: "/shop" },
+    { label: "Trending", href: "/shop?sort=bestseller" },
+    { label: "Split posters", href: "/shop?category=split-poster" },
+    { label: "Cart", href: "/cart" },
   ],
   Company: [
     { label: "About", href: "/about" },
@@ -24,89 +25,82 @@ const FOOTER_LINKS = {
   ],
 };
 
+const SOCIAL = [
+  { label: "Instagram", icon: FaInstagram },
+  { label: "X (Twitter)", icon: FaXTwitter },
+  { label: "Pinterest", icon: FaPinterestP },
+];
+
 export default function Footer() {
   return (
-    <footer
-      className="bg-charcoal text-white border-t-3 border-charcoal-dark"
-      role="contentinfo"
-    >
-      <div className="container-main py-16">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-10">
-          {/* Brand */}
-          <div className="col-span-2">
-            <Link href="/" className="inline-flex items-center gap-2 mb-6">
-              <Image
-                src={logo}
-                alt="logo"
-                className="h-10 w-10 border rounded-2xl"
-                width={40}
-                height={40}
-              />
-              <span className="font-display text-2xl font-bold">
-                PRINT<span className="text-magenta-light">ALA</span>
-              </span>
-            </Link>
-            <p className="text-white/50 text-sm leading-relaxed max-w-xs mb-6">
-              Premium posters for anime fans, gamers, car lovers, cricket
-              fanatics & more. Your walls, your vibe.
-            </p>
-            <div className="flex gap-3">
-              {["Instagram", "Twitter", "Pinterest"].map((social) => (
-                <a
-                  key={social}
-                  href="#"
-                  className="w-10 h-10 rounded-xl border-2 border-white/20
-                             flex items-center justify-center text-xs text-white/50
-                             hover:border-magenta hover:text-magenta hover:bg-magenta/10
-                             transition-all"
-                  aria-label={`Follow on ${social}`}
-                >
-                  {social[0]}
-                </a>
-              ))}
+    <footer role="contentinfo" data-nav-theme="dark" className="overflow-hidden bg-ink-2 text-cream">
+      <div className="container-main pt-20 md:pt-24">
+        <div className="grid gap-14 border-b border-white/10 pb-16 lg:grid-cols-[1.1fr_2fr] lg:gap-20">
+          <div>
+            <Newsletter />
+            <div className="mt-12 space-y-2 text-sm">
+              <p className="text-[10.5px] uppercase tracking-[0.26em] text-mute">Say hello</p>
+              <a href="mailto:hello@printala.com" className="block text-cream/85 transition-colors hover:text-accent">
+                hello@printala.com
+              </a>
+              <p className="text-mute">Replies within 24 hours</p>
             </div>
+            <ul className="mt-8 flex gap-2">
+              {SOCIAL.map(({ label, icon: Icon }) => (
+                <li key={label}>
+                  <a
+                    href="#"
+                    aria-label={`Printala on ${label}`}
+                    className="grid h-10 w-10 place-items-center rounded-full border border-white/15 text-cream/75 transition-colors hover:border-accent hover:bg-accent hover:text-white"
+                  >
+                    <Icon size={15} aria-hidden="true" />
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
 
-          {Object.entries(FOOTER_LINKS).map(([title, links]) => (
-            <nav key={title} aria-label={`${title} links`}>
-              <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white/40 mb-5">
-                {title}
-              </h3>
-              <ul className="space-y-3">
-                {links.map((link) => (
-                  <li key={link.label}>
-                    <Link
-                      href={link.href}
-                      className="text-sm text-white/60 hover:text-magenta-light transition-colors font-medium"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
+          <div className="grid grid-cols-2 gap-10 sm:grid-cols-4">
+            {Object.entries(COLUMNS).map(([title, links]) => (
+              <nav key={title} aria-label={`${title} links`}>
+                <h3 className="text-[10.5px] uppercase tracking-[0.26em] text-mute">{title}</h3>
+                <ul className="mt-5 space-y-3">
+                  {links.map((l) => (
+                    <li key={l.label}>
+                      <Link
+                        href={l.href}
+                        className="text-sm text-cream/75 transition-colors hover:text-cream"
+                      >
+                        {l.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Oversized wordmark */}
+      <p
+        aria-hidden="true"
+        className="select-none whitespace-nowrap pt-6 text-center font-display text-[17.5vw] font-bold uppercase leading-[0.8] tracking-[-0.06em] text-white/[0.06]"
+      >
+        Printala<span className="text-accent/60">.</span>
+      </p>
+
+      <div className="container-main flex flex-col items-center justify-between gap-4 border-t border-white/10 py-7 text-xs text-mute md:flex-row">
+        <p>© {new Date().getFullYear()} Printala. Premium posters &amp; split wall art, made in India.</p>
+        <ul className="flex gap-6">
+          {["Privacy", "Terms", "Cookies"].map((p) => (
+            <li key={p}>
+              <a href="#" className="transition-colors hover:text-cream">
+                {p}
+              </a>
+            </li>
           ))}
-        </div>
-
-        <div
-          className="flex flex-col md:flex-row items-center justify-between gap-4
-                        border-t border-white/10 mt-12 pt-8"
-        >
-          <p className="text-xs text-white/30">
-            © {new Date().getFullYear()} Printala. All rights reserved.
-          </p>
-          <div className="flex gap-6 text-xs text-white/30">
-            <a href="#" className="hover:text-magenta-light transition-colors">
-              Privacy
-            </a>
-            <a href="#" className="hover:text-magenta-light transition-colors">
-              Terms
-            </a>
-            <a href="#" className="hover:text-magenta-light transition-colors">
-              Cookies
-            </a>
-          </div>
-        </div>
+        </ul>
       </div>
     </footer>
   );

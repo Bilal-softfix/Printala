@@ -45,7 +45,7 @@ export default function AdminOrdersPage() {
           o._id === orderId ? { ...o, orderStatus: newStatus } : o,
         ),
       );
-      toast.success(`Status updated to "${newStatus}" ✅`);
+      toast.success(`Status updated to "${newStatus}"`);
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Update failed");
     }
@@ -208,8 +208,8 @@ export default function AdminOrdersPage() {
                           {order.shipping?.city}, {order.shipping?.state} —{" "}
                           {order.shipping?.pincode}
                         </p>
-                        <p>📞 {order.shipping?.phone}</p>
-                        <p>📧 {order.shipping?.email}</p>
+                        <p>{order.shipping?.phone}</p>
+                        <p>{order.shipping?.email}</p>
                       </div>
                     </div>
 

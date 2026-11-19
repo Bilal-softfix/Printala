@@ -32,7 +32,7 @@ export default function AdminSettingsPage() {
       if (result.data?.token) {
         localStorage.setItem("admin_token", result.data.token);
       }
-      toast.success("Password changed! 🔐");
+      toast.success("Password changed!");
       setPasswords({ current: "", newPass: "", confirm: "" });
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Failed to change password");

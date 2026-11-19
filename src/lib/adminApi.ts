@@ -1,7 +1,8 @@
 import axios from "axios";
 
 const ADMIN_API = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api",
+  baseURL:
+    process.env.NEXT_PUBLIC_API_URL || "https://printala-api.onrender.com/api",
   timeout: 15000,
 });
 
@@ -26,18 +27,19 @@ ADMIN_API.interceptors.response.use(
       window.location.href = "/admin/login";
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 // ─── Auth ───
 export const adminLogin = (email: string, password: string) =>
   ADMIN_API.post("/admin/login", { email, password }).then((r) => r.data);
 
-export const getMe = () =>
-  ADMIN_API.get("/admin/me").then((r) => r.data);
+export const getMe = () => ADMIN_API.get("/admin/me").then((r) => r.data);
 
 export const changePassword = (currentPassword: string, newPassword: string) =>
-  ADMIN_API.put("/admin/password", { currentPassword, newPassword }).then((r) => r.data);
+  ADMIN_API.put("/admin/password", { currentPassword, newPassword }).then(
+    (r) => r.data,
+  );
 
 // ─── Dashboard ───
 export const getDashboard = () =>
@@ -63,8 +65,10 @@ export const getAdminOrders = (params?: Record<string, string>) =>
 export const getOrderDetails = (orderNumber: string) =>
   ADMIN_API.get(`/admin/orders/${orderNumber}`).then((r) => r.data);
 
-export const updateOrderStatus = (id: string, data: { orderStatus: string; trackingNumber?: string }) =>
-  ADMIN_API.put(`/admin/orders/${id}/status`, data).then((r) => r.data);
+export const updateOrderStatus = (
+  id: string,
+  data: { orderStatus: string; trackingNumber?: string },
+) => ADMIN_API.put(`/admin/orders/${id}/status`, data).then((r) => r.data);
 
 // ─── Contacts ───
 export const getContacts = () =>
@@ -84,7 +88,7 @@ export const uploadImage = (file: File) => {
     onUploadProgress: (progressEvent) => {
       // You can track upload progress here if needed
       const percent = Math.round(
-        (progressEvent.loaded * 100) / (progressEvent.total || 1)
+        (progressEvent.loaded * 100) / (progressEvent.total || 1),
       );
       console.log(`Upload progress: ${percent}%`);
     },

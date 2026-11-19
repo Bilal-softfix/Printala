@@ -1,13 +1,15 @@
 "use client";
 
 import Image from "next/image";
-import { HiMinus, HiPlus, HiOutlineTrash } from "react-icons/hi";
+import Link from "next/link";
+import { HiMinus, HiPlus } from "react-icons/hi";
 import { motion } from "framer-motion";
 import { CartItem as CartItemType } from "@/types";
 import { useCartStore } from "@/store/cartStore";
+import { rupees } from "@/lib/cart";
 
 export default function CartItem({ item }: { item: CartItemType }) {
-  const { removeItem, updateQuantity } = useCartStore();
+  const { removeItem, updateQuantity, closeCart } = useCartStore();
   const { product, quantity, selectedSize } = item;
   const linePrice = (product.price + selectedSize.priceModifier) * quantity;
 
@@ -17,68 +19,54 @@ export default function CartItem({ item }: { item: CartItemType }) {
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
-      className="flex gap-4 py-4 border-b-2 border-charcoal/10"
+      className="flex gap-4 border-b border-black/10 py-5"
     >
-      <div
-        className="relative w-20 h-28 rounded-xl overflow-hidden bg-bg-tertiary shrink-0
-                      border-2 border-charcoal shadow-[2px_2px_0_#2F3542]"
+      <Link
+        href={`/product/${product._id}`}
+        onClick={closeCart}
+        className="relative h-28 w-20 shrink-0 bg-paper-2 p-1.5"
       >
-        <Image
-          src={product.image}
-          alt={product.name}
-          fill
-          className="object-cover"
-          sizes="80px"
-        />
-      </div>
+        <span className="relative block h-full w-full overflow-hidden shadow-[0_6px_14px_-6px_rgba(0,0,0,0.4)]">
+          <Image src={product.image} alt={product.name} fill className="object-cover" sizes="80px" />
+        </span>
+      </Link>
 
-      <div className="flex-1 flex flex-col justify-between min-w-0">
-        <div>
-          <h4 className="font-bold text-sm text-charcoal truncate">
-            {product.name}
-          </h4>
-          <p className="text-xs text-text-muted mt-0.5">
-            {selectedSize.label} — {selectedSize.dimensions}
-          </p>
+      <div className="flex min-w-0 flex-1 flex-col justify-between">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <h4 className="truncate text-sm font-medium text-ink-text">{product.name}</h4>
+            <p className="mt-1 text-xs text-ink-text/55">
+              {selectedSize.label} · {selectedSize.dimensions}
+            </p>
+          </div>
+          <span className="shrink-0 text-sm font-semibold text-ink-text">{rupees(linePrice)}</span>
         </div>
 
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-0 border-2 border-charcoal rounded-lg overflow-hidden">
+          <div className="flex items-center border border-black/15">
             <button
-              onClick={() =>
-                updateQuantity(product._id, selectedSize.label, quantity - 1)
-              }
-              className="p-1.5 hover:bg-sky hover:text-white transition-colors"
-              aria-label="Decrease"
+              onClick={() => updateQuantity(product._id, selectedSize.label, quantity - 1)}
+              className="grid h-8 w-8 place-items-center transition-colors hover:bg-paper-2"
+              aria-label={`Decrease quantity of ${product.name}`}
             >
-              <HiMinus size={12} />
+              <HiMinus size={11} />
             </button>
-            <span className="w-8 text-center text-xs font-black border-x-2 border-charcoal py-1.5">
-              {quantity}
-            </span>
+            <span className="w-7 text-center text-xs font-semibold tabular-nums">{quantity}</span>
             <button
-              onClick={() =>
-                updateQuantity(product._id, selectedSize.label, quantity + 1)
-              }
-              className="p-1.5 hover:bg-sky hover:text-white transition-colors"
-              aria-label="Increase"
+              onClick={() => updateQuantity(product._id, selectedSize.label, quantity + 1)}
+              className="grid h-8 w-8 place-items-center transition-colors hover:bg-paper-2"
+              aria-label={`Increase quantity of ${product.name}`}
             >
-              <HiPlus size={12} />
+              <HiPlus size={11} />
             </button>
           </div>
-
-          <div className="flex items-center gap-3">
-            <span className="font-comic text-base text-magenta">
-              ₹{linePrice.toFixed(2)}
-            </span>
-            <button
-              onClick={() => removeItem(product._id, selectedSize.label)}
-              className="text-text-muted hover:text-red-500 transition-colors"
-              aria-label={`Remove ₹{product.name}`}
-            >
-              <HiOutlineTrash size={16} />
-            </button>
-          </div>
+          <button
+            onClick={() => removeItem(product._id, selectedSize.label)}
+            className="border-b border-transparent text-xs text-ink-text/55 transition-colors hover:border-accent hover:text-accent"
+            aria-label={`Remove ${product.name}`}
+          >
+            Remove
+          </button>
         </div>
       </div>
     </motion.div>

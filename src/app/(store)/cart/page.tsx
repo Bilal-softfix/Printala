@@ -1,113 +1,80 @@
 "use client";
 
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
-import { HiOutlineArrowLeft, HiOutlineShoppingBag } from "react-icons/hi";
+import { AnimatePresence } from "framer-motion";
+import { HiArrowLeft, HiArrowRight } from "react-icons/hi2";
 import { useCartStore } from "@/store/cartStore";
 import CartItem from "@/components/CartItem";
+import SectionHeading from "@/components/ui/SectionHeading";
+import { cartTotals, rupees, FREE_SHIPPING_MIN } from "@/lib/cart";
 
 export default function CartPage() {
-  const { items, totalPrice, clearCart } = useCartStore();
-
-  const subtotal = totalPrice();
-  const shipping = subtotal >= 50 ? 0 : 5.99;
-  const total = subtotal + shipping;
+  const { items, totalPrice, clearCart, totalItems } = useCartStore();
+  const { subtotal, shipping, total } = cartTotals(totalPrice());
 
   return (
-    <div className="pt-28 pb-20">
+    <div className="min-h-screen bg-paper pt-28 pb-24 text-ink-text md:pt-36">
       <div className="container-main">
-        <h1 className="font-display text-5xl md:text-6xl font-bold mb-12">
-          Your <span className="text-text-muted">Cart</span>
-        </h1>
+        <SectionHeading
+          as="h1"
+          index="—"
+          eyebrow={`${totalItems()} ${totalItems() === 1 ? "item" : "items"}`}
+          lines={["Your bag."]}
+        />
 
         {items.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center py-24"
-          >
-            <div className="w-24 h-24 rounded-full bg-bg-tertiary flex items-center justify-center mx-auto mb-8">
-              <HiOutlineShoppingBag size={40} className="text-text-muted" />
-            </div>
-            <p className="font-display text-2xl font-bold mb-3">
-              Nothing here yet
+          <div className="mt-16 border-t border-black/10 pt-16">
+            <p className="max-w-md text-[15px] leading-relaxed text-ink-text/65">
+              Nothing here yet — your future wall is one click away.
             </p>
-            <p className="text-text-muted mb-8">
-              Your future masterpieces await.
-            </p>
-            <Link href="/shop" className="btn-primary">
-              <span>Explore Posters</span>
+            <Link href="/shop" className="btn-ink mt-8">
+              Explore posters <HiArrowRight size={14} aria-hidden="true" />
             </Link>
-          </motion.div>
+          </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            {/* Items */}
-            <div className="lg:col-span-2">
+          <div className="mt-14 grid gap-14 lg:grid-cols-[1fr_24rem] lg:gap-20">
+            <div className="border-t border-black/10">
               <AnimatePresence mode="popLayout">
                 {items.map((item) => (
-                  <CartItem
-                    key={`${item.product._id}-${item.selectedSize.label}`}
-                    item={item}
-                  />
+                  <CartItem key={`${item.product._id}-${item.selectedSize.label}`} item={item} />
                 ))}
               </AnimatePresence>
-
-              <div className="flex justify-between items-center mt-8">
-                <Link
-                  href="/shop"
-                  className="flex items-center gap-2 text-sm text-text-muted hover:text-accent transition-colors"
-                >
-                  <HiOutlineArrowLeft size={16} /> Continue shopping
+              <div className="mt-8 flex items-center justify-between text-sm">
+                <Link href="/shop" className="inline-flex items-center gap-2 text-ink-text/65 transition-colors hover:text-ink-text">
+                  <HiArrowLeft size={14} aria-hidden="true" /> Continue shopping
                 </Link>
-                <button
-                  onClick={clearCart}
-                  className="text-sm text-accent/60 hover:text-accent transition-colors"
-                >
-                  Clear cart
+                <button onClick={clearCart} className="text-ink-text/55 transition-colors hover:text-accent">
+                  Clear bag
                 </button>
               </div>
             </div>
 
-            {/* Summary */}
-            <div className="bg-bg-secondary border border-white/5 rounded-2xl p-8 h-fit lg:sticky lg:top-28">
-              <h2 className="font-display text-xl font-bold mb-6">
-                Order Summary
-              </h2>
-              <div className="space-y-3 text-sm mb-6">
-                <div className="flex justify-between text-text-secondary">
-                  <span>Subtotal</span>
-                  <span>₹{subtotal.toFixed(2)}</span>
+            <aside className="h-fit bg-paper-2 p-8 lg:sticky lg:top-28" aria-label="Order summary">
+              <h2 className="text-[10.5px] uppercase tracking-[0.3em] text-ink-text/55">Order summary</h2>
+              <dl className="mt-6 space-y-3 text-sm">
+                <div className="flex justify-between text-ink-text/70">
+                  <dt>Subtotal</dt>
+                  <dd>{rupees(subtotal)}</dd>
                 </div>
-                <div className="flex justify-between text-text-secondary">
-                  <span>Shipping</span>
-                  <span>
-                    {shipping === 0 ? (
-                      <span className="text-green-400">Free</span>
-                    ) : (
-                      `₹${shipping.toFixed(2)}`
-                    )}
-                  </span>
+                <div className="flex justify-between text-ink-text/70">
+                  <dt>Shipping</dt>
+                  <dd>{shipping === 0 ? "Free" : rupees(shipping)}</dd>
                 </div>
-                {subtotal < 50 && (
-                  <p className="text-xs text-text-muted">
-                    Add{" "}
-                    <span className="text-accent font-medium">
-                      ₹{(50 - subtotal).toFixed(2)}
-                    </span>{" "}
-                    more for free shipping
+                {shipping > 0 && (
+                  <p className="text-xs text-ink-text/55">
+                    Add {rupees(FREE_SHIPPING_MIN - subtotal)} more for free shipping.
                   </p>
                 )}
-                <div className="border-t border-white/5 pt-3">
-                  <div className="flex justify-between font-display text-xl font-bold">
-                    <span>Total</span>
-                    <span>₹{total.toFixed(2)}</span>
-                  </div>
+                <div className="flex justify-between border-t border-black/10 pt-4 font-display text-2xl font-bold tracking-[-0.03em]">
+                  <dt>Total</dt>
+                  <dd>{rupees(total)}</dd>
                 </div>
-              </div>
-              <Link href="/checkout" className="btn-primary w-full text-center">
-                <span>Proceed to Checkout</span>
+              </dl>
+              <Link href="/checkout" className="btn-ink mt-8 w-full">
+                Proceed to checkout <HiArrowRight size={14} aria-hidden="true" />
               </Link>
-            </div>
+              <p className="mt-4 text-center text-xs text-ink-text/55">Cash on Delivery available</p>
+            </aside>
           </div>
         )}
       </div>

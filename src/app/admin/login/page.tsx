@@ -28,7 +28,7 @@ export default function AdminLoginPage() {
     try {
       const result = await adminLogin(email, password);
       login(result.data.admin, result.data.token);
-      toast.success("Welcome back! 🎉");
+      toast.success("Welcome back!");
       router.push("/admin");
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Login failed");

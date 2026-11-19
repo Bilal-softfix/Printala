@@ -1,25 +1,30 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { HiArrowRight, HiCheck } from "react-icons/hi2";
 import toast from "react-hot-toast";
-import AnimateIn from "./AnimateIn";
 import { subscribeNewsletter } from "@/lib/api";
 
+/** Newsletter sign-up (lives in the footer). Uses the existing subscribe API. */
 export default function Newsletter() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  const [done, setDone] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
       const result = await subscribeNewsletter(email);
-      toast.success(result.message || "Welcome to the Printala family! 🎉");
+      toast.success(result.message || "Welcome to the Printala family!");
       setEmail("");
-    } catch (err: any) {
+      setDone(true);
+      setTimeout(() => setDone(false), 2500);
+    } catch (err) {
       const msg =
-        err?.response?.data?.message || "Subscribe nahi ho paya, try again!";
+        (err as { response?: { data?: { message?: string } } })?.response?.data
+          ?.message || "Subscribe nahi ho paya, try again!";
       toast.error(msg);
     } finally {
       setLoading(false);
@@ -27,74 +32,51 @@ export default function Newsletter() {
   };
 
   return (
-    <section
-      className="py-24 relative overflow-hidden halftone-magenta"
-      style={{ background: "linear-gradient(135deg, #E10F80, #5FAAC6)" }}
-      aria-labelledby="newsletter-heading"
-    >
-      {/* Decorative */}
-      <div className="absolute top-10 right-10 w-40 h-40 bg-yellow/20 rounded-full blur-3xl pointer-events-none" />
-
-      <div className="container-main relative z-10">
-        <AnimateIn className="max-w-2xl mx-auto text-center">
-          <div className="comic-burst w-20 h-20 text-charcoal mx-auto mb-6">
-            NEW!
-          </div>
-
-          <h2
-            id="newsletter-heading"
-            className="font-display text-4xl md:text-5xl font-bold mb-4 text-white"
-          >
-            Don&apos;t Miss{" "}
-            <span
-              className="font-comic text-yellow"
-              style={{ textShadow: "3px 3px 0 #2F3542" }}
+    <div>
+      <h2 id="newsletter-heading" className="font-display text-3xl font-bold tracking-[-0.03em] md:text-4xl">
+        New drops, first.
+      </h2>
+      <p className="mt-3 max-w-sm text-sm leading-relaxed text-mute">
+        Early access to new designs and poster drops. No spam — unsubscribe anytime.
+      </p>
+      <form
+        onSubmit={handleSubmit}
+        aria-labelledby="newsletter-heading"
+        className="mt-7 flex max-w-md items-center border-b border-white/25 pb-2 transition-colors focus-within:border-accent"
+      >
+        <label htmlFor="newsletter-email" className="sr-only">
+          Email address
+        </label>
+        <input
+          id="newsletter-email"
+          type="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="your@email.com"
+          className="w-full bg-transparent py-2 text-base text-cream placeholder:text-white/30 focus:outline-none"
+        />
+        <motion.button
+          type="submit"
+          disabled={loading}
+          whileTap={{ scale: 0.92 }}
+          aria-label="Subscribe"
+          className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-cream text-ink-text transition-colors duration-300 hover:bg-accent hover:text-white disabled:opacity-50"
+        >
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.span
+              key={done ? "done" : "go"}
+              initial={{ opacity: 0, scale: 0.6 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.6 }}
+              transition={{ duration: 0.2 }}
+              className="flex"
             >
-              New Drops!
-            </span>
-          </h2>
-          <p className="text-white/80 mb-10 max-w-md mx-auto">
-            Get early access to new designs, exclusive deals, and poster drops
-            before anyone else. No spam, we promise.
-          </p>
-
-          <form
-            onSubmit={handleSubmit}
-            className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto"
-          >
-            <label htmlFor="newsletter-email" className="sr-only">
-              Email
-            </label>
-            <input
-              id="newsletter-email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="your@email.com"
-              required
-              className="flex-1 px-6 py-4 border-3 border-charcoal rounded-xl
-                         font-bold focus:outline-none focus:shadow-[4px_4px_0_#2F3542]
-                         transition-all"
-            />
-            <motion.button
-              type="submit"
-              disabled={loading}
-              whileTap={{ scale: 0.95 }}
-              className="px-8 py-4 bg-yellow text-charcoal font-black uppercase tracking-wider
-                         rounded-xl border-3 border-charcoal shadow-[4px_4px_0_#2F3542]
-                         hover:translate-x-[-2px] hover:translate-y-[-2px]
-                         hover:shadow-[6px_6px_0_#2F3542] transition-all
-                         disabled:opacity-50"
-            >
-              {loading ? "..." : "Subscribe!"}
-            </motion.button>
-          </form>
-
-          <p className="text-[11px] text-white/50 mt-4">
-            No spam ever. Unsubscribe anytime.
-          </p>
-        </AnimateIn>
-      </div>
-    </section>
+              {done ? <HiCheck size={18} /> : <HiArrowRight size={16} />}
+            </motion.span>
+          </AnimatePresence>
+        </motion.button>
+      </form>
+    </div>
   );
 }

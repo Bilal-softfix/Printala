@@ -140,10 +140,10 @@ export default function ProductFormPage() {
 
       if (isNew) {
         await createProduct(productData);
-        toast.success("Product create ho gaya! 🎉");
+        toast.success("Product create ho gaya!");
       } else {
         await updateProduct(id as string, productData);
-        toast.success("Product update ho gaya! ✅");
+        toast.success("Product update ho gaya!");
       }
 
       router.push("/admin/products");
@@ -165,7 +165,7 @@ export default function ProductFormPage() {
   return (
     <div className="max-w-5xl">
       <h1 className="text-white text-2xl font-bold mb-8">
-        {isNew ? "➕ Add New Product" : "✏️ Edit Product"}
+        {isNew ? "Add New Product" : "Edit Product"}
       </h1>
 
       <form onSubmit={handleSubmit}>
@@ -186,7 +186,7 @@ export default function ProductFormPage() {
             {/* Basic Info */}
             <div className="bg-[#1A1A1D] border border-white/5 rounded-2xl p-6 space-y-5">
               <h2 className="text-white font-bold flex items-center gap-2">
-                📝 Basic Info
+                Basic Info
               </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -288,7 +288,7 @@ export default function ProductFormPage() {
             {/* Pricing */}
             <div className="bg-[#1A1A1D] border border-white/5 rounded-2xl p-6 space-y-5">
               <h2 className="text-white font-bold flex items-center gap-2">
-                💰 Pricing & Type
+                Pricing & Type
               </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -359,10 +359,10 @@ export default function ProductFormPage() {
                                focus:outline-none focus:border-magenta transition-colors"
                   >
                     <option value="poster" className="bg-[#1A1A1D]">
-                      🖼️ Single Poster
+                      Single Poster
                     </option>
                     <option value="split-poster" className="bg-[#1A1A1D]">
-                      🖼️🖼️🖼️ Split Poster
+                      Split Poster
                     </option>
                   </select>
                 </div>
@@ -438,7 +438,7 @@ export default function ProductFormPage() {
             {/* Flags */}
             <div className="bg-[#1A1A1D] border border-white/5 rounded-2xl p-6">
               <h2 className="text-white font-bold mb-4 flex items-center gap-2">
-                🏷️ Flags & Badges
+                Flags & Badges
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
@@ -515,9 +515,9 @@ export default function ProductFormPage() {
                     Saving...
                   </>
                 ) : isNew ? (
-                  "✅ Create Product"
+                  "Create Product"
                 ) : (
-                  "💾 Update Product"
+                  "Update Product"
                 )}
               </button>
 

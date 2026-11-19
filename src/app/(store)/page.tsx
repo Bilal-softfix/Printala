@@ -5,13 +5,13 @@ import FeaturedGrid from "@/components/FeaturedGrid";
 import SplitPosterShowcase from "@/components/SplitPosterShowcase";
 import CategoryShowcase from "@/components/CategoryShowcase";
 import Testimonials from "@/components/Testimonials";
-import Newsletter from "@/components/Newsletter";
+import ClosingStatement from "@/components/ClosingStatement";
 import WhyPrintala from "./WhyPrintala";
 
 export const metadata: Metadata = {
   title: "Printala — Anime, Gaming, Cars & Split Posters | Premium Wall Art",
   description:
-    "Shop premium posters — anime, gaming, supercars, cricket, movies, sports & multi-panel split posters. Thick matte paper, vibrant colors, fast delivery. Starting at $12.99.",
+    "Shop premium posters — anime, gaming, supercars, cricket, movies, sports & multi-panel split posters. Thick matte paper, vibrant colors, fast delivery. Starting at ₹149. COD available.",
   alternates: { canonical: "/" },
 };
 
@@ -20,12 +20,12 @@ export default function HomePage() {
     <>
       <Hero />
       <Marquee />
+      <CategoryShowcase />
       <FeaturedGrid />
       <SplitPosterShowcase />
       <WhyPrintala />
-      <CategoryShowcase />
       <Testimonials />
-      <Newsletter />
+      <ClosingStatement />
     </>
   );
 }

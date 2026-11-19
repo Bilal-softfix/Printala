@@ -44,7 +44,7 @@ export default function AdminProductsPage() {
     try {
       await deleteProduct(id);
       setProducts(products.filter((p) => p._id !== id));
-      toast.success("Product deleted! 🗑️");
+      toast.success("Product deleted!");
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Delete failed");
     } finally {

@@ -34,6 +34,17 @@
   --color-text-secondary: #5A6275;
   --color-text-muted: #8E95A5;
 
+  /* ── Editorial system (redesign) ── */
+  --color-ink: #080808;
+  --color-ink-2: #101010;
+  --color-ink-3: #1a1a1a;
+  --color-paper: #F4F1EB;
+  --color-paper-2: #EAE6DF;
+  --color-cream: #F7F5F0;
+  --color-mute: #A5A5A5;
+  --color-ink-text: #171717;
+  --color-accent: #E10F80;
+
   /* ── Fonts ── */
   --font-sans: var(--font-inter), system-ui, sans-serif;
   --font-display: var(--font-syne), system-ui, sans-serif;
@@ -587,34 +598,6 @@ body {
 
 
 /* ═══════════════════════════════════════════
-   HERO TEXT REVEAL
-   ═══════════════════════════════════════════ */
-
-.hero-line {
-  overflow: hidden;
-  display: block;
-}
-
-.hero-line>span {
-  display: block;
-  transform: translateY(105%);
-  animation: reveal-up 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.hero-line:nth-child(1)>span {
-  animation-delay: 0.2s;
-}
-
-.hero-line:nth-child(2)>span {
-  animation-delay: 0.35s;
-}
-
-.hero-line:nth-child(3)>span {
-  animation-delay: 0.5s;
-}
-
-
-/* ═══════════════════════════════════════════
    PRODUCT CARD HOVER
    ═══════════════════════════════════════════ */
 
@@ -775,4 +758,336 @@ main {
   html {
     scroll-behavior: auto;
   }
+}
+/* ═══════════════════════════════════════════
+   TESTIMONIALS — drifting review rows
+   ═══════════════════════════════════════════ */
+.review-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 60s linear infinite;
+}
+
+.review-track-reverse {
+  animation-direction: reverse;
+  animation-duration: 70s;
+}
+
+.review-rows:hover .review-track {
+  animation-play-state: paused;
+}
+
+.review-rows {
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .review-track {
+    animation: none;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   SPLIT POSTERS — panels fan out in 3D on hover
+   ═══════════════════════════════════════════ */
+.split-panel {
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+}
+
+.group:hover .split-panel {
+  transform: translateX(calc(var(--o) * 10px)) rotateY(calc(var(--o) * -14deg)) translateZ(calc(var(--o) * var(--o) * -12px + 20px));
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15), 0 30px 50px -16px rgba(0, 0, 0, 0.55);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .group:hover .split-panel {
+    transform: none;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   GALLERY HERO — "The Living Poster Gallery"
+   Entrance + float run in CSS so the headline and
+   lead poster paint before hydration (LCP-safe).
+   Pointer/scroll parallax is layered on via Framer.
+   ═══════════════════════════════════════════ */
+.gallery {
+  --g-bg: #080808;
+  --g-bg-2: #101010;
+  --g-text: #f7f5f0;
+  --g-muted: #a5a5a5;
+  --g-accent: #e10f80;
+  --g-line: rgba(255, 255, 255, 0.12);
+  --g-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  background: var(--g-bg);
+  color: var(--g-text);
+}
+
+.gallery ::selection {
+  background: var(--g-accent);
+  color: var(--g-text);
+}
+
+/* Outlined display type */
+.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--outline, #f7f5f0);
+}
+
+/* Atmosphere */
+.gallery-atmos {
+  animation: gallery-fade 1.6s ease both;
+}
+
+.gallery-grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.06;
+}
+
+.gallery-vignette {
+  background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0, 0, 0, 0.6) 100%);
+}
+
+/* Headline: each line rises out of its own mask */
+.gallery-line {
+  display: block;
+  overflow: hidden;
+  /* room for italic overhang & descenders inside the mask */
+  padding: 0 0.08em 0.04em 0;
+  margin-bottom: -0.04em;
+}
+
+.gallery-line > span {
+  display: block;
+  animation: gallery-rise 1.15s var(--g-ease) both;
+  animation-delay: var(--d, 0s);
+}
+
+.gallery-fade-up {
+  animation: gallery-fade-up 0.9s var(--g-ease) both;
+  animation-delay: var(--d, 0s);
+}
+
+.gallery-fade {
+  animation: gallery-fade 1s ease both;
+  animation-delay: var(--d, 0s);
+}
+
+/* Prints: entrance holds the resting rotation, float sits inside it */
+.gallery-print-in {
+  transform: rotate(var(--r, 0deg));
+  animation: gallery-print-in 1.3s var(--g-ease) both;
+  animation-delay: var(--d, 0s);
+}
+
+.gallery-float {
+  animation: gallery-float var(--fd, 8s) ease-in-out var(--fdl, 0s) infinite alternate;
+  will-change: transform;
+}
+
+.gallery-print {
+  box-shadow:
+    0 1px 1px rgba(0, 0, 0, 0.35),
+    0 12px 24px -8px rgba(0, 0, 0, 0.55),
+    0 40px 80px -24px rgba(0, 0, 0, 0.75);
+  transition: box-shadow 0.5s var(--g-ease);
+}
+
+.gallery-print-wrap:hover .gallery-print,
+.gallery-print-wrap:focus-visible .gallery-print {
+  box-shadow:
+    0 1px 1px rgba(0, 0, 0, 0.35),
+    0 22px 40px -10px rgba(0, 0, 0, 0.6),
+    0 70px 120px -30px rgba(0, 0, 0, 0.85),
+    0 0 0 1px rgba(225, 15, 128, 0.45);
+}
+
+/* A hovered/focused print steps in front of its neighbours */
+.gallery-slot:hover,
+.gallery-slot:focus-within {
+  z-index: 30 !important;
+}
+
+/* Paper sheen — light falling across a matte print */
+.gallery-sheen {
+  background: linear-gradient(118deg,
+      rgba(255, 255, 255, 0.13) 0%,
+      rgba(255, 255, 255, 0.03) 28%,
+      transparent 52%,
+      rgba(0, 0, 0, 0.16) 100%);
+}
+
+.gallery-caption {
+  opacity: 0;
+  transform: translate3d(0, -4px, 0);
+  transition: opacity 0.4s var(--g-ease), transform 0.4s var(--g-ease);
+}
+
+.gallery-print-wrap:hover .gallery-caption,
+.gallery-print-wrap:focus-visible .gallery-caption,
+.gallery-caption[data-always] {
+  opacity: 1;
+  transform: none;
+}
+
+/* CTAs */
+.gallery-cta-arrow {
+  transition: transform 0.45s var(--g-ease);
+}
+
+.gallery-cta:hover .gallery-cta-arrow,
+.gallery-cta:focus-visible .gallery-cta-arrow {
+  transform: translateX(4px);
+}
+
+.gallery-link-line {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.5s var(--g-ease);
+}
+
+.gallery-cta:hover .gallery-link-line,
+.gallery-cta:focus-visible .gallery-link-line {
+  background-size: 100% 1px;
+}
+
+/* Scroll cue: a light travelling down a hairline */
+.gallery-scroll-dot {
+  animation: gallery-scroll 2.4s var(--g-ease) infinite;
+}
+
+.gallery-pulse {
+  animation: gallery-pulse 2.8s ease-in-out infinite;
+}
+
+.gallery :focus-visible {
+  outline: 1px solid var(--g-accent);
+  outline-offset: 4px;
+}
+
+/* Navbar entrance */
+.nav-reveal {
+  animation: nav-reveal 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+}
+
+@keyframes gallery-rise {
+  from { transform: translate3d(0, 108%, 0); }
+  to { transform: none; }
+}
+
+@keyframes gallery-fade-up {
+  from { opacity: 0; transform: translate3d(0, 18px, 0); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes gallery-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes gallery-print-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 56px, 0) rotate(calc(var(--r, 0deg) + 5deg)) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(var(--r, 0deg));
+  }
+}
+
+@keyframes gallery-float {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(0, var(--fa, -10px), 0); }
+}
+
+@keyframes gallery-scroll {
+  0% { transform: translate3d(0, -100%, 0); opacity: 0; }
+  30% { opacity: 1; }
+  100% { transform: translate3d(0, 300%, 0); opacity: 0; }
+}
+
+@keyframes gallery-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+@keyframes nav-reveal {
+  from { opacity: 0; transform: translate3d(0, -100%, 0); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gallery-atmos,
+  .gallery-line > span,
+  .gallery-fade-up,
+  .gallery-fade,
+  .gallery-print-in,
+  .gallery-float,
+  .gallery-scroll-dot,
+  .gallery-pulse,
+  .nav-reveal {
+    animation: none !important;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   EDITORIAL FORM + BUTTON PRIMITIVES (redesign)
+   ═══════════════════════════════════════════ */
+.field {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(23, 23, 23, 0.2);
+  padding: 0.7rem 0;
+  font-size: 1rem;
+  color: #171717;
+  border-radius: 0;
+  transition: border-color 0.3s ease;
+}
+.field::placeholder { color: rgba(23, 23, 23, 0.35); }
+.field:focus { outline: none; border-bottom-color: #e10f80; }
+
+.field-label {
+  display: block;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.26em;
+  color: rgba(23, 23, 23, 0.55);
+}
+
+.btn-ink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 3.5rem;
+  padding: 0 1.75rem;
+  background: #171717;
+  color: #f7f5f0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: background-color 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.btn-ink:hover { background: #e10f80; }
+.btn-ink:disabled { background: rgba(23, 23, 23, 0.4); cursor: not-allowed; }
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  border: 1px solid rgba(23, 23, 23, 0.15);
+  border-radius: 9999px;
+  padding: 0.5rem 1rem;
+  font-size: 0.8125rem;
+  color: rgba(23, 23, 23, 0.75);
+  transition: all 0.3s ease;
+}
+.chip:hover { border-color: #171717; color: #171717; }
+.chip[aria-pressed="true"], .chip[aria-selected="true"] {
+  background: #171717;
+  border-color: #171717;
+  color: #f7f5f0;
 }
