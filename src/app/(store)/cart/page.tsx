@@ -4,12 +4,14 @@ import Link from "next/link";
 import { AnimatePresence } from "framer-motion";
 import { HiArrowLeft, HiArrowRight } from "react-icons/hi2";
 import { useCartStore } from "@/store/cartStore";
+import { useCartRefresh } from "@/store/useCartRefresh";
 import CartItem from "@/components/CartItem";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { cartTotals, rupees, FREE_SHIPPING_MIN } from "@/lib/cart";
 
 export default function CartPage() {
   const { items, totalPrice, clearCart, totalItems } = useCartStore();
+  useCartRefresh();
   const { subtotal, shipping, total } = cartTotals(totalPrice());
 
   return (

@@ -1,86 +1,61 @@
 "use client";
 
 import { useState, useEffect, Suspense, useCallback } from "react";
-import { useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import ProductCard from "@/components/ProductCard";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { ProductGridSkeleton } from "@/components/Skeleton";
 import { fetchProducts } from "@/lib/api";
-import { PRODUCTS as FALLBACK_PRODUCTS, CATEGORIES } from "@/lib/data";
+import { CATEGORIES } from "@/lib/categories";
 import { Product } from "@/types";
 
 function ShopContent() {
   const searchParams = useSearchParams();
-  const categoryParam = searchParams.get("category");
+  const router = useRouter();
   const searchQuery = searchParams.get("search");
-  const typeParam = searchParams.get("type");
-  const sortParam = searchParams.get("sort");
+  const activeType = searchParams.get("type") || "all";
+  const sortBy = searchParams.get("sort") || "newest";
 
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeCategory, setActiveCategory] = useState(categoryParam || "all");
-  const [activeType, setActiveType] = useState(typeParam || "all");
-  const [sortBy, setSortBy] = useState(sortParam || "newest");
+  const [failed, setFailed] = useState(false);
 
-  // Fetch products from API
+  // URL is the single source of truth for filters (shareable, Back works).
+  const setParam = (key: string, value: string, fallback: string) => {
+    const next = new URLSearchParams(searchParams.toString());
+    if (value === fallback) next.delete(key);
+    else next.set(key, value);
+    const qs = next.toString();
+    router.replace(qs ? `/shop?${qs}` : "/shop", { scroll: false });
+  };
+
   const loadProducts = useCallback(async () => {
     setLoading(true);
+    setFailed(false);
     try {
       const params: Record<string, string> = { limit: "50" };
-
-      if (activeCategory !== "all") params.category = activeCategory;
-      if (activeType === "poster") params.type = "poster";
-      if (activeType === "split-poster") params.type = "split-poster";
+      if (activeType !== "all") params.type = activeType;
       if (searchQuery) params.search = searchQuery;
-      if (sortBy === "price-asc") params.sort = "price-asc";
-      if (sortBy === "price-desc") params.sort = "price-desc";
-      if (sortBy === "name") params.sort = "name";
-      if (sortBy === "bestseller") params.sort = "bestseller";
+      if (sortBy !== "newest") params.sort = sortBy;
 
       const result = await fetchProducts(params);
-
-      if (result.data && result.data.length > 0) {
-        setProducts(result.data);
-      } else {
-        setProducts([]);
-      }
+      setProducts(result.data ?? []);
     } catch {
-      // Fallback to static data
-      setProducts(FALLBACK_PRODUCTS);
+      setProducts([]);
+      setFailed(true);
     } finally {
       setLoading(false);
     }
-  }, [activeCategory, activeType, sortBy, searchQuery]);
+  }, [activeType, sortBy, searchQuery]);
 
   useEffect(() => {
     loadProducts();
   }, [loadProducts]);
 
-  // Sync URL params with state
-  useEffect(() => {
-    if (categoryParam) setActiveCategory(categoryParam);
-    if (typeParam) setActiveType(typeParam);
-    if (sortParam) setSortBy(sortParam);
-  }, [categoryParam, typeParam, sortParam]);
-
-  const handleCategoryClick = (slug: string) => {
-    setActiveCategory(slug);
-    if (slug === "split-poster") {
-      setActiveType("split-poster");
-    } else if (activeType === "split-poster" && slug !== "all") {
-      setActiveType("all");
-    }
-  };
-
-  const handleTypeClick = (type: string) => {
-    setActiveType(type);
-    if (type === "split-poster") {
-      setActiveCategory("split-poster");
-    } else if (activeCategory === "split-poster") {
-      setActiveCategory("all");
-    }
-  };
+  const handleTypeClick = (type: string) => setParam("type", type, "all");
+  const setSortBy = (sort: string) => setParam("sort", sort, "newest");
 
   const TYPES = [
     { value: "all", label: "All" },
@@ -131,15 +106,13 @@ function ShopContent() {
           <span className="hidden h-6 w-px bg-black/15 lg:block" />
 
           <div className="-mx-5 flex min-w-0 flex-1 gap-1.5 overflow-x-auto px-5 scrollbar-hide lg:mx-0 lg:px-0" role="group" aria-label="Category">
-            {[{ slug: "all", name: "All" }, ...CATEGORIES].map((cat) => (
-              <button
-                key={cat.slug}
-                aria-pressed={activeCategory === cat.slug}
-                onClick={() => handleCategoryClick(cat.slug)}
-                className="chip shrink-0"
-              >
+            <span aria-current="page" className="chip shrink-0">
+              All
+            </span>
+            {CATEGORIES.map((cat) => (
+              <Link key={cat.slug} href={`/shop/${cat.slug}`} className="chip shrink-0">
                 {cat.name}
-              </button>
+              </Link>
             ))}
           </div>
 
@@ -155,7 +128,24 @@ function ShopContent() {
           <ProductGridSkeleton count={8} />
         ) : (
           <AnimatePresence mode="wait">
-            {products.length === 0 ? (
+            {failed ? (
+              <motion.div
+                key="error"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="py-28"
+              >
+                <p className="font-display text-4xl font-bold uppercase tracking-[-0.04em] md:text-6xl">
+                  Couldn&apos;t load posters.
+                </p>
+                <p className="mt-4 text-[15px] text-ink-text/70">
+                  Our catalog is taking too long to respond. Please try again.
+                </p>
+                <button onClick={loadProducts} className="btn-ink mt-8">
+                  Try again
+                </button>
+              </motion.div>
+            ) : products.length === 0 ? (
               <motion.div
                 key="empty"
                 initial={{ opacity: 0 }}
@@ -166,20 +156,18 @@ function ShopContent() {
                 <p className="font-display text-4xl font-bold uppercase tracking-[-0.04em] md:text-6xl">
                   Nothing on this wall.
                 </p>
-                <p className="mt-4 text-[15px] text-ink-text/65">Try a different category or search.</p>
-                <button
-                  onClick={() => {
-                    setActiveCategory("all");
-                    setActiveType("all");
-                  }}
-                  className="btn-ink mt-8"
-                >
-                  Reset filters
+                <p className="mt-4 text-[15px] text-ink-text/70">
+                  {searchQuery
+                    ? `No posters match “${searchQuery}”. Try another word or browse a collection.`
+                    : "Try a different filter or browse a collection."}
+                </p>
+                <button onClick={() => router.replace("/shop")} className="btn-ink mt-8">
+                  Clear filters
                 </button>
               </motion.div>
             ) : (
               <motion.div
-                key={activeCategory + activeType + sortBy + searchQuery}
+                key={activeType + sortBy + searchQuery}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}

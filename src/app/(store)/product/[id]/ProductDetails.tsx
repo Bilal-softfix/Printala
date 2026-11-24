@@ -5,7 +5,7 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { HiMinus, HiPlus } from "react-icons/hi";
 import { HiCheck, HiOutlineShoppingBag } from "react-icons/hi2";
-import { useCartStore } from "@/store/cartStore";
+import { useCartStore, MAX_QTY } from "@/store/cartStore";
 import { Product, Size } from "@/types";
 import { formatPrice } from "@/lib/utils";
 import { FREE_SHIPPING_MIN, rupees } from "@/lib/cart";
@@ -14,6 +14,8 @@ import ProductGallery from "@/components/product/ProductGallery";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { EASE } from "@/lib/motion";
 import { productBreadcrumbs } from "@/lib/seo";
+import { SITE } from "@/lib/site";
+import { FaWhatsapp } from "react-icons/fa6";
 
 /* Store-wide terms already shown on this page before the redesign. */
 const TRUST = [
@@ -191,7 +193,8 @@ export default function ProductDetails({
                   </span>
                   <button
                     type="button"
-                    onClick={() => setQuantity(quantity + 1)}
+                    onClick={() => setQuantity(Math.min(MAX_QTY, quantity + 1))}
+                    disabled={quantity >= MAX_QTY}
                     aria-label="Increase quantity"
                     className="grid h-14 w-11 place-items-center transition-colors hover:bg-paper-2"
                   >
@@ -243,6 +246,18 @@ export default function ProductDetails({
                   </li>
                 ))}
               </ul>
+
+              <a
+                href={`${SITE.whatsappHref}?text=${encodeURIComponent(
+                  `Hi Printala, I have a question about "${product.name}"${selectedSize ? ` (${selectedSize.label})` : ""}.`,
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-6 inline-flex items-center gap-2 text-sm text-ink-text/75 underline-offset-4 transition-colors hover:text-accent hover:underline"
+              >
+                <FaWhatsapp size={16} aria-hidden="true" />
+                Questions about this poster? Chat on WhatsApp
+              </a>
 
               {/* Specifications */}
               <dl className="mt-8 grid grid-cols-2 gap-x-6 gap-y-5 text-sm">

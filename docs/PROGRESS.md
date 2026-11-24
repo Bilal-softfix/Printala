@@ -23,16 +23,16 @@ Work phases in order. Within a phase, top to bottom.
 - [x] S9 Product JSON-LD — sku, image array, AggregateOffer (low/high by size)
 
 ## Phase 3 — Conversion & functionality
-- [!] F1 Shipping values — threshold ₹499 + INR format (no decimals) done; needs D1 fee amount (`SHIPPING_FEE` in `src/lib/cart.ts`)
-- [ ] F3 Checkout validation
-- [ ] F2 Order confirmation + track page
-- [ ] F5 Error state instead of silent fallback
-- [ ] F6 Shop filters in URL + pagination
-- [ ] F4 Cart price/stock refresh
+- [x] F1 Shipping values — free ≥ ₹499, else ₹59; INR format
+- [x] F3 Checkout validation — phone/PIN patterns + hints, state dropdown, country removed, `:user-invalid` style
+- [x] F2 Order confirmation + track — `/order/[orderNumber]` (API + sessionStorage snapshot, noindex), `/track`, footer link
+- [x] F5 Error state — shop shows retry state, no static fallback (product page still falls back server-side if API is down)
+- [~] F6 Shop filters in URL — type/sort/search in URL via router.replace; category chips link to `/shop/[category]`; pagination still TODO (limit 50)
+- [x] F4 Cart refresh — `refreshItems()` + `useCartRefresh` on cart/checkout; removes gone/sold-out items with toast; qty cap 10
 - [!] F7 Policy pages — all `#` links/socials removed from footer; Shipping/Returns/FAQ/Privacy/Terms pages need D7
 - [x] S8 Single site config — `src/lib/site.ts` used by contact, footer, Org JSON-LD (phone, WhatsApp, IST hours, no email/socials)
 - [x] U1 Copy consistency — all Hinglish strings → English (store + admin)
-- [ ] U3 Product page buying info
+- [~] U3 Product page — WhatsApp question link, toast removed; size guide + delivery estimate need D7
 
 ## Phase 4 — Polish
 - [ ] A1 Contrast / min font size
@@ -51,7 +51,7 @@ Work phases in order. Within a phase, top to bottom.
 - [ ] P4 fetch vs axios (optional)
 
 ## Decisions received
-- D1: free shipping ≥ ₹499 (fee TBD)
+- D1: free shipping ≥ ₹499, else ₹59
 - D3: phone/WhatsApp +91 8858424768; no public email; hours Mon–Sat 10–7 IST; no socials yet
 - D5: English only
 - D6: no real reviews yet; will import from Flipkart etc.
@@ -59,6 +59,8 @@ Work phases in order. Within a phase, top to bottom.
 
 ## Backend asks
 _(API changes needed, one line each)_
+- Confirm API computes shippingCost the same way (free ≥ ₹499, else ₹59) — frontend total must match the order total.
+- Confirm `GET /orders/track/:orderNumber` returns orderStatus, items[{name,size,quantity,price}], shippingCost, total.
 
 ## Log
 _(one line per session: date · IDs done · notes)_
@@ -66,3 +68,4 @@ _(one line per session: date · IDs done · notes)_
 - 2026-11-24 · Decisions applied: S8 U1 done; F1 F7 U2 partial/blocked · tsc + eslint clean
 - 2026-11-24 · Phase 2: S1 P1 P2 S5 S9 done · removed `(store)/loading.tsx` (it forced HTTP 200 on notFound) · build + SSR checks pass. Next: S6 (+ rest of S4).
 - 2026-11-24 · S6 + S4 done; default title says "Free Shipping over ₹499" · build + SSR checks pass. Phase 2 complete. Football category has 0 products (noindexed).
+- 2026-11-24 · Phase 3: F1 F2 F3 F4 F5 done; F6 U3 partial · build + route smoke tests pass. Remaining: F7 (D7), F6 pagination, U3 rest (D7).

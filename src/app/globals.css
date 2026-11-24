@@ -1049,6 +1049,7 @@ main {
 }
 .field::placeholder { color: rgba(23, 23, 23, 0.35); }
 .field:focus { outline: none; border-bottom-color: #e10f80; }
+.field:user-invalid { border-bottom-color: #dc2626; }
 
 .field-label {
   display: block;
@@ -1086,7 +1087,7 @@ main {
   transition: all 0.3s ease;
 }
 .chip:hover { border-color: #171717; color: #171717; }
-.chip[aria-pressed="true"], .chip[aria-selected="true"] {
+.chip[aria-pressed="true"], .chip[aria-selected="true"], .chip[aria-current="page"] {
   background: #171717;
   border-color: #171717;
   color: #f7f5f0;

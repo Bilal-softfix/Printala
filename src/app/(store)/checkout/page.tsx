@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { useCartStore } from "@/store/cartStore";
+import { useCartRefresh } from "@/store/useCartRefresh";
 import toast from "react-hot-toast";
 import { createOrder } from "@/lib/api";
 import { getErrorMessage } from "@/lib/utils";
@@ -13,22 +14,13 @@ import { cartTotals, rupees } from "@/lib/cart";
 import { EASE } from "@/lib/motion";
 import SectionHeading from "@/components/ui/SectionHeading";
 
-const FIELDS: {
-  name: keyof typeof EMPTY;
-  label: string;
-  type?: string;
-  span?: 2;
-  autoComplete?: string;
-  inputMode?: "numeric" | "tel" | "email";
-}[] = [
-  { name: "fullName", label: "Full name", span: 2, autoComplete: "name" },
-  { name: "email", label: "Email", type: "email", autoComplete: "email" },
-  { name: "phone", label: "Phone", type: "tel", autoComplete: "tel", inputMode: "tel" },
-  { name: "address", label: "Address", span: 2, autoComplete: "street-address" },
-  { name: "city", label: "City", autoComplete: "address-level2" },
-  { name: "state", label: "State", autoComplete: "address-level1" },
-  { name: "pincode", label: "PIN code", autoComplete: "postal-code", inputMode: "numeric" },
-  { name: "country", label: "Country", autoComplete: "country-name" },
+const STATES = [
+  "Andaman and Nicobar Islands", "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar",
+  "Chandigarh", "Chhattisgarh", "Dadra and Nagar Haveli and Daman and Diu", "Delhi", "Goa",
+  "Gujarat", "Haryana", "Himachal Pradesh", "Jammu and Kashmir", "Jharkhand", "Karnataka",
+  "Kerala", "Ladakh", "Lakshadweep", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya",
+  "Mizoram", "Nagaland", "Odisha", "Puducherry", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu",
+  "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal",
 ];
 
 const EMPTY = {
@@ -39,16 +31,53 @@ const EMPTY = {
   city: "",
   state: "",
   pincode: "",
-  country: "India",
 };
+
+const FIELDS: {
+  name: keyof typeof EMPTY;
+  label: string;
+  type?: string;
+  span?: 2;
+  autoComplete?: string;
+  inputMode?: "numeric" | "tel" | "email";
+  pattern?: string;
+  maxLength?: number;
+  hint?: string;
+}[] = [
+  { name: "fullName", label: "Full name", span: 2, autoComplete: "name" },
+  {
+    name: "phone",
+    label: "Mobile number",
+    type: "tel",
+    autoComplete: "tel-national",
+    inputMode: "numeric",
+    pattern: "[6-9][0-9]{9}",
+    maxLength: 10,
+    hint: "10-digit mobile number, used for delivery updates",
+  },
+  { name: "email", label: "Email", type: "email", autoComplete: "email" },
+  { name: "address", label: "Address (house no., street, area)", span: 2, autoComplete: "street-address" },
+  { name: "city", label: "City", autoComplete: "address-level2" },
+  { name: "state", label: "State", autoComplete: "address-level1" },
+  {
+    name: "pincode",
+    label: "PIN code",
+    autoComplete: "postal-code",
+    inputMode: "numeric",
+    pattern: "[1-9][0-9]{5}",
+    maxLength: 6,
+    hint: "6 digits",
+  },
+];
 
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, totalPrice, clearCart } = useCartStore();
+  useCartRefresh();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState(EMPTY);
 
-  const update = (e: React.ChangeEvent<HTMLInputElement>) =>
+  const update = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
   const { subtotal, shipping, total } = cartTotals(totalPrice());
@@ -80,9 +109,26 @@ export default function CheckoutPage() {
       const result = await createOrder(orderData);
 
       if (result.success) {
+        const orderNumber: string = result.data.orderNumber;
+        // Snapshot for the confirmation page in case the tracking API is slow.
+        try {
+          sessionStorage.setItem(
+            `order:${orderNumber}`,
+            JSON.stringify({
+              orderNumber,
+              items: items.map((i) => ({
+                name: i.product.name,
+                size: i.selectedSize.label,
+                quantity: i.quantity,
+                price: i.product.price + i.selectedSize.priceModifier,
+              })),
+              shippingCost: shipping,
+              total,
+            }),
+          );
+        } catch {}
+        router.push(`/order/${encodeURIComponent(orderNumber)}`);
         clearCart();
-        toast.success(`Order placed! ${result.data.orderNumber}`);
-        router.push("/");
       }
     } catch (err) {
       const message = getErrorMessage(err, "Couldn't place your order. Please try again.");
@@ -112,17 +158,45 @@ export default function CheckoutPage() {
                   <label htmlFor={f.name} className="field-label">
                     {f.label}
                   </label>
-                  <input
-                    id={f.name}
-                    name={f.name}
-                    type={f.type || "text"}
-                    value={form[f.name]}
-                    onChange={update}
-                    autoComplete={f.autoComplete}
-                    inputMode={f.inputMode}
-                    required
-                    className="field"
-                  />
+                  {f.name === "state" ? (
+                    <select
+                      id={f.name}
+                      name={f.name}
+                      value={form.state}
+                      onChange={update}
+                      autoComplete={f.autoComplete}
+                      required
+                      className="field"
+                    >
+                      <option value="" disabled>
+                        Select state
+                      </option>
+                      {STATES.map((st) => (
+                        <option key={st}>{st}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input
+                      id={f.name}
+                      name={f.name}
+                      type={f.type || "text"}
+                      value={form[f.name]}
+                      onChange={update}
+                      autoComplete={f.autoComplete}
+                      inputMode={f.inputMode}
+                      pattern={f.pattern}
+                      maxLength={f.maxLength}
+                      title={f.hint}
+                      aria-describedby={f.hint ? `${f.name}-hint` : undefined}
+                      required
+                      className="field"
+                    />
+                  )}
+                  {f.hint && (
+                    <p id={`${f.name}-hint`} className="mt-1.5 text-xs text-ink-text/70">
+                      {f.hint}
+                    </p>
+                  )}
                 </div>
               ))}
             </div>

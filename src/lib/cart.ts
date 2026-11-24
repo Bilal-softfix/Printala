@@ -1,6 +1,6 @@
 /* Shipping rule shared by product page, cart drawer, cart page and checkout. */
 export const FREE_SHIPPING_MIN = 499;
-export const SHIPPING_FEE = 5.99; // TODO(D1): set real fee in ₹
+export const SHIPPING_FEE = 59;
 
 export function cartTotals(subtotal: number) {
   const shipping = subtotal >= FREE_SHIPPING_MIN ? 0 : SHIPPING_FEE;

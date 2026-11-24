@@ -5,7 +5,7 @@ import Link from "next/link";
 import { HiMinus, HiPlus } from "react-icons/hi";
 import { motion } from "framer-motion";
 import { CartItem as CartItemType } from "@/types";
-import { useCartStore } from "@/store/cartStore";
+import { useCartStore, MAX_QTY } from "@/store/cartStore";
 import { rupees } from "@/lib/cart";
 
 export default function CartItem({ item }: { item: CartItemType }) {
@@ -54,6 +54,7 @@ export default function CartItem({ item }: { item: CartItemType }) {
             <span className="w-7 text-center text-xs font-semibold tabular-nums">{quantity}</span>
             <button
               onClick={() => updateQuantity(product._id, selectedSize.label, quantity + 1)}
+              disabled={quantity >= MAX_QTY}
               className="grid h-8 w-8 place-items-center transition-colors hover:bg-paper-2"
               aria-label={`Increase quantity of ${product.name}`}
             >

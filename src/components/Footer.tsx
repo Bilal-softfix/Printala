@@ -15,6 +15,7 @@ const COLUMNS = {
   Company: [
     { label: "About", href: "/about" },
     { label: "Contact", href: "/contact" },
+    { label: "Track order", href: "/track" },
   ],
 };
 
