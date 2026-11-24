@@ -13,6 +13,7 @@ import {
   HiOutlineLogout,
   HiOutlineCog,
   HiOutlineExternalLink,
+  HiOutlineChartBar,
 } from "react-icons/hi";
 import { HiOutlineBars3, HiXMark } from "react-icons/hi2";
 import { useAdminStore } from "@/store/adminStore";
@@ -24,6 +25,7 @@ const SIDEBAR_LINKS = [
   { href: "/admin", label: "Dashboard", icon: HiOutlineHome },
   { href: "/admin/orders", label: "Orders", icon: HiOutlineShoppingCart },
   { href: "/admin/products", label: "Products", icon: HiOutlineCube },
+  { href: "/admin/seo", label: "SEO health", icon: HiOutlineChartBar },
   { href: "/admin/contacts", label: "Messages", icon: HiOutlineMail },
   { href: "/admin/subscribers", label: "Subscribers", icon: HiOutlineNewspaper },
   { href: "/admin/settings", label: "Settings", icon: HiOutlineCog },

@@ -10,6 +10,8 @@ What the code already does is listed at the bottom. **Rankings now depend mostly
 5. **Bing Webmaster Tools** → "Import from Google Search Console" (2 minutes).
 
 ## Ongoing — Content (biggest ranking factor)
+**Use Admin → SEO health** (`/admin/seo`): it scores every product, lists the weakest first with a Fix button, and tracks category coverage and products added this week. In the product editor, **✨ Write a draft for me** and **Suggest tags** do the first pass — then add the character, series and mood in your own words.
+
 Current catalog: 37 products, median description **29 characters**. Google sees these pages as thin.
 - For every product, fill the admin **Search visibility** checklist:
   - Name: specific — `Gojo Satoru Jujutsu Kaisen Poster`, not `Anime Poster`.

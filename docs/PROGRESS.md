@@ -74,6 +74,7 @@ Work phases in order. Within a phase, top to bottom.
 - [x] Blog: `/blog` + 4 posts (size guide, split posters, hang without damage, anime room decor), BlogPosting schema, sitemap, footer link, size-guide links on product pages
 - [x] Blog: +6 posts (anime gifts, gaming setup, cricket, cars, gym/study motivation, matte vs glossy) → 10 total
 - [x] South India SEO: 10 posts (South cinema decor, Tamil/Telugu/Kannada/Malayalam, IPL CSK/RCB/SRH, humid-city poster care, Bengaluru PG, Hyderabad, Onam/Pongal/Ugadi) + `/blog/tag/[tag]` hubs (CollectionPage schema), tag chips, related-by-tag, homepage link → 20 posts total
+- [x] Admin content tools: `/admin/seo` (score per product, weakest-first Fix list, category coverage vs 12, weekly goal), product form draft writer + tag suggestions + live score, `?category=` prefill. Baseline: avg 39/100, 1/37 products at 80+
 - [x] AI discoverability: `/llms.txt`, `/llms-full.txt` (live catalog), robots allows AI crawlers (GPTBot, ClaudeBot, PerplexityBot…), `<link rel=alternate>` in head
 - [!] Dummy marketplace ratings — declined (fake reviews; CCPA). Badges appear when real data is added to `src/lib/reviews.ts`
 - [~] Reviews: `src/lib/reviews.ts` (marketplace links + real reviews replace placeholders) — waiting for store URLs/reviews (Flipkart/Amazon listings not found via web search)
@@ -105,3 +106,4 @@ _(one line per session: date · IDs done · notes)_
 - 2026-11-24 · Blog + reviews plumbing · check + build + page checks pass.
 - 2026-11-24 · +6 blog posts, llms.txt/llms-full.txt, AI crawler robots rules · check + build + output checks pass.
 - 2026-11-24 · South India blog cluster + tag hubs · check + build + page checks pass.
+- 2026-11-24 · Admin SEO health + draft/tag helpers · check + build + live-catalog test pass.

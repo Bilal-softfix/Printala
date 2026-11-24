@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { HiOutlineArrowLeft, HiOutlineExternalLink, HiOutlinePlus, HiOutlineTrash } from "react-icons/hi";
 import toast from "react-hot-toast";
 import { createProduct, updateProduct } from "@/lib/adminApi";
@@ -10,6 +10,7 @@ import { fetchProductById } from "@/lib/api";
 import { CATEGORIES } from "@/lib/categories";
 import { formatPrice, getErrorMessage } from "@/lib/utils";
 import { Size } from "@/types";
+import { contentChecks, contentScore, draftDescription, suggestTags } from "@/lib/contentScore";
 import ImageUploader from "../../ImageUploader";
 import { Card, Field, LoadingBlock, PageHeader, btnGhost, btnPrimary, inputCls } from "../../ui";
 
@@ -71,7 +72,13 @@ export default function ProductFormPage() {
   const isNew = id === "new";
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
-  const [form, setForm] = useState(EMPTY);
+  const searchParams = useSearchParams();
+  const [form, setForm] = useState(() => {
+    const cat = isNew ? searchParams.get("category") : null;
+    return cat
+      ? { ...EMPTY, category: cat, ...(cat === "split-poster" ? { type: "split-poster" as const } : {}) }
+      : EMPTY;
+  });
   const [sizes, setSizes] = useState<Size[]>(POSTER_SIZES);
   const [slugTouched, setSlugTouched] = useState(!isNew);
 
@@ -124,19 +131,27 @@ export default function ProductFormPage() {
     ? CATEGORY_OPTIONS
     : [...CATEGORY_OPTIONS, { value: form.category, label: form.category }];
 
-  // Search-visibility checklist: product content is what ranks.
-  const tagCount = form.tags.split(",").map((t) => t.trim()).filter(Boolean).length;
-  const seoChecks = [
-    {
-      ok: form.name.trim().length >= 20,
-      text: "Specific name (20+ chars): character + series + type, e.g. “Gojo Satoru Jujutsu Kaisen Poster”",
-    },
-    {
-      ok: form.description.trim().length >= 150,
-      text: `Description of 150+ characters (now ${form.description.trim().length}) — mention the character, series, mood and where it suits`,
-    },
-    { ok: tagCount >= 3, text: `At least 3 tags (now ${tagCount}) — series, character, style` },
-  ];
+  // Search-visibility checklist (shared with the SEO health page).
+  const seoChecks = contentChecks(form);
+  const seoScore = contentScore(seoChecks);
+  const categoryName = CATEGORY_OPTIONS.find((c) => c.value === form.category)?.label ?? form.category;
+  const tagList = form.tags.split(",").map((t) => t.trim()).filter(Boolean);
+
+  const writeDraft = () => {
+    if (!form.name.trim()) return toast.error("Enter the product name first.");
+    if (form.description.trim().length > 40 && !confirm("Replace the current description with a draft?")) return;
+    set(
+      "description",
+      draftDescription({ name: form.name.trim(), categoryName, type: form.type, panels: form.panels, sizes, tags: tagList }),
+    );
+    toast.success("Draft added — now add the character, series and mood in your own words.");
+  };
+
+  const addSuggestedTags = () => {
+    if (!form.name.trim()) return toast.error("Enter the product name first.");
+    const merged = [...new Set([...tagList, ...suggestTags(form.name, form.category, form.type)])];
+    set("tags", merged.join(", "));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -199,9 +214,34 @@ export default function ProductFormPage() {
 
       <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="lg:col-span-1">
-          <Card className="p-5 lg:sticky lg:top-20">
-            <ImageUploader value={form.image} onChange={(url) => set("image", url)} label="Main image" />
-          </Card>
+          <div className="space-y-6 lg:sticky lg:top-20">
+            <Card className="p-5">
+              <ImageUploader value={form.image} onChange={(url) => set("image", url)} label="Main image" />
+            </Card>
+            <Card className="p-5">
+              <div className="flex items-center justify-between">
+                <h2 className="font-semibold">Search visibility</h2>
+                <span
+                  className={`rounded-lg px-2.5 py-1 text-sm font-bold ${
+                    seoScore >= 80 ? "bg-emerald-500/10 text-emerald-300" : seoScore >= 50 ? "bg-amber-500/10 text-amber-300" : "bg-red-500/10 text-red-300"
+                  }`}
+                >
+                  {seoScore}/100
+                </span>
+              </div>
+              <ul className="mt-3 space-y-2 text-sm">
+                {seoChecks.map((c) => (
+                  <li key={c.key} className="flex gap-2">
+                    <span aria-hidden="true" className={c.ok ? "text-emerald-300" : "text-amber-300"}>
+                      {c.ok ? "✓" : "!"}
+                    </span>
+                    <span className={c.ok ? "text-white/50" : "text-white/85"}>{c.label}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-3 text-xs text-white/40">Example name: “Gojo Satoru Jujutsu Kaisen Poster”</p>
+            </Card>
+          </div>
         </div>
 
         <div className="space-y-6 lg:col-span-2">
@@ -247,10 +287,19 @@ export default function ProductFormPage() {
                 </select>
               </Field>
             </div>
-            <Field id="description" label="Description">
+            <Field
+              id="description"
+              label="Description"
+              hint={`${form.description.trim().length} characters · aim for 150–600. Mention the character, series, mood and where it suits.`}
+            >
+              <div className="mb-2 flex justify-end">
+                <button type="button" onClick={writeDraft} className={`${btnGhost} px-3 py-1.5 text-xs`}>
+                  ✨ Write a draft for me
+                </button>
+              </div>
               <textarea
                 id="description"
-                rows={4}
+                rows={6}
                 value={form.description}
                 onChange={(e) => set("description", e.target.value)}
                 placeholder="What makes this poster special? Shown on the product page and in Google results."
@@ -258,7 +307,12 @@ export default function ProductFormPage() {
               />
             </Field>
             <Field id="tags" label="Tags" hint="Comma separated, e.g. naruto, anime, orange">
-              <input id="tags" value={form.tags} onChange={(e) => set("tags", e.target.value)} className={inputCls} />
+              <div className="flex gap-2">
+                <input id="tags" value={form.tags} onChange={(e) => set("tags", e.target.value)} className={inputCls} />
+                <button type="button" onClick={addSuggestedTags} className={`${btnGhost} shrink-0 px-3 text-xs`}>
+                  Suggest tags
+                </button>
+              </div>
             </Field>
           </Card>
 
@@ -409,25 +463,6 @@ export default function ProductFormPage() {
                 );
               })}
             </div>
-          </Card>
-
-          <Card className="p-5 sm:p-6">
-            <h2 className="font-semibold">
-              Search visibility{" "}
-              <span className="text-sm font-normal text-white/50">
-                · {seoChecks.filter((c) => c.ok).length}/{seoChecks.length} done
-              </span>
-            </h2>
-            <ul className="mt-3 space-y-2 text-sm">
-              {seoChecks.map((c) => (
-                <li key={c.text} className="flex gap-2">
-                  <span aria-hidden="true" className={c.ok ? "text-emerald-300" : "text-amber-300"}>
-                    {c.ok ? "✓" : "!"}
-                  </span>
-                  <span className={c.ok ? "text-white/55" : "text-white/85"}>{c.text}</span>
-                </li>
-              ))}
-            </ul>
           </Card>
 
           <div className="flex flex-wrap gap-3">
