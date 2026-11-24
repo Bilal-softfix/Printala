@@ -114,7 +114,19 @@ function ProductInfo({ product }: { product: Product }) {
             {sizes.length > 0 && (
               <p>
                 Available in {sizes.length === 1 ? "one size" : `${sizes.length} sizes`}: {sizeText}. Prices start at{" "}
-                {from}.
+                {from}. Not sure which size fits your wall? Read our{" "}
+                <Link href="/blog/poster-size-guide-a4-a3-a2-a1" className="font-medium text-ink-text underline underline-offset-4 hover:text-accent">
+                  poster size guide
+                </Link>
+                {isSplit && (
+                  <>
+                    {" "}and{" "}
+                    <Link href="/blog/what-are-split-posters-how-to-hang" className="font-medium text-ink-text underline underline-offset-4 hover:text-accent">
+                      how to hang split posters
+                    </Link>
+                  </>
+                )}
+                .
               </p>
             )}
             <p>

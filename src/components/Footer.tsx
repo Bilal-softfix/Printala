@@ -16,6 +16,7 @@ const COLUMNS = {
     { label: "About", href: "/about" },
     { label: "Contact", href: "/contact" },
     { label: "Track order", href: "/track" },
+    { label: "Blog", href: "/blog" },
   ],
 };
 

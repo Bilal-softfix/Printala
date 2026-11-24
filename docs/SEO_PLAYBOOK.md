@@ -19,6 +19,14 @@ Current catalog: 37 products, median description **29 characters**. Google sees 
 - Add products in thin categories first: **Football (0)**, **Gaming (1)**. A category needs ~12+ products to rank.
 - Add 5–10 products per week; consistency matters more than bursts.
 
+## Ongoing — Blog (1 post every 1–2 weeks)
+Posts live in `src/lib/blog.ts` — add an object to `POSTS` (slug, title, description, date, body blocks). Sitemap, page, and Article schema are automatic.
+Ideas with real search demand (India): "best anime posters for room", "poster for gym wall", "cricket posters for room", "aesthetic room decor ideas", "gift ideas for anime fans", "gaming setup wall decor", "Naruto posters", "One Piece posters", "car posters for bedroom".
+Each post: answer the question fully (800+ words), link 2–3 category/product pages, end with a shop link.
+
+## Reviews
+Add real marketplace reviews and your store links in `src/lib/reviews.ts`. The homepage switches from placeholder testimonials to them automatically, labelled with their source.
+
 ## Ongoing — Links & social (authority)
 - **Pinterest** business account: pin every product (Pinterest ranks on Google images for “anime poster”). Link each pin to its product page.
 - **Instagram**: Reels of posters on walls; link in bio → site. Add the profile URL to `src/lib/site.ts → socials` so it appears in the footer and Google's business data.

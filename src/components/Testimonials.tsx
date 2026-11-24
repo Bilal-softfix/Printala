@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { HiArrowLeft, HiArrowRight } from "react-icons/hi2";
 import SectionHeading from "./ui/SectionHeading";
-import { TESTIMONIALS } from "@/lib/data";
+import { MARKETPLACES, homepageReviews } from "@/lib/reviews";
+
+const TESTIMONIALS = homepageReviews();
 import { EASE } from "@/lib/motion";
 
 const AUTO_MS = 7000;
@@ -46,6 +48,26 @@ export default function Testimonials() {
             size="sm"
             lines={["Words", "from the wall."]}
           />
+          {MARKETPLACES.length > 0 && (
+            <ul className="flex flex-wrap gap-2" aria-label="Printala on marketplaces">
+              {MARKETPLACES.map((m) => (
+                <li key={m.name}>
+                  <a
+                    href={m.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-full border border-black/15 px-4 py-2 text-sm transition-colors hover:border-ink-text"
+                  >
+                    {typeof m.rating === "number" && <span className="font-semibold">★ {m.rating}</span>}
+                    <span className="text-ink-text/70">
+                      on {m.name}
+                      {m.ratingCount ? ` · ${m.ratingCount} ratings` : ""}
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
           <div className="flex items-center gap-5">
             <button
               onClick={() => go(-1)}
