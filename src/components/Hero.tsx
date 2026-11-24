@@ -131,7 +131,7 @@ export default function Hero() {
           className="relative z-20 lg:max-w-[48%]"
         >
           <p
-            className="gallery-fade-up flex items-center gap-3 text-[10.5px] font-medium uppercase tracking-[0.22em] text-[var(--g-muted)] sm:tracking-[0.32em]"
+            className="gallery-fade-up flex items-center gap-3 text-xs font-medium uppercase tracking-[0.22em] text-[var(--g-muted)] sm:tracking-[0.32em]"
             style={vars({ "--d": "0.25s" })}
           >
             <span className="hidden h-px w-8 bg-[var(--g-accent)] sm:block" />
@@ -233,7 +233,7 @@ export default function Hero() {
             className="gallery-fade absolute left-1/2 bottom-8 flex -translate-x-1/2 flex-col items-center gap-3"
             style={vars({ "--d": "1.6s" })}
           >
-            <span className="text-[10px] uppercase tracking-[0.34em] text-[var(--g-muted)]">
+            <span className="text-xs uppercase tracking-[0.34em] text-[var(--g-muted)]">
               Scroll
             </span>
             <span className="relative h-10 w-px overflow-hidden bg-[var(--g-line)]">
@@ -250,7 +250,7 @@ export default function Hero() {
 function CollectionTag({ className = "" }: { className?: string }) {
   return (
     <p
-      className={`gallery-fade flex items-center gap-2.5 whitespace-nowrap text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--g-muted)] sm:gap-3 sm:text-[10.5px] sm:tracking-[0.28em] ${className}`}
+      className={`gallery-fade flex items-center gap-2.5 whitespace-nowrap text-xs font-medium uppercase tracking-[0.16em] text-[var(--g-muted)] sm:gap-3 sm:text-xs sm:tracking-[0.28em] ${className}`}
       style={vars({ "--d": "1.4s" })}
     >
       <span className="gallery-pulse h-1.5 w-1.5 rounded-full bg-[var(--g-accent)]" />
@@ -359,7 +359,7 @@ const PrintSlot = memo(function PrintSlot({
               <span
                 aria-hidden="true"
                 data-always={p.lead ? "" : undefined}
-                className={`gallery-caption pointer-events-none absolute top-full mt-4 hidden flex-col gap-1 whitespace-nowrap text-[10px] uppercase tracking-[0.24em] lg:flex ${p.lead ? "right-0 items-end" : "left-0"}`}
+                className={`gallery-caption pointer-events-none absolute top-full mt-4 hidden flex-col gap-1 whitespace-nowrap text-xs uppercase tracking-[0.24em] lg:flex ${p.lead ? "right-0 items-end" : "left-0"}`}
               >
                 <span className="text-[var(--g-text)]">
                   {p.lead && <span className="text-[var(--g-accent)]">N° 01 — </span>}

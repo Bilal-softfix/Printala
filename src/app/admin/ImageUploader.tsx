@@ -1,5 +1,6 @@
 "use client";
 
+import { getErrorMessage } from "@/lib/utils";
 import { useState, useRef, useCallback } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -8,7 +9,6 @@ import {
   HiOutlinePhotograph,
   HiOutlineTrash,
   HiOutlineCheck,
-  HiOutlineX,
 } from "react-icons/hi";
 import { uploadImage } from "@/lib/adminApi";
 import toast from "react-hot-toast";
@@ -69,10 +69,10 @@ export default function ImageUploader({
           setImageUrl(result.data.url);
           toast.success(`Image uploaded! (${result.data.size})`);
         }
-      } catch (err: any) {
+      } catch (err) {
         clearInterval(progressInterval);
         const msg =
-          err.response?.data?.message || "Upload fail ho gaya. Try again!";
+          getErrorMessage(err, "Upload failed. Please try again.");
         toast.error(msg);
       } finally {
         setTimeout(() => {

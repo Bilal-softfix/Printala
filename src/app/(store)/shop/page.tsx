@@ -73,7 +73,7 @@ function ShopContent() {
             eyebrow={searchQuery ? "Search results" : "Full collection"}
             lines={searchQuery ? [<>&ldquo;{searchQuery}&rdquo;</>] : ["All posters."]}
           />
-          <p className="text-sm text-ink-text/55 md:pb-3" aria-live="polite">
+          <p className="text-sm text-ink-text/70 md:pb-3" aria-live="polite">
             {loading
               ? "Loading…"
               : `${products.length} ${products.length === 1 ? "poster" : "posters"}`}

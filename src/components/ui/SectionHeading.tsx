@@ -24,7 +24,7 @@ export default function SectionHeading({
   as?: "h1" | "h2";
   className?: string;
 }) {
-  const muted = tone === "dark" ? "text-mute" : "text-ink-text/55";
+  const muted = tone === "dark" ? "text-mute" : "text-ink-text/70";
   return (
     <motion.div
       initial="hidden"
@@ -34,7 +34,7 @@ export default function SectionHeading({
     >
       <motion.p
         variants={fadeUp}
-        className={`flex items-center gap-3 text-[10.5px] font-medium uppercase tracking-[0.3em] ${muted}`}
+        className={`flex items-center gap-3 text-xs font-medium uppercase tracking-[0.3em] ${muted}`}
       >
         {index !== "—" && <span className="text-accent">{index}</span>}
         <span className={`h-px w-8 ${index === "—" ? "bg-accent" : tone === "dark" ? "bg-white/20" : "bg-black/20"}`} />

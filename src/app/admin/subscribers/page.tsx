@@ -1,11 +1,12 @@
 "use client";
 
+import type { Subscriber } from "@/types/admin";
 import { useEffect, useState } from "react";
 import { getSubscribers } from "@/lib/adminApi";
 import { HiOutlineMail } from "react-icons/hi";
 
 export default function AdminSubscribersPage() {
-  const [subscribers, setSubscribers] = useState<any[]>([]);
+  const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

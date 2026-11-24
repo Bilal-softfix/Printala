@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Printala
 
-## Getting Started
+Storefront and admin panel for Printala — premium posters and split wall art, India.
+Next.js 16 (App Router) · React 19 · Tailwind CSS 4 · Zustand. Data comes from a separate API.
 
-First, run the development server:
+## Setup
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local   # adjust if needed
+npm run dev                  # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| Variable | Purpose |
+|---|---|
+| `NEXT_PUBLIC_API_URL` | Backend API base (default `https://printala-api.onrender.com/api`) |
+| `NEXT_PUBLIC_SITE_URL` | Public URL for canonicals, sitemap, JSON-LD (default `https://printala.in`) |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command | What it does |
+|---|---|
+| `npm run dev` | Dev server |
+| `npm run build` / `npm start` | Production build / serve |
+| `npm run lint` | ESLint |
+| `npm run typecheck` | TypeScript, no emit |
+| `npm run check` | typecheck + lint (run before committing) |
 
-## Learn More
+## Structure
 
-To learn more about Next.js, take a look at the following resources:
+- `src/app/(store)/` — storefront: home, shop, `shop/[category]`, `product/[id]`, cart, checkout, `order/[orderNumber]`, track, about, contact
+- `src/app/admin/` — admin panel (client-side auth via API token)
+- `src/lib/server-api.ts` — server-side data fetching (ISR, 5 min); `src/lib/api.ts` / `adminApi.ts` — browser API clients
+- `src/lib/site.ts` — business contact info · `src/lib/cart.ts` — shipping rules · `src/lib/seo.ts` — JSON-LD
+- `src/lib/data.ts` — static fallback catalog used only when the API is unreachable
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Docs
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+`docs/ISSUES.md` (audit), `docs/PROGRESS.md` (status), `docs/AGENT_GUIDE.md` (how AI agents should work here).

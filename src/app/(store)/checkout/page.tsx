@@ -209,7 +209,7 @@ export default function CheckoutPage() {
             aria-label="Your order"
             className="h-fit bg-paper-2 p-8 lg:sticky lg:top-28"
           >
-            <h2 className="text-[10.5px] uppercase tracking-[0.3em] text-ink-text/55">Your order</h2>
+            <h2 className="text-xs uppercase tracking-[0.3em] text-ink-text/70">Your order</h2>
 
             {items.length === 0 ? (
               <p className="mt-6 text-sm text-ink-text/65">
@@ -227,7 +227,7 @@ export default function CheckoutPage() {
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="block truncate">{item.product.name}</span>
-                      <span className="text-xs text-ink-text/55">
+                      <span className="text-xs text-ink-text/70">
                         {item.selectedSize.label} × {item.quantity}
                       </span>
                     </span>
@@ -259,7 +259,7 @@ export default function CheckoutPage() {
             <button type="submit" disabled={loading || !items.length} className="btn-ink mt-8 w-full">
               {loading ? "Placing order…" : items.length ? `Place order — ${rupees(total)}` : "Place order"}
             </button>
-            <p className="mt-4 text-center text-xs text-ink-text/55">
+            <p className="mt-4 text-center text-xs text-ink-text/70">
               Payment: Cash on Delivery
             </p>
           </motion.aside>

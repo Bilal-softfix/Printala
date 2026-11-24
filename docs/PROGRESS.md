@@ -35,17 +35,17 @@ Work phases in order. Within a phase, top to bottom.
 - [~] U3 Product page — WhatsApp question link, toast removed; size guide + delivery estimate need D7
 
 ## Phase 4 — Polish
-- [ ] A1 Contrast / min font size
-- [ ] A2 Native radio size selector
-- [ ] A3 Dialog focus (verify)
-- [ ] A4 Reduced motion (verify)
+- [x] A1 Contrast — store text /45,/55 → /70 (≈6:1), 10–11px → 12px
+- [x] A2 Native radio size selector (sr-only input, focus ring on label)
+- [x] A3 Dialog focus — `src/hooks/useDialogFocus.ts` (move in, trap, Esc, restore) on cart, search, mobile menu
+- [x] A4 Reduced motion — already OK (MotionConfig user + CSS media queries)
 - [!] U2 Testimonials — keep current set, do NOT add rating schema or fake details; replace with real Flipkart/marketplace reviews (with source) when available
-- [ ] U4 Search no-results UX
-- [ ] U5 Checkout friction
-- [ ] P3 Image config tightening
-- [ ] C1 README + .env.example
-- [ ] C3 typecheck script / CI
-- [ ] C4 Fix pre-existing admin lint errors (13 errors: no-explicit-any, hooks deps)
+- [x] U4 Search no-results — shop empty state names the query + Clear filters (done with F6)
+- [ ] U5 Checkout friction — skipped for now (form persistence low value; COD note already shown)
+- [x] P3 Image config — http/localhost hosts dev-only; live catalog verified all https; hero already priority
+- [x] C1 README + .env.example
+- [x] C3 `npm run typecheck`, `npm run check` (CI workflow not added)
+- [x] C4 Admin lint — `src/types/admin.ts`, getErrorMessage, useCallback loaders, store `hydrated` flag; `npm run check` passes clean
 - [ ] S10 Slug URLs (needs D4)
 - [ ] F9 Online payments (needs D2)
 - [ ] P4 fetch vs axios (optional)
@@ -69,3 +69,4 @@ _(one line per session: date · IDs done · notes)_
 - 2026-11-24 · Phase 2: S1 P1 P2 S5 S9 done · removed `(store)/loading.tsx` (it forced HTTP 200 on notFound) · build + SSR checks pass. Next: S6 (+ rest of S4).
 - 2026-11-24 · S6 + S4 done; default title says "Free Shipping over ₹499" · build + SSR checks pass. Phase 2 complete. Football category has 0 products (noindexed).
 - 2026-11-24 · Phase 3: F1 F2 F3 F4 F5 done; F6 U3 partial · build + route smoke tests pass. Remaining: F7 (D7), F6 pagination, U3 rest (D7).
+- 2026-11-24 · Phase 4: A1 A2 A3 A4 U4 P3 C1 C3 C4 done · `npm run check` + build + smoke tests pass. Remaining: U2 (real reviews), S10 (D4), F9 (D2), U5, P4, F7 (D7), F6 pagination.

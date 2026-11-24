@@ -1,5 +1,6 @@
 "use client";
 
+import { getErrorMessage } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { createProduct, updateProduct } from "@/lib/adminApi";
@@ -108,7 +109,7 @@ export default function ProductFormPage() {
     e.preventDefault();
 
     if (!form.image) {
-      toast.error("Image upload karo pehle!");
+      toast.error("Please upload an image first.");
       return;
     }
 
@@ -140,15 +141,15 @@ export default function ProductFormPage() {
 
       if (isNew) {
         await createProduct(productData);
-        toast.success("Product create ho gaya!");
+        toast.success("Product created.");
       } else {
         await updateProduct(id as string, productData);
-        toast.success("Product update ho gaya!");
+        toast.success("Product updated.");
       }
 
       router.push("/admin/products");
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Save failed");
+    } catch (err) {
+      toast.error(getErrorMessage(err, "Save failed"));
     } finally {
       setSaving(false);
     }

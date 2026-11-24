@@ -34,15 +34,13 @@ export default function AdminShell({
 }: {
   children: React.ReactNode;
 }) {
-  const { user, isAuthenticated, logout, loadFromStorage } = useAdminStore();
+  const { user, isAuthenticated, logout, loadFromStorage, hydrated: loaded } = useAdminStore();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [loaded, setLoaded] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
     loadFromStorage();
-    setLoaded(true);
   }, [loadFromStorage]);
 
   useEffect(() => {

@@ -134,7 +134,7 @@ function Tile({ slot, cat, index }: { slot: Slot; cat: Category; index: number }
         </motion.div>
         <span className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/10 to-ink/25" />
 
-        <span className="absolute left-4 right-4 top-4 flex items-start justify-between text-[10px] font-medium uppercase tracking-[0.26em] text-cream/75 md:left-5 md:right-5 md:top-5">
+        <span className="absolute left-4 right-4 top-4 flex items-start justify-between text-xs font-medium uppercase tracking-[0.26em] text-cream/75 md:left-5 md:right-5 md:top-5">
           <span>{String(index + 1).padStart(2, "0")}</span>
           <span>{cat.count} {cat.count === 1 ? "design" : "designs"}</span>
         </span>

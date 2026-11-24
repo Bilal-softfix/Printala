@@ -1,5 +1,6 @@
 "use client";
 
+import { getErrorMessage } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -30,8 +31,8 @@ export default function AdminLoginPage() {
       login(result.data.admin, result.data.token);
       toast.success("Welcome back!");
       router.push("/admin");
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Login failed");
+    } catch (err) {
+      toast.error(getErrorMessage(err, "Login failed"));
     } finally {
       setLoading(false);
     }

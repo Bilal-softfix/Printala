@@ -34,7 +34,7 @@ export default function CollectionsMenu({
       <div className="container-main grid grid-cols-[14rem_1fr] gap-12 py-10">
         <div className="flex flex-col justify-between">
           <div>
-            <p className="text-[10.5px] uppercase tracking-[0.3em] text-mute">
+            <p className="text-xs uppercase tracking-[0.3em] text-mute">
               Collections
             </p>
             <p className="mt-4 font-display text-3xl font-bold leading-tight tracking-tight">

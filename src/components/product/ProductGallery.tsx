@@ -71,7 +71,7 @@ export default function ProductGallery({ product }: { product: Product }) {
           </motion.div>
         </AnimatePresence>
         {!isSplit && (
-          <span className="pointer-events-none absolute bottom-4 right-4 hidden text-[10px] uppercase tracking-[0.26em] text-ink-text/45 [@media(hover:hover)]:block">
+          <span className="pointer-events-none absolute bottom-4 right-4 hidden text-xs uppercase tracking-[0.26em] text-ink-text/70 [@media(hover:hover)]:block">
             Hover to inspect
           </span>
         )}

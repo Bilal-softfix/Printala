@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { HiXMark, HiArrowRight } from "react-icons/hi2";
@@ -12,15 +13,15 @@ import CartItem from "./CartItem";
 export default function CartSidebar() {
   const { items, isOpen, closeCart, totalPrice, totalItems } = useCartStore();
 
+  const panel = useRef<HTMLElement>(null);
+  useDialogFocus(panel, isOpen, { onEscape: closeCart });
+
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "";
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && closeCart();
-    if (isOpen) window.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = "";
-      window.removeEventListener("keydown", onKey);
     };
-  }, [isOpen, closeCart]);
+  }, [isOpen]);
 
   const { subtotal, shipping, total } = cartTotals(totalPrice());
   const progress = Math.min(1, subtotal / FREE_SHIPPING_MIN);
@@ -38,6 +39,7 @@ export default function CartSidebar() {
           />
 
           <motion.aside
+            ref={panel}
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
@@ -50,7 +52,7 @@ export default function CartSidebar() {
             <div className="flex items-center justify-between border-b border-black/10 px-6 py-5">
               <h2 className="font-display text-xl font-bold uppercase tracking-[-0.03em]">
                 Your bag
-                <span className="ml-2 align-middle font-sans text-xs font-normal normal-case tracking-normal text-ink-text/55">
+                <span className="ml-2 align-middle font-sans text-xs font-normal normal-case tracking-normal text-ink-text/70">
                   {totalItems()} {totalItems() === 1 ? "item" : "items"}
                 </span>
               </h2>
@@ -66,7 +68,7 @@ export default function CartSidebar() {
             <div className="flex-1 overflow-y-auto px-6">
               {items.length === 0 ? (
                 <div className="flex h-full flex-col items-start justify-center py-20">
-                  <p className="text-[10.5px] uppercase tracking-[0.3em] text-ink-text/55">Empty bag</p>
+                  <p className="text-xs uppercase tracking-[0.3em] text-ink-text/70">Empty bag</p>
                   <p className="mt-4 font-display text-4xl font-bold uppercase leading-[0.95] tracking-[-0.04em]">
                     Your wall
                     <br />
@@ -125,7 +127,7 @@ export default function CartSidebar() {
                 <Link
                   href="/cart"
                   onClick={closeCart}
-                  className="block text-center text-xs uppercase tracking-[0.22em] text-ink-text/55 transition-colors hover:text-ink-text"
+                  className="block text-center text-xs uppercase tracking-[0.22em] text-ink-text/70 transition-colors hover:text-ink-text"
                 >
                   View full bag
                 </Link>

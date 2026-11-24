@@ -61,7 +61,7 @@ export default function Testimonials() {
             >
               <HiArrowRight size={16} />
             </button>
-            <span className="text-sm tabular-nums text-ink-text/55" aria-live="polite">
+            <span className="text-sm tabular-nums text-ink-text/70" aria-live="polite">
               {String(i + 1).padStart(2, "0")} / {String(n).padStart(2, "0")}
             </span>
           </div>
@@ -88,9 +88,9 @@ export default function Testimonials() {
                 </span>
                 <span>
                   <span className="block text-sm font-medium">{t.name}</span>
-                  <span className="block text-xs text-ink-text/55">{t.location}</span>
+                  <span className="block text-xs text-ink-text/70">{t.location}</span>
                 </span>
-                <span className="ml-auto text-xs uppercase tracking-[0.22em] text-ink-text/55">
+                <span className="ml-auto text-xs uppercase tracking-[0.22em] text-ink-text/70">
                   {t.rating}/5
                 </span>
               </figcaption>

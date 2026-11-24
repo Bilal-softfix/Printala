@@ -35,7 +35,7 @@ export default function CartItem({ item }: { item: CartItemType }) {
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <h4 className="truncate text-sm font-medium text-ink-text">{product.name}</h4>
-            <p className="mt-1 text-xs text-ink-text/55">
+            <p className="mt-1 text-xs text-ink-text/70">
               {selectedSize.label} · {selectedSize.dimensions}
             </p>
           </div>
@@ -63,7 +63,7 @@ export default function CartItem({ item }: { item: CartItemType }) {
           </div>
           <button
             onClick={() => removeItem(product._id, selectedSize.label)}
-            className="border-b border-transparent text-xs text-ink-text/55 transition-colors hover:border-accent hover:text-accent"
+            className="border-b border-transparent text-xs text-ink-text/70 transition-colors hover:border-accent hover:text-accent"
             aria-label={`Remove ${product.name}`}
           >
             Remove

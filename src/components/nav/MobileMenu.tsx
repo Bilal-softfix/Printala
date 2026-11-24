@@ -5,7 +5,9 @@ import { motion } from "framer-motion";
 import { HiOutlineSearch } from "react-icons/hi";
 import { CATEGORIES } from "@/lib/categories";
 
-const EASE = [0.22, 1, 0.36, 1] as const;
+import { useRef } from "react";
+import { EASE } from "@/lib/motion";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
 
 /** Full-screen mobile navigation, sits under the (always-dark) bar. */
 export default function MobileMenu({
@@ -17,8 +19,13 @@ export default function MobileMenu({
   onClose: () => void;
   onSearch: () => void;
 }) {
+  const panel = useRef<HTMLDivElement>(null);
+  // Toggle button stays visible above the menu, so no Tab trap here.
+  useDialogFocus(panel, true, { onEscape: onClose, trap: false });
+
   return (
     <motion.div
+      ref={panel}
       id="mobile-menu"
       initial={{ clipPath: "inset(0 0 100% 0)" }}
       animate={{ clipPath: "inset(0 0 0% 0)" }}
@@ -62,7 +69,7 @@ export default function MobileMenu({
             Search posters
           </button>
 
-          <p className="mt-10 text-[10.5px] uppercase tracking-[0.3em] text-mute">
+          <p className="mt-10 text-xs uppercase tracking-[0.3em] text-mute">
             Collections
           </p>
           <ul className="mt-4 flex flex-wrap gap-2">

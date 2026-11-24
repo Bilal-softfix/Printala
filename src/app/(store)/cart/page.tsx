@@ -45,14 +45,14 @@ export default function CartPage() {
                 <Link href="/shop" className="inline-flex items-center gap-2 text-ink-text/65 transition-colors hover:text-ink-text">
                   <HiArrowLeft size={14} aria-hidden="true" /> Continue shopping
                 </Link>
-                <button onClick={clearCart} className="text-ink-text/55 transition-colors hover:text-accent">
+                <button onClick={clearCart} className="text-ink-text/70 transition-colors hover:text-accent">
                   Clear bag
                 </button>
               </div>
             </div>
 
             <aside className="h-fit bg-paper-2 p-8 lg:sticky lg:top-28" aria-label="Order summary">
-              <h2 className="text-[10.5px] uppercase tracking-[0.3em] text-ink-text/55">Order summary</h2>
+              <h2 className="text-xs uppercase tracking-[0.3em] text-ink-text/70">Order summary</h2>
               <dl className="mt-6 space-y-3 text-sm">
                 <div className="flex justify-between text-ink-text/70">
                   <dt>Subtotal</dt>
@@ -63,7 +63,7 @@ export default function CartPage() {
                   <dd>{shipping === 0 ? "Free" : rupees(shipping)}</dd>
                 </div>
                 {shipping > 0 && (
-                  <p className="text-xs text-ink-text/55">
+                  <p className="text-xs text-ink-text/70">
                     Add {rupees(FREE_SHIPPING_MIN - subtotal)} more for free shipping.
                   </p>
                 )}
@@ -75,7 +75,7 @@ export default function CartPage() {
               <Link href="/checkout" className="btn-ink mt-8 w-full">
                 Proceed to checkout <HiArrowRight size={14} aria-hidden="true" />
               </Link>
-              <p className="mt-4 text-center text-xs text-ink-text/55">Cash on Delivery available</p>
+              <p className="mt-4 text-center text-xs text-ink-text/70">Cash on Delivery available</p>
             </aside>
           </div>
         )}

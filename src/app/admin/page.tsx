@@ -1,5 +1,6 @@
 "use client";
 
+import type { AdminOrder } from "@/types/admin";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { getDashboard } from "@/lib/adminApi";
@@ -29,7 +30,7 @@ interface DashboardData {
     revenueGrowth: number;
     orderGrowth: number;
   };
-  recentOrders: any[];
+  recentOrders: AdminOrder[];
   ordersByStatus: Record<string, number>;
   topProducts: { _id: string; totalSold: number; totalRevenue: number }[];
   dailyRevenue: { _id: string; revenue: number; orders: number }[];

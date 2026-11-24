@@ -94,7 +94,7 @@ export default function AboutPage() {
               delay={i * 0.08}
               className={`py-10 ${i % 2 ? "border-l border-black/10 pl-6" : ""} ${i === 2 ? "md:border-l md:pl-6" : ""} ${i > 1 ? "border-t border-black/10 md:border-t-0" : ""}`}
             >
-              <dt className="text-[10.5px] uppercase tracking-[0.26em] text-ink-text/55">{s.label}</dt>
+              <dt className="text-xs uppercase tracking-[0.26em] text-ink-text/70">{s.label}</dt>
               <dd className="mt-3 font-display text-5xl font-bold tracking-[-0.05em] md:text-6xl">{s.value}</dd>
             </AnimateIn>
           ))}

@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import type { AdminOrder, AdminOrderItem } from "@/types/admin";
+import { getErrorMessage } from "@/lib/utils";
+import { useCallback, useEffect, useState } from "react";
 import { getAdminOrders, updateOrderStatus } from "@/lib/adminApi";
 import { formatPrice } from "@/lib/utils";
 import toast from "react-hot-toast";
@@ -15,12 +17,12 @@ const STATUSES = [
 ];
 
 export default function AdminOrdersPage() {
-  const [orders, setOrders] = useState<any[]>([]);
+  const [orders, setOrders] = useState<AdminOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  const load = async () => {
+  const load = useCallback(async () => {
     try {
       const params: Record<string, string> = { limit: "50" };
       if (filterStatus) params.status = filterStatus;
@@ -31,11 +33,11 @@ export default function AdminOrdersPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filterStatus]);
 
   useEffect(() => {
     load();
-  }, [filterStatus]);
+  }, [load]);
 
   const handleStatusChange = async (orderId: string, newStatus: string) => {
     try {
@@ -46,8 +48,8 @@ export default function AdminOrdersPage() {
         ),
       );
       toast.success(`Status updated to "${newStatus}"`);
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Update failed");
+    } catch (err) {
+      toast.error(getErrorMessage(err, "Update failed"));
     }
   };
 
@@ -165,7 +167,7 @@ export default function AdminOrdersPage() {
                         Items
                       </h3>
                       <div className="space-y-2">
-                        {order.items?.map((item: any, i: number) => (
+                        {order.items?.map((item: AdminOrderItem, i: number) => (
                           <div key={i} className="flex justify-between text-sm">
                             <span className="text-white/70">
                               {item.name} ({item.size}) ×{item.quantity}

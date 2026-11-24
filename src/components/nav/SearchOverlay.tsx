@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useDialogFocus } from "@/hooks/useDialogFocus";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { HiOutlineSearch } from "react-icons/hi";
@@ -15,15 +16,15 @@ export default function SearchOverlay({ onClose }: { onClose: () => void }) {
   const [q, setQ] = useState("");
   const router = useRouter();
 
+  const panel = useRef<HTMLDivElement>(null);
+  useDialogFocus(panel, true, { onEscape: onClose });
+
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-    window.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
     return () => {
-      window.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
     };
-  }, [onClose]);
+  }, []);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,6 +36,7 @@ export default function SearchOverlay({ onClose }: { onClose: () => void }) {
 
   return (
     <motion.div
+      ref={panel}
       role="dialog"
       aria-modal="true"
       aria-label="Search posters"
@@ -64,7 +66,7 @@ export default function SearchOverlay({ onClose }: { onClose: () => void }) {
         >
           <label
             htmlFor="site-search"
-            className="text-[10.5px] uppercase tracking-[0.3em] text-mute"
+            className="text-xs uppercase tracking-[0.3em] text-mute"
           >
             Search the collection
           </label>
@@ -88,7 +90,7 @@ export default function SearchOverlay({ onClose }: { onClose: () => void }) {
           transition={{ delay: 0.18, duration: 0.6, ease: EASE }}
           className="mx-auto mt-12 w-full max-w-4xl"
         >
-          <p className="text-[10.5px] uppercase tracking-[0.3em] text-mute">
+          <p className="text-xs uppercase tracking-[0.3em] text-mute">
             Browse collections
           </p>
           <ul className="mt-5 flex flex-wrap gap-2.5">

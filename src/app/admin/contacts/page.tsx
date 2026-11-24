@@ -1,13 +1,14 @@
 "use client";
 
+import type { ContactMessage } from "@/types/admin";
 import { useEffect, useState } from "react";
 import { getContacts } from "@/lib/adminApi";
 import { HiOutlineMail, HiOutlineClock } from "react-icons/hi";
 
 export default function AdminContactsPage() {
-  const [contacts, setContacts] = useState<any[]>([]);
+  const [contacts, setContacts] = useState<ContactMessage[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selected, setSelected] = useState<any>(null);
+  const [selected, setSelected] = useState<ContactMessage | null>(null);
 
   useEffect(() => {
     const load = async () => {

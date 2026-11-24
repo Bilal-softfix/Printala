@@ -60,7 +60,7 @@ export default function WhyPrintala() {
             </motion.div>
             <span className="gallery-grain pointer-events-none absolute inset-0 !opacity-[0.12]" />
           </div>
-          <p className="mt-4 flex justify-between text-[10.5px] uppercase tracking-[0.26em] text-ink-text/55">
+          <p className="mt-4 flex justify-between text-xs uppercase tracking-[0.26em] text-ink-text/70">
             <span>Detail — matte surface</span>
             <span>300gsm</span>
           </p>
@@ -88,7 +88,7 @@ export default function WhyPrintala() {
                   <span className="text-[clamp(2.75rem,5vw,4.25rem)] transition-colors duration-500 group-hover:text-accent">
                     {s.n}
                   </span>
-                  <span className="ml-1.5 align-top text-xs font-medium uppercase tracking-[0.2em] text-ink-text/55">
+                  <span className="ml-1.5 align-top text-xs font-medium uppercase tracking-[0.2em] text-ink-text/70">
                     {s.unit}
                   </span>
                 </dt>

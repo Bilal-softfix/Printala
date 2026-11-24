@@ -100,7 +100,7 @@ export default function Navbar() {
   }, []);
   const closeSearch = useCallback(() => setSearchOpen(false), []);
 
-  const linkCls = `relative py-1 text-[11px] font-medium uppercase tracking-[0.22em] transition-colors duration-300
+  const linkCls = `relative py-1 text-xs font-medium uppercase tracking-[0.22em] transition-colors duration-300
     after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:bg-accent
     after:origin-right after:scale-x-0 after:transition-transform after:duration-500
     hover:after:origin-left hover:after:scale-x-100 focus-visible:after:scale-x-100 ${
@@ -215,7 +215,7 @@ export default function Navbar() {
                   initial={{ scale: 0.4 }}
                   animate={{ scale: 1 }}
                   transition={{ type: "spring", stiffness: 500, damping: 15 }}
-                  className="absolute right-0.5 top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-accent px-1 text-[10px] font-semibold text-white"
+                  className="absolute right-0.5 top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-accent px-1 text-xs font-semibold text-white"
                 >
                   {totalItems}
                 </motion.span>

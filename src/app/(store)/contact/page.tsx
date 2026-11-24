@@ -50,7 +50,7 @@ export default function ContactPage() {
             <dl className="mt-12 border-t border-black/10">
               {INFO.map((item) => (
                 <div key={item.label} className="flex items-baseline justify-between gap-6 border-b border-black/10 py-5">
-                  <dt className="text-[10.5px] uppercase tracking-[0.26em] text-ink-text/55">{item.label}</dt>
+                  <dt className="text-xs uppercase tracking-[0.26em] text-ink-text/70">{item.label}</dt>
                   <dd className="text-right">
                     {item.href ? (
                       <a

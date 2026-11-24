@@ -78,7 +78,7 @@ export default function SplitPosterShowcase({ sets }: { sets: Product[] }) {
                   i === active ? "text-cream" : "text-cream/45 hover:text-cream/80"
                 }`}
               >
-                <span className={`text-[10.5px] tracking-[0.2em] ${i === active ? "text-accent" : ""}`}>
+                <span className={`text-xs tracking-[0.2em] ${i === active ? "text-accent" : ""}`}>
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <span className="text-base font-medium">{p.name}</span>
@@ -96,11 +96,11 @@ export default function SplitPosterShowcase({ sets }: { sets: Product[] }) {
               className="grid grid-cols-2 gap-x-8 gap-y-6 text-sm"
             >
               <div>
-                <dt className="text-[10.5px] uppercase tracking-[0.26em] text-mute">Configuration</dt>
+                <dt className="text-xs uppercase tracking-[0.26em] text-mute">Configuration</dt>
                 <dd className="mt-2 font-display text-2xl font-bold">{set.panels || 3} panels</dd>
               </div>
               <div>
-                <dt className="text-[10.5px] uppercase tracking-[0.26em] text-mute">From</dt>
+                <dt className="text-xs uppercase tracking-[0.26em] text-mute">From</dt>
                 <dd className="mt-2 font-display text-2xl font-bold">
                   {formatPrice(set.price)}
                   {set.comparePrice && (
@@ -111,7 +111,7 @@ export default function SplitPosterShowcase({ sets }: { sets: Product[] }) {
                 </dd>
               </div>
               <div className="col-span-2">
-                <dt className="text-[10.5px] uppercase tracking-[0.26em] text-mute">
+                <dt className="text-xs uppercase tracking-[0.26em] text-mute">
                   Available sizes
                 </dt>
                 <dd className="mt-3 flex flex-wrap gap-2">

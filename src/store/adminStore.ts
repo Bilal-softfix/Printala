@@ -11,6 +11,8 @@ interface AdminStore {
   user: AdminUser | null;
   token: string | null;
   isAuthenticated: boolean;
+  /** True once localStorage has been read (client only). */
+  hydrated: boolean;
   login: (user: AdminUser, token: string) => void;
   logout: () => void;
   loadFromStorage: () => void;
@@ -20,6 +22,7 @@ export const useAdminStore = create<AdminStore>((set) => ({
   user: null,
   token: null,
   isAuthenticated: false,
+  hydrated: false,
 
   login: (user, token) => {
     localStorage.setItem("admin_token", token);
@@ -35,6 +38,7 @@ export const useAdminStore = create<AdminStore>((set) => ({
 
   loadFromStorage: () => {
     if (typeof window === "undefined") return;
+    set({ hydrated: true });
     const token = localStorage.getItem("admin_token");
     const userStr = localStorage.getItem("admin_user");
     if (token && userStr) {

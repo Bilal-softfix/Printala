@@ -59,7 +59,7 @@ export default function ProductDetails({
       <article className="min-h-screen bg-paper pt-24 pb-24 text-ink-text md:pt-28">
         <div className="container-main">
           <nav aria-label="Breadcrumb" className="mb-8 md:mb-10">
-            <ol className="flex flex-wrap items-center gap-2 text-xs text-ink-text/55">
+            <ol className="flex flex-wrap items-center gap-2 text-xs text-ink-text/70">
               {breadcrumbs.map((bc, i) => (
                 <li key={bc.url} className="flex items-center gap-2">
                   {i > 0 && <span aria-hidden="true">/</span>}
@@ -87,7 +87,7 @@ export default function ProductDetails({
               transition={{ duration: 0.8, ease: EASE, delay: 0.1 }}
               className="lg:sticky lg:top-28 lg:self-start"
             >
-              <p className="flex flex-wrap items-center gap-3 text-[10.5px] font-medium uppercase tracking-[0.3em] text-ink-text/55">
+              <p className="flex flex-wrap items-center gap-3 text-xs font-medium uppercase tracking-[0.3em] text-ink-text/70">
                 <span className="capitalize text-accent">{categoryLabel}</span>
                 {isSplit && (
                   <>
@@ -122,10 +122,10 @@ export default function ProductDetails({
                 </AnimatePresence>
                 {product.comparePrice && (
                   <>
-                    <span className="text-lg text-ink-text/45 line-through">
+                    <span className="text-lg text-ink-text/70 line-through">
                       {formatPrice(product.comparePrice + modifier)}
                     </span>
-                    <span className="bg-accent px-2 py-1 text-[10.5px] font-semibold uppercase tracking-[0.16em] text-white">
+                    <span className="bg-accent px-2 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-white">
                       Save {formatPrice(product.comparePrice - product.price)}
                     </span>
                   </>
@@ -138,7 +138,7 @@ export default function ProductDetails({
 
               {/* Size */}
               <fieldset className="mt-9">
-                <legend className="text-[10.5px] uppercase tracking-[0.26em] text-ink-text/55">
+                <legend className="text-xs uppercase tracking-[0.26em] text-ink-text/70">
                   {isSplit ? "Set size" : "Size"}
                   {selectedSize && (
                     <span className="ml-2 normal-case tracking-normal text-ink-text">
@@ -146,32 +146,37 @@ export default function ProductDetails({
                     </span>
                   )}
                 </legend>
-                <div role="radiogroup" className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                {/* Native radios: arrow-key navigation and form semantics for free (A2). */}
+                <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
                   {product.sizes.map((size) => {
                     const on = selectedSize?.label === size.label;
                     return (
-                      <button
+                      <label
                         key={size.label}
-                        type="button"
-                        role="radio"
-                        aria-checked={on}
-                        onClick={() => setSelectedSize(size)}
-                        className={`relative border px-3 py-3 text-left transition-colors duration-300 ${
+                        className={`relative cursor-pointer border px-3 py-3 text-left transition-colors duration-300 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-accent ${
                           on
                             ? "border-ink-text bg-ink-text text-cream"
                             : "border-black/15 hover:border-ink-text"
                         }`}
                       >
+                        <input
+                          type="radio"
+                          name="size"
+                          value={size.label}
+                          checked={on}
+                          onChange={() => setSelectedSize(size)}
+                          className="sr-only"
+                        />
                         <span className="block text-sm font-semibold">{size.label}</span>
-                        <span className={`mt-0.5 block text-[11px] ${on ? "text-cream/70" : "text-ink-text/55"}`}>
+                        <span className={`mt-0.5 block text-xs ${on ? "text-cream/80" : "text-ink-text/70"}`}>
                           {size.dimensions}
                         </span>
                         {size.priceModifier > 0 && (
-                          <span className={`mt-1 block text-[11px] font-medium ${on ? "text-cream" : "text-accent"}`}>
+                          <span className={`mt-1 block text-xs font-medium ${on ? "text-cream" : "text-accent"}`}>
                             +{formatPrice(size.priceModifier)}
                           </span>
                         )}
-                      </button>
+                      </label>
                     );
                   })}
                 </div>
@@ -242,7 +247,7 @@ export default function ProductDetails({
                 {TRUST.map((t, i) => (
                   <li key={t.title} className={`py-4 pr-3 ${i ? "border-l border-black/10 pl-4" : ""}`}>
                     <p className="text-xs font-semibold">{t.title}</p>
-                    <p className="mt-1 text-[11px] leading-snug text-ink-text/55">{t.text}</p>
+                    <p className="mt-1 text-xs leading-snug text-ink-text/70">{t.text}</p>
                   </li>
                 ))}
               </ul>
@@ -268,7 +273,7 @@ export default function ProductDetails({
                   ["Ships in", "Rigid cardboard tube"],
                 ].map(([k, v]) => (
                   <div key={k}>
-                    <dt className="text-[10.5px] uppercase tracking-[0.26em] text-ink-text/55">{k}</dt>
+                    <dt className="text-xs uppercase tracking-[0.26em] text-ink-text/70">{k}</dt>
                     <dd className="mt-1.5">{v}</dd>
                   </div>
                 ))}

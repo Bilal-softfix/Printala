@@ -27,7 +27,7 @@ export default function Footer() {
           <div>
             <Newsletter />
             <div className="mt-12 space-y-2 text-sm">
-              <p className="text-[10.5px] uppercase tracking-[0.26em] text-mute">Talk to us</p>
+              <p className="text-xs uppercase tracking-[0.26em] text-mute">Talk to us</p>
               <a href={SITE.phoneHref} className="block text-cream/85 transition-colors hover:text-accent">
                 {SITE.phone}
               </a>
@@ -62,7 +62,7 @@ export default function Footer() {
           <div className="grid grid-cols-2 gap-10 sm:grid-cols-3">
             {Object.entries(COLUMNS).map(([title, links]) => (
               <nav key={title} aria-label={`${title} links`}>
-                <h3 className="text-[10.5px] uppercase tracking-[0.26em] text-mute">{title}</h3>
+                <h3 className="text-xs uppercase tracking-[0.26em] text-mute">{title}</h3>
                 <ul className="mt-5 space-y-3">
                   {links.map((l) => (
                     <li key={l.label}>

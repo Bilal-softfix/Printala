@@ -101,7 +101,7 @@ export default function ProductCard({
                   {product.name}
                 </span>
               </h3>
-              <p className="mt-1 text-xs capitalize text-ink-text/55">
+              <p className="mt-1 text-xs capitalize text-ink-text/70">
                 {isSplit
                   ? `${product.panels || 3}-panel split · ${product.sizes.length} sizes`
                   : `${product.category.replace("-", " ")} · ${product.sizes.length} sizes`}
@@ -112,7 +112,7 @@ export default function ProductCard({
                 {formatPrice(product.price)}
               </span>
               {product.comparePrice && (
-                <span className="block text-xs text-ink-text/45 line-through">
+                <span className="block text-xs text-ink-text/70 line-through">
                   {formatPrice(product.comparePrice)}
                 </span>
               )}

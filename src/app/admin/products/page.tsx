@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { getErrorMessage } from "@/lib/utils";
+import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -21,7 +22,7 @@ export default function AdminProductsPage() {
   const [search, setSearch] = useState("");
   const [deleting, setDeleting] = useState<string | null>(null);
 
-  const load = async () => {
+  const load = useCallback(async () => {
     try {
       const params: Record<string, string> = { limit: "100" };
       if (search) params.search = search;
@@ -32,11 +33,11 @@ export default function AdminProductsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [search]);
 
   useEffect(() => {
     load();
-  }, [search]);
+  }, [load]);
 
   const handleDelete = async (id: string, name: string) => {
     if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
@@ -45,8 +46,8 @@ export default function AdminProductsPage() {
       await deleteProduct(id);
       setProducts(products.filter((p) => p._id !== id));
       toast.success("Product deleted!");
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Delete failed");
+    } catch (err) {
+      toast.error(getErrorMessage(err, "Delete failed"));
     } finally {
       setDeleting(null);
     }

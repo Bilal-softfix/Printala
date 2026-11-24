@@ -1,5 +1,6 @@
 "use client";
 
+import { getErrorMessage } from "@/lib/utils";
 import { useState } from "react";
 import { changePassword } from "@/lib/adminApi";
 import { useAdminStore } from "@/store/adminStore";
@@ -34,8 +35,8 @@ export default function AdminSettingsPage() {
       }
       toast.success("Password changed!");
       setPasswords({ current: "", newPass: "", confirm: "" });
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Failed to change password");
+    } catch (err) {
+      toast.error(getErrorMessage(err, "Failed to change password"));
     } finally {
       setLoading(false);
     }
