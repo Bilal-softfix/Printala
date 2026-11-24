@@ -7,6 +7,8 @@ import { CATEGORIES } from "@/lib/categories";
 import { PRODUCTS } from "@/lib/data";
 import { BASE_URL, generateBreadcrumbJsonLd } from "@/lib/seo";
 import { getProducts } from "@/lib/server-api";
+import FaqSection from "@/components/FaqSection";
+import { STORE_FAQ } from "@/lib/faq";
 
 export const revalidate = 300;
 export const dynamicParams = false;
@@ -163,6 +165,18 @@ export default async function CategoryPage({ params }: Props) {
             ))}
           </div>
         )}
+
+        <FaqSection
+          className="mt-28 max-w-3xl"
+          title={`${cat.name} posters — FAQ`}
+          faqs={[
+            {
+              q: `Which ${cat.name.toLowerCase()} posters do you have?`,
+              a: `Our ${cat.name.toLowerCase()} collection includes ${cat.description}. New designs are added regularly.`,
+            },
+            ...STORE_FAQ.filter((f) => !/contact/i.test(f.q)),
+          ]}
+        />
       </div>
     </div>
   );

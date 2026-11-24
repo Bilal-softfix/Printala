@@ -12,6 +12,12 @@ const nextConfig: NextConfig = {
         destination: "/shop/:cat",
         permanent: true,
       },
+      // Common ways people type the tracking URL.
+      ...["/track-order", "/order-tracking", "/trackorder", "/orders/track"].map((source) => ({
+        source,
+        destination: "/track",
+        permanent: true,
+      })),
     ];
   },
   images: {

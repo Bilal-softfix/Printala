@@ -124,6 +124,20 @@ export default function ProductFormPage() {
     ? CATEGORY_OPTIONS
     : [...CATEGORY_OPTIONS, { value: form.category, label: form.category }];
 
+  // Search-visibility checklist: product content is what ranks.
+  const tagCount = form.tags.split(",").map((t) => t.trim()).filter(Boolean).length;
+  const seoChecks = [
+    {
+      ok: form.name.trim().length >= 20,
+      text: "Specific name (20+ chars): character + series + type, e.g. “Gojo Satoru Jujutsu Kaisen Poster”",
+    },
+    {
+      ok: form.description.trim().length >= 150,
+      text: `Description of 150+ characters (now ${form.description.trim().length}) — mention the character, series, mood and where it suits`,
+    },
+    { ok: tagCount >= 3, text: `At least 3 tags (now ${tagCount}) — series, character, style` },
+  ];
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.image) return toast.error("Please upload an image first.");
@@ -395,6 +409,25 @@ export default function ProductFormPage() {
                 );
               })}
             </div>
+          </Card>
+
+          <Card className="p-5 sm:p-6">
+            <h2 className="font-semibold">
+              Search visibility{" "}
+              <span className="text-sm font-normal text-white/50">
+                · {seoChecks.filter((c) => c.ok).length}/{seoChecks.length} done
+              </span>
+            </h2>
+            <ul className="mt-3 space-y-2 text-sm">
+              {seoChecks.map((c) => (
+                <li key={c.text} className="flex gap-2">
+                  <span aria-hidden="true" className={c.ok ? "text-emerald-300" : "text-amber-300"}>
+                    {c.ok ? "✓" : "!"}
+                  </span>
+                  <span className={c.ok ? "text-white/55" : "text-white/85"}>{c.text}</span>
+                </li>
+              ))}
+            </ul>
           </Card>
 
           <div className="flex flex-wrap gap-3">

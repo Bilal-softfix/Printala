@@ -68,6 +68,10 @@ export const metadata: Metadata = {
     description:
       "India's premium poster store. Anime, gaming, cars, cricket & split posters.",
   },
+  // Set NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION to the code from Google Search Console.
+  ...(process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION && {
+    verification: { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION },
+  }),
   robots: {
     index: true,
     follow: true,

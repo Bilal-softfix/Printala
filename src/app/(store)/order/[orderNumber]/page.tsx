@@ -7,6 +7,10 @@ import SectionHeading from "@/components/ui/SectionHeading";
 import { trackOrder } from "@/lib/api";
 import { rupees } from "@/lib/cart";
 import { SITE } from "@/lib/site";
+import { trackUrl } from "@/lib/orders";
+import toast from "react-hot-toast";
+import { HiOutlineClipboardCopy, HiOutlineLink } from "react-icons/hi";
+import { FaWhatsapp } from "react-icons/fa6";
 
 type OrderView = {
   orderNumber: string;
@@ -120,8 +124,14 @@ export default function OrderPage() {
               </dl>
             )}
 
+            {justPlaced && <SaveOrderCard orderNumber={order.orderNumber} />}
+
             <p className="mt-10 text-[15px] leading-relaxed text-ink-text/75">
-              Save your order number to track this order later. Questions? Call or WhatsApp{" "}
+              Track this order anytime at{" "}
+              <Link href={trackUrl(order.orderNumber)} className="underline underline-offset-4">
+                printala.in/track
+              </Link>
+              . Questions? Call or WhatsApp{" "}
               <a
                 href={SITE.whatsappHref}
                 target="_blank"
@@ -147,5 +157,51 @@ export default function OrderPage() {
         )}
       </div>
     </div>
+  );
+}
+
+/** Prominent "keep your order number" card shown right after checkout. */
+function SaveOrderCard({ orderNumber }: { orderNumber: string }) {
+  const link = `${window.location.origin}${trackUrl(orderNumber)}`;
+  const copy = (text: string, msg: string) =>
+    navigator.clipboard.writeText(text).then(() => toast.success(msg), () => toast.error("Couldn't copy"));
+  const btn =
+    "inline-flex items-center gap-2 rounded-full border border-black/15 bg-paper px-4 py-2.5 text-sm font-medium transition-colors hover:border-ink-text";
+
+  return (
+    <section
+      aria-labelledby="save-order-heading"
+      className="mt-8 border-2 border-accent/40 bg-accent/[0.06] p-6"
+    >
+      <h2 id="save-order-heading" className="font-display text-xl font-bold tracking-[-0.02em]">
+        Save your order number
+      </h2>
+      <p className="mt-2 text-[15px] text-ink-text/75">
+        You&apos;ll need <strong className="text-ink-text">{orderNumber}</strong> to track your order.
+        Take a screenshot, or save it with one tap:
+      </p>
+      <p className="mt-4 select-all font-display text-3xl font-bold tracking-tight">{orderNumber}</p>
+      <div className="mt-5 flex flex-wrap gap-2">
+        <button type="button" onClick={() => copy(orderNumber, "Order number copied")} className={btn}>
+          <HiOutlineClipboardCopy size={16} aria-hidden="true" /> Copy number
+        </button>
+        <a
+          href={`https://wa.me/?text=${encodeURIComponent(
+            `My Printala order: ${orderNumber}\nTrack it here: ${link}`,
+          )}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={btn}
+        >
+          <FaWhatsapp size={16} aria-hidden="true" /> Send to my WhatsApp
+        </a>
+        <button type="button" onClick={() => copy(link, "Tracking link copied")} className={btn}>
+          <HiOutlineLink size={16} aria-hidden="true" /> Copy tracking link
+        </button>
+      </div>
+      <p className="mt-4 text-xs text-ink-text/70">
+        It&apos;s also saved on this device — just open the Track Order page.
+      </p>
+    </section>
   );
 }

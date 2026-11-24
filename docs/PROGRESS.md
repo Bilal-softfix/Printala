@@ -64,6 +64,15 @@ Work phases in order. Within a phase, top to bottom.
 - [x] A-9 Image upload: real progress (axios onUploadProgress), keyboard-accessible drop zone, English copy
 - [ ] A-10 Test logged-in flows with an admin account (not done — no credentials)
 
+## SEO push + order tracking (2026-11-24)
+- [x] Home H1 = "Anime, gaming & split posters in India"; SEO intro with category links + FAQ (FAQPage)
+- [x] Category FAQ (FAQPage); product "About this poster" + FAQ + category links (server-rendered)
+- [x] Google Merchant feed `/feed.xml`; Search Console verification env var
+- [x] Product page defaults to base size (price matches feed/JSON-LD)
+- [x] Admin product form "Search visibility" checklist
+- [x] Order flow: save-order card (copy / WhatsApp to self / copy link), orders remembered on device, `/track` lists recent orders, `/track?order=` links, nav "Track Order", `/track-order` etc. redirect
+- [ ] Owner: follow `docs/SEO_PLAYBOOK.md` (Search Console, Merchant Center, product content)
+
 ## Decisions received
 - D1: free shipping ≥ ₹499, else ₹59
 - D3: phone/WhatsApp +91 8858424768; no public email; hours Mon–Sat 10–7 IST; no socials yet
@@ -86,3 +95,4 @@ _(one line per session: date · IDs done · notes)_
 - 2026-11-24 · Phase 4: A1 A2 A3 A4 U4 P3 C1 C3 C4 done · `npm run check` + build + smoke tests pass. Remaining: U2 (real reviews), S10 (D4), F9 (D2), U5, P4, F7 (D7), F6 pagination.
 - 2026-11-24 · F11 fixed (invalid id in persisted cart) · check + build + 404 test pass · pushed.
 - 2026-11-24 · Admin panel redesign + fixes (A-1…A-9) · check + build + route smoke tests pass; logged-in flows untested.
+- 2026-11-24 · SEO push + order tracking UX · check + build + SSR/feed checks pass.

@@ -16,7 +16,7 @@ import MobileMenu from "./nav/MobileMenu";
 const LINKS_LEFT = [{ href: "/shop", label: "Shop" }];
 const LINKS_RIGHT = [
   { href: "/shop?sort=bestseller", label: "Trending" },
-  { href: "/about", label: "About" },
+  { href: "/track", label: "Track Order" },
 ];
 const MOBILE_LINKS = [
   { href: "/shop", label: "Shop" },
@@ -24,6 +24,7 @@ const MOBILE_LINKS = [
   { href: "/shop?sort=bestseller", label: "Trending" },
   { href: "/shop/split-poster", label: "Split Posters" },
   { href: "/about", label: "About" },
+  { href: "/track", label: "Track Order" },
   { href: "/contact", label: "Contact" },
 ];
 

@@ -130,16 +130,16 @@ export default function Hero() {
           style={live ? { y: textY, opacity: textOpacity } : undefined}
           className="relative z-20 lg:max-w-[48%]"
         >
-          <p
+          <h1
+            id="hero-title"
             className="gallery-fade-up flex items-center gap-3 text-xs font-medium uppercase tracking-[0.22em] text-[var(--g-muted)] sm:tracking-[0.32em]"
             style={vars({ "--d": "0.25s" })}
           >
             <span className="hidden h-px w-8 bg-[var(--g-accent)] sm:block" />
-            Printala — Art that defines your space
-          </p>
+            Anime, gaming &amp; split posters in India
+          </h1>
 
-          <h1
-            id="hero-title"
+          <p
             className="mt-7 font-display text-[clamp(2.2rem,10.2vw,4.75rem)] font-bold uppercase leading-[0.92] tracking-[-0.045em] text-[var(--g-text)] lg:text-[clamp(3rem,5.2vw,6.25rem)]"
           >
             <span className="gallery-line">
@@ -160,7 +160,7 @@ export default function Hero() {
                 Universe<span className="text-[var(--g-accent)]">.</span>
               </span>
             </span>
-          </h1>
+          </p>
 
           <p
             className="gallery-fade-up mt-8 max-w-[25rem] text-[15px] leading-relaxed text-[var(--g-muted)] sm:text-base"

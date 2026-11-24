@@ -32,7 +32,7 @@ export default function ProductDetails({
   related: Product[];
 }) {
   const [selectedSize, setSelectedSize] = useState<Size | null>(
-    product.sizes[1] || product.sizes[0] || null,
+    product.sizes[0] ?? null,
   );
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);

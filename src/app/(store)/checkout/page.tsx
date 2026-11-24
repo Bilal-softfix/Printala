@@ -10,6 +10,7 @@ import { useCartRefresh } from "@/store/useCartRefresh";
 import toast from "react-hot-toast";
 import { createOrder } from "@/lib/api";
 import { getErrorMessage } from "@/lib/utils";
+import { saveOrder } from "@/lib/orders";
 import { cartTotals, rupees } from "@/lib/cart";
 import { EASE } from "@/lib/motion";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -141,6 +142,7 @@ export default function CheckoutPage() {
             }),
           );
         } catch {}
+        saveOrder({ orderNumber, total: fresh.total, placedAt: new Date().toISOString() });
         router.push(`/order/${encodeURIComponent(orderNumber)}`);
         clearCart();
       }
