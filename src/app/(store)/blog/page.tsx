@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import SectionHeading from "@/components/ui/SectionHeading";
-import { sortedPosts } from "@/lib/blog";
+import { blogTags, sortedPosts } from "@/lib/blog";
 
 export const metadata: Metadata = {
   title: "Blog — Poster Guides, Size Help & Room Decor Ideas",
@@ -19,7 +19,16 @@ export default function BlogIndex() {
     <div className="min-h-screen bg-paper pt-28 pb-24 text-ink-text md:pt-36">
       <div className="container-main">
         <SectionHeading as="h1" index="—" eyebrow="Guides & ideas" lines={["The Printala", "journal."]} />
-        <ul className="mt-14 grid gap-px border-y border-black/10 bg-black/10 md:grid-cols-2">
+        <ul className="mt-10 flex flex-wrap gap-2" aria-label="Topics">
+          {blogTags().map((t) => (
+            <li key={t.slug}>
+              <Link href={`/blog/tag/${t.slug}`} className="chip capitalize">
+                {t.name} ({t.count})
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <ul className="mt-10 grid gap-px border-y border-black/10 bg-black/10 md:grid-cols-2">
           {posts.map((p) => (
             <li key={p.slug} className="bg-paper">
               <Link href={`/blog/${p.slug}`} className="group block h-full p-6 transition-colors hover:bg-paper-2 md:p-8">

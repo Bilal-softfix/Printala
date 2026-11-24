@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { PRODUCTS } from "@/lib/data";
 import { CATEGORIES } from "@/lib/categories";
-import { POSTS } from "@/lib/blog";
+import { POSTS, blogTags } from "@/lib/blog";
 import { BASE_URL } from "@/lib/seo";
 import { getProducts } from "@/lib/server-api";
 
@@ -25,6 +25,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const blogPages: MetadataRoute.Sitemap = [
     { url: `${BASE_URL}/blog`, changeFrequency: "weekly", priority: 0.7 },
+    ...blogTags().map((t) => ({
+      url: `${BASE_URL}/blog/tag/${t.slug}`,
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
+    })),
     ...POSTS.map((p) => ({
       url: `${BASE_URL}/blog/${p.slug}`,
       lastModified: new Date(p.updated ?? p.date),

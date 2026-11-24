@@ -397,7 +397,300 @@ export const POSTS: Post[] = [
       { type: "cta", text: "Shop 300gsm matte posters", href: "/shop" },
     ],
   },
+  {
+    slug: "south-indian-movie-posters-room-decor",
+    title: "South Indian Movie Posters: Room Decor Ideas for Tamil, Telugu, Kannada & Malayalam Cinema Fans",
+    description:
+      "Turn your wall into a tribute to South Indian cinema. Poster layouts, colour ideas and fan-wall tips for Kollywood, Tollywood, Sandalwood and Mollywood fans.",
+    date: "2026-11-24",
+    readMinutes: 6,
+    tags: ["south india", "movie posters", "room decor"],
+    body: [
+      { type: "p", text: "South Indian cinema has some of the most passionate fans in the world — first-day-first-show crowds, cut-outs, whistles and all. Bringing that energy home is easy with the right posters. Here's how to build a wall that celebrates Kollywood, Tollywood, Sandalwood or Mollywood in style." },
+      { type: "h2", text: "Pick your industry — or mix them" },
+      {
+        type: "list",
+        items: [
+          "Tamil (Kollywood): mass-hero moments and iconic dialogues.",
+          "Telugu (Tollywood): larger-than-life epics and blockbuster action.",
+          "Kannada (Sandalwood): gritty, stylish visuals made famous worldwide by KGF and Kantara.",
+          "Malayalam (Mollywood): realistic, aesthetic frames — perfect for a calmer room.",
+        ],
+      },
+      { type: "p", text: "Pan-India fans can mix all four — keep one colour palette (for example dark tones with gold) so the wall still looks planned." },
+      { type: "h2", text: "Build a 'first day first show' fan wall" },
+      { type: "p", text: "Put your favourite hero's poster in the centre at eye level, in A2 or as a 3-panel split poster. Surround it with A4 or A3 posters of their best films, spaced evenly about 5 cm apart. It recreates that theatre-entrance feeling right in your room." },
+      { type: "h2", text: "Use split posters for epic scenes" },
+      { type: "p", text: "Wide, cinematic frames — battle scenes, entry shots, slow-motion walks — look incredible as split posters. Stretched across three panels above your bed or TV, they feel like a cinema screen." },
+      { type: "h2", text: "Colour and lighting tips" },
+      {
+        type: "list",
+        items: [
+          "Dark, high-contrast action posters pop under cool white or RGB lights.",
+          "Warm, golden-toned art suits wooden furniture and traditional homes.",
+          "Matte paper avoids glare from windows and tube lights — important in bright South Indian homes.",
+        ],
+      },
+      { type: "cta", text: "Shop movie posters", href: "/shop/bollywood" },
+    ],
+  },
+  {
+    slug: "tamil-cinema-fan-wall-thalaivar-thalapathy",
+    title: "Thalaivar & Thalapathy Fan Wall: Tamil Cinema Poster Ideas",
+    description:
+      "Ideas for a Tamil cinema fan wall — styling Rajinikanth, Vijay, Ajith and Suriya posters, dialogue art, and layouts for bedrooms, hostels and home theatres.",
+    date: "2026-11-24",
+    readMinutes: 5,
+    tags: ["south india", "tamil", "movie posters"],
+    body: [
+      { type: "p", text: "In Tamil Nadu, a star's release is a festival. If your loyalty is to Thalaivar, Thalapathy, Thala or Suriya, your room should show it. Here's how to make a fan wall that looks premium, not cluttered." },
+      { type: "h2", text: "One hero, one statement" },
+      { type: "p", text: "The strongest fan walls focus on one star. Choose a single large poster — A1 or a 3-panel split poster — with their most iconic look or entry scene. Leave space around it; let it breathe like a theatre banner." },
+      { type: "h2", text: "Add dialogue art" },
+      { type: "p", text: "Tamil cinema is famous for punch dialogues. Smaller A4 or A3 posters with typography-style dialogues placed next to the main poster add personality and make guests smile." },
+      { type: "h2", text: "Home theatre corner" },
+      { type: "p", text: "If you have a TV wall or projector setup, frame it with two vertical posters on either side. Dim warm lights behind the TV make matte posters glow without reflections — just like a cinema hall." },
+      { type: "h2", text: "Hostel room version" },
+      {
+        type: "list",
+        items: [
+          "Use A3 posters — big enough to notice, easy to carry home after semester.",
+          "Stick them with removable strips so you don't lose your hostel deposit.",
+          "Theme it: one wall for your favourite hero, one for cricket — very Chennai.",
+        ],
+      },
+      { type: "cta", text: "Browse movie posters", href: "/shop/bollywood" },
+    ],
+  },
+  {
+    slug: "telugu-movie-posters-tollywood-fans",
+    title: "Telugu Movie Posters: Mass Hero Wall Ideas for Tollywood Fans",
+    description:
+      "Pushpa, Baahubali, RRR and mass-hero moments — ideas for decorating your room with Telugu cinema posters, from split-poster epics to gallery walls.",
+    date: "2026-11-24",
+    readMinutes: 5,
+    tags: ["south india", "telugu", "movie posters"],
+    body: [
+      { type: "p", text: "Tollywood does scale like no one else — epic battles, unforgettable entry scenes and dialogues the whole state repeats. Those visuals are made for big walls." },
+      { type: "h2", text: "Epic films deserve split posters" },
+      { type: "p", text: "Films like Baahubali and RRR are built on huge, wide frames. A 3-panel or 5-panel split poster recreates that scale above a bed, sofa or study desk — far more impressive than a single small print." },
+      { type: "h2", text: "Mass-hero gallery wall" },
+      {
+        type: "list",
+        items: [
+          "Centre: your favourite star's most iconic look in A2.",
+          "Sides: two A3 posters from their biggest hits.",
+          "Bottom row: small A4 dialogue or symbol posters — the 'thaggedhe le' energy.",
+        ],
+      },
+      { type: "h2", text: "Match the room's colours" },
+      { type: "p", text: "Pushpa-style earthy reds and browns suit wooden furniture; Baahubali's golds and blues look grand with warm lighting; RRR's fire-and-water contrast works brilliantly on a white or grey wall." },
+      { type: "h2", text: "Gift idea" },
+      { type: "p", text: "For a friend in Hyderabad, Vijayawada or Vizag who never misses a first-day show, a poster of their favourite hero is a gift they'll actually hang — and talk about." },
+      { type: "cta", text: "Shop movie posters", href: "/shop/bollywood" },
+    ],
+  },
+  {
+    slug: "kannada-cinema-posters-kgf-kantara",
+    title: "Kannada Cinema Wall Art: KGF, Kantara & Sandalwood Poster Ideas",
+    description:
+      "Sandalwood went pan-India with KGF and Kantara. Ideas for styling Kannada cinema posters in Bengaluru flats, PGs and gaming rooms.",
+    date: "2026-11-24",
+    readMinutes: 4,
+    tags: ["south india", "kannada", "movie posters"],
+    body: [
+      { type: "p", text: "KGF and Kantara put Kannada cinema on every screen in India. Their dark, dramatic visuals make some of the most striking wall art you can hang." },
+      { type: "h2", text: "Go dark and dramatic" },
+      { type: "p", text: "KGF's smoky golds and deep blacks look best on a dark or grey wall with warm lighting. A single A1 poster or a wide split poster becomes an instant focal point — perfect for a gaming room or a bachelor flat in Bengaluru." },
+      { type: "h2", text: "Earthy, cultural tones" },
+      { type: "p", text: "Kantara's fiery reds and earthy textures suit homes with wooden furniture, plants and traditional decor. Pair the poster with brass lamps or warm fairy lights for a rich, cultural look." },
+      { type: "h2", text: "Small-space tips for Bengaluru PGs" },
+      {
+        type: "list",
+        items: [
+          "Use one A2 poster above your bed rather than many small ones — small rooms look bigger with fewer, larger pieces.",
+          "Use removable strips; most PG owners don't allow nails.",
+          "Bengaluru's mild weather is kind to paper — matte posters stay flat and fresh for years.",
+        ],
+      },
+      { type: "cta", text: "Shop movie posters", href: "/shop/bollywood" },
+    ],
+  },
+  {
+    slug: "malayalam-cinema-aesthetic-posters",
+    title: "Malayalam Cinema Aesthetic Posters: Calm, Classy Room Decor",
+    description:
+      "Mollywood's realistic, beautifully shot films make perfect aesthetic wall art. Ideas for Malayalam cinema posters in Kochi, Thiruvananthapuram and beyond.",
+    date: "2026-11-24",
+    readMinutes: 4,
+    tags: ["south india", "malayalam", "aesthetic"],
+    body: [
+      { type: "p", text: "Malayalam cinema is loved for its realism, natural light and beautiful frames — from Lalettan and Mammukka classics to new-wave hits. That softer, cinematic look makes for elegant room decor." },
+      { type: "h2", text: "Aesthetic over loud" },
+      { type: "p", text: "Choose posters with natural colours — greens, blues and warm sunset tones. They suit Kerala homes with lots of daylight and pair well with plants, wooden shelves and minimal furniture." },
+      { type: "h2", text: "Gallery of frames" },
+      { type: "p", text: "Malayalam films have many iconic stills rather than one big image. Create a gallery wall of four to six A4 posters in a neat grid — it feels like a film festival lobby." },
+      { type: "h2", text: "Kerala climate tip" },
+      { type: "p", text: "Coastal humidity can make paper wave over time. Keep posters away from bathroom walls and damp corners, and consider a frame or clip hanger during the monsoon. Matte 300gsm paper holds up much better than thin glossy prints." },
+      { type: "cta", text: "Browse posters", href: "/shop" },
+    ],
+  },
+  {
+    slug: "ipl-fan-room-decor-csk-rcb-srh",
+    title: "IPL Fan Room Decor for South India: CSK, RCB & SRH Wall Ideas",
+    description:
+      "Whistle Podu, Ee Sala Cup Namde, Orange Army — room decor ideas for Chennai Super Kings, Royal Challengers Bengaluru and Sunrisers Hyderabad fans.",
+    date: "2026-11-24",
+    readMinutes: 5,
+    tags: ["south india", "cricket", "ipl"],
+    body: [
+      { type: "p", text: "The South has three of the IPL's loudest fan bases. Your team colours deserve more than a jersey in the cupboard — put them on the wall." },
+      { type: "h2", text: "CSK: the Yellove wall" },
+      { type: "p", text: "Go full yellow: a large poster of Thala Dhoni in the centre, flanked by smaller posters of legends and match-winning moments. Add a yellow cushion or bedsheet and the room is ready for Whistle Podu nights." },
+      { type: "h2", text: "RCB: red and gold" },
+      { type: "p", text: "RCB fans waited a long time for that first title — celebrate it. Red-and-black posters of Virat Kohli and big-night moments work beautifully with gold accents and warm lighting. Ee Sala Cup Namde, on your wall." },
+      { type: "h2", text: "SRH: the Orange Army corner" },
+      { type: "p", text: "Orange is bold, so balance it: one strong poster on a white or grey wall, with black frames or shelves around it. Perfect for a Hyderabad flat or hostel room." },
+      { type: "h2", text: "Layouts that work for any team" },
+      {
+        type: "list",
+        items: [
+          "Match-day wall: one split poster of a stadium or celebration moment above the TV.",
+          "Player gallery: one A2 captain poster plus three A4 team-mate posters in a row.",
+          "Study desk: a motivational A3 poster of your favourite player — focus mode on.",
+        ],
+      },
+      { type: "cta", text: "Shop cricket posters", href: "/shop/cricket" },
+    ],
+  },
+  {
+    slug: "poster-care-humid-cities-chennai-kochi",
+    title: "Poster Care in Humid Cities: Chennai, Kochi, Mangaluru & Vizag",
+    description:
+      "Coastal humidity can curl and wave paper posters. Simple tips to keep posters flat and fresh in Chennai, Kochi, Mangaluru, Vizag and other humid South Indian cities.",
+    date: "2026-11-24",
+    readMinutes: 4,
+    tags: ["south india", "poster care", "how to"],
+    body: [
+      { type: "p", text: "Sea breeze, monsoon rains and sticky summers — coastal South India is tough on paper. With a few habits, your posters will stay flat and vibrant for years." },
+      { type: "h2", text: "1. Choose thick, matte paper" },
+      { type: "p", text: "Thin paper absorbs moisture quickly and starts to wave. Heavier 300gsm matte paper is far more stable and doesn't show the shine of damp patches like glossy prints do." },
+      { type: "h2", text: "2. Pick the right wall" },
+      {
+        type: "list",
+        items: [
+          "Avoid walls shared with bathrooms or kitchens.",
+          "Skip walls that feel cool or damp to touch in the monsoon.",
+          "Interior walls stay drier than walls facing the sea or rain.",
+        ],
+      },
+      { type: "h2", text: "3. Use stronger mounting" },
+      { type: "p", text: "Humidity weakens putty and some tapes. Use good-quality removable adhesive strips on all four corners, or hang the poster in a clip frame so it isn't stuck to the wall at all." },
+      { type: "h2", text: "4. Let air circulate" },
+      { type: "p", text: "A ceiling fan or occasional AC keeps humidity down. During heavy monsoon weeks, open windows on dry afternoons to air out the room." },
+      { type: "h2", text: "5. Fixing a wavy poster" },
+      { type: "p", text: "Take it down, lay it flat under a few heavy books in an air-conditioned room overnight, and re-hang it with fresh strips." },
+      { type: "cta", text: "Shop 300gsm matte posters", href: "/shop" },
+    ],
+  },
+  {
+    slug: "bengaluru-pg-flat-room-decor-posters",
+    title: "Bengaluru PG & Flat Room Decor: Poster Ideas on a Budget",
+    description:
+      "Moved to Bengaluru for work or college? Budget-friendly poster decor ideas for PG rooms, shared flats and work-from-home corners — no nails, no deposit drama.",
+    date: "2026-11-24",
+    readMinutes: 5,
+    tags: ["south india", "bengaluru", "room decor"],
+    body: [
+      { type: "p", text: "Thousands of people move to Bengaluru every month for tech jobs and college. A PG room or shared flat can feel like home quickly — posters are the cheapest, fastest way to do it." },
+      { type: "h2", text: "PG room: one wall, one story" },
+      { type: "p", text: "Most PG rooms are small. Pick the wall behind your bed and keep it to one theme — anime, cars, cricket or cinema. One A2 poster with two A4s beside it is enough to change the whole feel." },
+      { type: "h2", text: "Work-from-home corner" },
+      { type: "p", text: "The wall behind your laptop shows up on every stand-up call. A clean A3 or A2 poster — minimal, aesthetic or motivational — looks professional and personal at the same time." },
+      { type: "h2", text: "Shared flat living room" },
+      { type: "p", text: "Agree on a theme with flatmates, then go big: a 3-panel split poster above the sofa gives the room a finished look for less than the cost of a weekend dinner out." },
+      { type: "h2", text: "Rules to protect your deposit" },
+      {
+        type: "list",
+        items: [
+          "Never use nails or strong double-sided tape on painted walls.",
+          "Use removable strips or poster putty, and peel slowly when moving out.",
+          "Keep posters rolled in their tube when shifting PGs — they travel easily.",
+        ],
+      },
+      { type: "p", text: "Ordering under budget? Orders above ₹499 ship free, and Cash on Delivery is available — handy when you've just moved in." },
+      { type: "cta", text: "Find posters for your room", href: "/shop" },
+    ],
+  },
+  {
+    slug: "hyderabad-room-decor-posters",
+    title: "Hyderabad Room Decor Ideas: Posters for Hostels, Flats & Gaming Rooms",
+    description:
+      "From Gachibowli flats to college hostels — poster decor ideas for Hyderabad rooms, plus tips to protect posters from harsh summer sun.",
+    date: "2026-11-24",
+    readMinutes: 4,
+    tags: ["south india", "hyderabad", "room decor"],
+    body: [
+      { type: "p", text: "Hyderabad mixes IT-corridor flats, busy college hostels and a huge gaming and cinema culture. Here's how to decorate each with posters." },
+      { type: "h2", text: "IT flat: minimal and modern" },
+      { type: "p", text: "Pick one or two large posters with a consistent colour palette — car art, aesthetic anime or motivational designs — and keep the rest of the wall clean." },
+      { type: "h2", text: "College hostel: fandom wall" },
+      { type: "p", text: "Tollywood heroes, SRH and anime are hostel favourites. Use A3 posters with removable strips so they come down easily at the end of the year." },
+      { type: "h2", text: "Gaming room" },
+      { type: "p", text: "A wide split poster above your desk plus RGB strips behind the monitor makes any room stream-ready. Matte paper avoids glare from screens and lights." },
+      { type: "h2", text: "Beat the summer sun" },
+      {
+        type: "list",
+        items: [
+          "Hyderabad summers are intense — avoid walls in direct afternoon sunlight to prevent fading.",
+          "Use curtains or blinds on west-facing windows.",
+          "Rotate posters between walls once a year if one wall gets more sun.",
+        ],
+      },
+      { type: "cta", text: "Shop posters", href: "/shop" },
+    ],
+  },
+  {
+    slug: "onam-pongal-ugadi-room-makeover-poster-ideas",
+    title: "Onam, Pongal & Ugadi Room Makeover: Festive Poster Decor Ideas",
+    description:
+      "Refresh your room for South Indian festivals. Easy poster makeover ideas and gift picks for Onam, Pongal, Ugadi and Vishu.",
+    date: "2026-11-24",
+    readMinutes: 4,
+    tags: ["south india", "festivals", "gift ideas"],
+    body: [
+      { type: "p", text: "Festivals are when homes get cleaned, painted and refreshed — the perfect time to change what's on your walls, or to gift something personal." },
+      { type: "h2", text: "Pongal (Tamil Nadu)" },
+      { type: "p", text: "After the Bhogi clean-up, a fresh wall feels right. Replace old prints with a new poster in warm harvest colours — yellows, oranges and greens — or treat yourself to the cricket or cinema poster you've been eyeing." },
+      { type: "h2", text: "Onam (Kerala)" },
+      { type: "p", text: "Families gather and rooms fill with guests. A calm, aesthetic poster or a gallery wall of small prints makes the living room feel festive without clutter." },
+      { type: "h2", text: "Ugadi (Karnataka, Andhra Pradesh, Telangana)" },
+      { type: "p", text: "A new year deserves a new look. Swap in a motivational poster for your study or work desk to start the year focused." },
+      { type: "h2", text: "Festival gift ideas" },
+      {
+        type: "list",
+        items: [
+          "Siblings: a poster of their favourite hero, team or anime character.",
+          "Students: a motivational A3 poster for their study table.",
+          "New homeowners: a split poster for their living room.",
+        ],
+      },
+      { type: "p", text: "Tip: order a little early — festival weeks are busy for couriers everywhere." },
+      { type: "cta", text: "Browse all posters", href: "/shop" },
+    ],
+  },
 ];
 
 export const getPost = (slug: string) => POSTS.find((p) => p.slug === slug);
 export const sortedPosts = () => [...POSTS].sort((a, b) => b.date.localeCompare(a.date));
+
+export const tagSlug = (t: string) => t.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+/** Tags used by 2+ posts get their own hub page at /blog/tag/<slug>. */
+export const blogTags = () => {
+  const counts = new Map<string, number>();
+  POSTS.forEach((p) => p.tags.forEach((t) => counts.set(t, (counts.get(t) ?? 0) + 1)));
+  return [...counts.entries()]
+    .filter(([, n]) => n >= 2)
+    .map(([name, count]) => ({ name, slug: tagSlug(name), count }))
+    .sort((a, b) => b.count - a.count);
+};

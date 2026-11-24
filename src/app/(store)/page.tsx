@@ -78,6 +78,14 @@ export default async function HomePage() {
               spread one artwork across multiple panels for a full-wall look. Every print is on thick 300gsm matte
               paper, ships in a rigid tube, and can be paid for with Cash on Delivery.
             </p>
+            <p className="mt-4 text-[15px] leading-relaxed text-ink-text/75">
+              New to decorating? Read our{" "}
+              <Link href="/blog" className="underline underline-offset-4 hover:text-accent">poster guides</Link>, including{" "}
+              <Link href="/blog/tag/south-india" className="underline underline-offset-4 hover:text-accent">
+                decor ideas for Tamil, Telugu, Kannada &amp; Malayalam cinema fans
+              </Link>
+              .
+            </p>
           </div>
           <FaqSection faqs={STORE_FAQ} />
         </div>

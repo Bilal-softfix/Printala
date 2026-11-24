@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Block, POSTS, getPost, sortedPosts } from "@/lib/blog";
+import { Block, POSTS, blogTags, getPost, sortedPosts, tagSlug } from "@/lib/blog";
 import { BASE_URL, generateBreadcrumbJsonLd } from "@/lib/seo";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -114,9 +114,11 @@ export default async function BlogPost({ params }: Props) {
     { name: "Blog", url: "/blog" },
     { name: post.title, url: `/blog/${post.slug}` },
   ];
+  const shared = (p: (typeof POSTS)[number]) => p.tags.filter((t) => post.tags.includes(t)).length;
   const more = sortedPosts()
     .filter((p) => p.slug !== post.slug)
-    .slice(0, 3);
+    .sort((a, b) => shared(b) - shared(a))
+    .slice(0, 4);
 
   return (
     <article className="min-h-screen bg-paper pt-28 pb-24 text-ink-text md:pt-36">
@@ -142,6 +144,17 @@ export default async function BlogPost({ params }: Props) {
           {post.title}
         </h1>
         <p className="mt-6 text-lg leading-relaxed text-ink-text/75">{post.description}</p>
+        <ul className="mt-6 flex flex-wrap gap-2" aria-label="Topics">
+          {post.tags
+            .filter((t) => blogTags().some((x) => x.name === t))
+            .map((t) => (
+              <li key={t}>
+                <Link href={`/blog/tag/${tagSlug(t)}`} className="chip capitalize">
+                  {t}
+                </Link>
+              </li>
+            ))}
+        </ul>
 
         <div className="mt-10 border-t border-black/10 pt-2 text-[16px] leading-[1.75] text-ink-text/85">
           {post.body.map((b, i) => (
