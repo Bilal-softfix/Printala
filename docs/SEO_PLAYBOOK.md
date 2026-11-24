@@ -31,7 +31,7 @@ Add real marketplace reviews and your store links in `src/lib/reviews.ts`. The h
 - **Pinterest** business account: pin every product (Pinterest ranks on Google images for “anime poster”). Link each pin to its product page.
 - **Instagram**: Reels of posters on walls; link in bio → site. Add the profile URL to `src/lib/site.ts → socials` so it appears in the footer and Google's business data.
 - Get listed: Google Business Profile (if you have a pickup/work address), IndiaMART/JustDial, Reddit (r/IndianGaming, r/animeindia — be helpful, not spammy).
-- Ask happy customers for reviews (later: show real reviews on the site → rich stars in Google).
+- Ask happy customers for reviews. Star ratings in Google need reviews collected **on printala.in itself** (a future on-site review feature) — copied marketplace reviews build trust but won't earn stars.
 
 ## Track monthly (Search Console → Performance)
 Queries, clicks, average position for: `anime posters`, `anime posters india`, `split posters`, `cricket posters`, `car posters`, `wall posters online`. Expect movement in **4–12 weeks**, not days.
