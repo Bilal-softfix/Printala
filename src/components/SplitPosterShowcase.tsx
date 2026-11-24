@@ -1,39 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { HiArrowUpRight } from "react-icons/hi2";
 import SectionHeading from "./ui/SectionHeading";
 import SplitAssembly from "./SplitAssembly";
-import { fetchProducts } from "@/lib/api";
-import { PRODUCTS as FALLBACK } from "@/lib/data";
 import { Product } from "@/types";
 import { formatPrice } from "@/lib/utils";
 import { EASE, VIEWPORT, fadeUp } from "@/lib/motion";
 
-const fallback = () => FALLBACK.filter((p) => p.type === "split-poster").slice(0, 3);
-
-export default function SplitPosterShowcase() {
-  const [sets, setSets] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function SplitPosterShowcase({ sets }: { sets: Product[] }) {
   const [active, setActive] = useState(0);
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const result = await fetchProducts({ type: "split-poster", limit: "3" });
-        setSets(result.data && result.data.length > 0 ? result.data : fallback());
-      } catch {
-        setSets(fallback());
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
-  }, []);
-
-  if (loading || sets.length === 0) return null;
+  if (sets.length === 0) return null;
   const set = sets[Math.min(active, sets.length - 1)];
 
   return (

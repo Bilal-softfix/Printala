@@ -1,41 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { HiArrowUpRight } from "react-icons/hi2";
 import ProductCard from "./ProductCard";
 import SectionHeading from "./ui/SectionHeading";
-import { fetchProducts } from "@/lib/api";
-import { PRODUCTS as FALLBACK } from "@/lib/data";
 import { Product } from "@/types";
-import { ProductGridSkeleton } from "./Skeleton";
 import { VIEWPORT, fadeUp } from "@/lib/motion";
 
-const fallback = () =>
-  FALLBACK.filter((p) => p.featured && p.type === "poster").slice(0, 6);
-
-export default function FeaturedGrid() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const result = await fetchProducts({
-          featured: "true",
-          type: "poster",
-          limit: "6",
-        });
-        setProducts(result.data && result.data.length > 0 ? result.data : fallback());
-      } catch {
-        setProducts(fallback());
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
-  }, []);
+export default function FeaturedGrid({ products }: { products: Product[] }) {
 
   return (
     <section
@@ -79,15 +52,11 @@ export default function FeaturedGrid() {
           </motion.div>
         </div>
 
-        {loading ? (
-          <ProductGridSkeleton count={6} />
-        ) : (
           <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 md:gap-x-6 md:gap-y-14">
             {products.map((product, i) => (
               <ProductCard key={product._id} product={product} index={i} />
             ))}
           </div>
-        )}
       </div>
     </section>
   );

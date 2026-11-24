@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
 import { HiArrowUpRight } from "react-icons/hi2";
-import { CATEGORIES } from "@/lib/data";
+import { CATEGORIES } from "@/lib/categories";
 import { VIEWPORT, lineReveal } from "@/lib/motion";
 
 /* Section I — the closing statement. Prints rise into view as you arrive. */

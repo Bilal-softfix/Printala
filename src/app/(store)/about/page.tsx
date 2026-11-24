@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import AnimateIn from "@/components/AnimateIn";
 import SectionHeading from "@/components/ui/SectionHeading";
-import { CATEGORIES } from "@/lib/data";
+import { CATEGORIES } from "@/lib/categories";
 
 export const metadata: Metadata = {
   title: "About",

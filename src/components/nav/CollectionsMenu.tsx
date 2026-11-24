@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { HiArrowUpRight } from "react-icons/hi2";
-import { CATEGORIES } from "@/lib/data";
+import { CATEGORIES } from "@/lib/categories";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 

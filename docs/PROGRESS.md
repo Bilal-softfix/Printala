@@ -1,6 +1,6 @@
 # Progress
 
-Legend: `[ ]` todo · `[x]` done · `[!]` blocked (reason). Details: `grep -n -A12 "^### <ID>" docs/ISSUES.md`.
+Legend: `[ ]` todo · `[~]` partial · `[x]` done · `[!]` blocked (reason). Details: `grep -n -A12 "^### <ID>" docs/ISSUES.md`.
 Work phases in order. Within a phase, top to bottom.
 
 ## Phase 1 — Quick wins (no decisions needed)
@@ -14,13 +14,13 @@ Work phases in order. Within a phase, top to bottom.
 - [x] S3 OG image, apple icon, logo; delete boilerplate SVGs — generated `opengraph-image.tsx`/`twitter-image.tsx`, `apple-icon.png`, `public/logo.png`; boilerplate SVGs deleted
 
 ## Phase 2 — SEO & rendering core
-- [ ] S1 Product page server-rendered + generateMetadata
-- [ ] S4 Metadata for shop/contact/cart/checkout
-- [ ] P1 Home sections fetched server-side
-- [ ] P2 Split CATEGORIES out of data.ts
-- [ ] S5 Dynamic sitemap + robots
+- [x] S1 Product page server-rendered + generateMetadata — `product/[id]/page.tsx` (server, ISR 5m, real 404) + `ProductDetails.tsx` (client); `src/lib/server-api.ts`; titles trimmed to ~60 chars; add-to-cart toast removed
+- [~] S4 Metadata — static metadata done; shop `?category=` titles come with S6
+- [x] P1 Home sections fetched server-side — home page ISR 5m; FeaturedGrid/CategoryShowcase/SplitPosterShowcase take props
+- [x] P2 Split CATEGORIES — `src/lib/categories.ts` (data.ts re-exports); client components import it
+- [x] S5 Dynamic sitemap — from API (fallback data.ts), BASE_URL, product images
 - [ ] S6 Category landing pages
-- [ ] S9 Richer Product JSON-LD
+- [x] S9 Product JSON-LD — sku, image array, AggregateOffer (low/high by size)
 
 ## Phase 3 — Conversion & functionality
 - [!] F1 Shipping values — threshold ₹499 + INR format (no decimals) done; needs D1 fee amount (`SHIPPING_FEE` in `src/lib/cart.ts`)
@@ -64,3 +64,4 @@ _(API changes needed, one line each)_
 _(one line per session: date · IDs done · notes)_
 - 2026-11-24 · Phase 1 done (S2 S7 F10 X2 C2 F8 X1-short S3) · tsc + build pass; lint errors only pre-existing in admin (C4). S4 partly done: static metadata added; shop category titles + product metadata pending (S6/S1).
 - 2026-11-24 · Decisions applied: S8 U1 done; F1 F7 U2 partial/blocked · tsc + eslint clean
+- 2026-11-24 · Phase 2: S1 P1 P2 S5 S9 done · removed `(store)/loading.tsx` (it forced HTTP 200 on notFound) · build + SSR checks pass. Next: S6 (+ rest of S4).

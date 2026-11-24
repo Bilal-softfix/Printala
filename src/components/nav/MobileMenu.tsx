@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { HiOutlineSearch } from "react-icons/hi";
-import { CATEGORIES } from "@/lib/data";
+import { CATEGORIES } from "@/lib/categories";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 

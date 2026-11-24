@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -11,8 +11,6 @@ import {
 } from "framer-motion";
 import { HiArrowUpRight } from "react-icons/hi2";
 import SectionHeading from "./ui/SectionHeading";
-import { fetchCategories } from "@/lib/api";
-import { CATEGORIES as FALLBACK_CATEGORIES } from "@/lib/data";
 import { Category } from "@/types";
 import { VIEWPORT, clipReveal, fadeUp } from "@/lib/motion";
 
@@ -43,31 +41,7 @@ const NAME_SIZE = {
   sm: "text-[clamp(1.25rem,2vw,1.875rem)]",
 };
 
-export default function CategoryShowcase() {
-  const [categories, setCategories] = useState<Category[]>(FALLBACK_CATEGORIES);
-
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const result = await fetchCategories();
-        if (result.data && result.data.length > 0) {
-          const merged = FALLBACK_CATEGORIES.map((fallbackCat) => {
-            const apiCat = result.data.find(
-              (c: { name: string; count: number }) =>
-                c.name === fallbackCat.slug,
-            );
-            return {
-              ...fallbackCat,
-              count: apiCat ? apiCat.count : fallbackCat.count,
-            };
-          });
-          setCategories(merged);
-        }
-      } catch {
-      }
-    };
-    load();
-  }, []);
+export default function CategoryShowcase({ categories }: { categories: Category[] }) {
 
   const bySlug = Object.fromEntries(categories.map((c) => [c.slug, c]));
 

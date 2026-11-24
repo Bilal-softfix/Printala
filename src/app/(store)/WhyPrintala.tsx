@@ -4,7 +4,7 @@ import { useRef } from "react";
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import SectionHeading from "@/components/ui/SectionHeading";
-import { CATEGORIES } from "@/lib/data";
+import { CATEGORIES } from "@/lib/categories";
 import { EASE, VIEWPORT } from "@/lib/motion";
 
 /* Section G — product quality as an editorial spec sheet.

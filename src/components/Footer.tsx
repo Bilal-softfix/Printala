@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Newsletter from "./Newsletter";
-import { CATEGORIES } from "@/lib/data";
+import { CATEGORIES } from "@/lib/categories";
 import { SITE } from "@/lib/site";
 
 /* Support/policy pages get added here as they are built (F7). */

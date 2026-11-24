@@ -13,7 +13,7 @@ import {
   type MotionValue,
 } from "framer-motion";
 import { HiArrowRight, HiArrowUpRight } from "react-icons/hi2";
-import { CATEGORIES } from "@/lib/data";
+import { CATEGORIES } from "@/lib/categories";
 
 /* ─────────────────────────────────────────────────────────────
    The composition. Every print is a real catalogue image (each

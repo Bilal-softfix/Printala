@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { HiOutlineSearch } from "react-icons/hi";
 import { HiXMark } from "react-icons/hi2";
-import { CATEGORIES } from "@/lib/data";
+import { CATEGORIES } from "@/lib/categories";
 
 import { EASE } from "@/lib/motion";
 

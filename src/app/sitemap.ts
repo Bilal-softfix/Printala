@@ -1,21 +1,26 @@
 import type { MetadataRoute } from "next";
 import { PRODUCTS } from "@/lib/data";
+import { BASE_URL } from "@/lib/seo";
+import { getProducts } from "@/lib/server-api";
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://printala.in";
+export const revalidate = 3600;
 
-  const staticPages = [
-    { url: baseUrl, lastModified: new Date(), changeFrequency: "daily" as const, priority: 1 },
-    { url: `${baseUrl}/shop`, lastModified: new Date(), changeFrequency: "daily" as const, priority: 0.9 },
-    { url: `${baseUrl}/about`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.6 },
-    { url: `${baseUrl}/contact`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.5 },
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const products = (await getProducts({ limit: "1000" })) || PRODUCTS;
+
+  const staticPages: MetadataRoute.Sitemap = [
+    { url: BASE_URL, changeFrequency: "daily", priority: 1 },
+    { url: `${BASE_URL}/shop`, changeFrequency: "daily", priority: 0.9 },
+    { url: `${BASE_URL}/about`, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${BASE_URL}/contact`, changeFrequency: "monthly", priority: 0.5 },
   ];
 
-  const productPages = PRODUCTS.map((product) => ({
-    url: `${baseUrl}/product/${product._id}`,
-    lastModified: new Date(product.createdAt),
-    changeFrequency: "weekly" as const,
+  const productPages: MetadataRoute.Sitemap = products.map((p) => ({
+    url: `${BASE_URL}/product/${p._id}`,
+    lastModified: p.createdAt ? new Date(p.createdAt) : undefined,
+    changeFrequency: "weekly",
     priority: 0.8,
+    images: [p.image],
   }));
 
   return [...staticPages, ...productPages];
