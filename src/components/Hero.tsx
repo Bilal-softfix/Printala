@@ -329,7 +329,7 @@ const PrintSlot = memo(function PrintSlot({
             transition={{ type: "spring", stiffness: 240, damping: 22 }}
           >
             <Link
-              href={`/shop?category=${cat.slug}`}
+              href={`/shop/${cat.slug}`}
               aria-label={`Browse ${cat.name} posters`}
               className="gallery-print-wrap relative block outline-none"
             >

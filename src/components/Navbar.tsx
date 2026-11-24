@@ -22,7 +22,7 @@ const MOBILE_LINKS = [
   { href: "/shop", label: "Shop" },
   { href: "/#collections", label: "Collections" },
   { href: "/shop?sort=bestseller", label: "Trending" },
-  { href: "/shop?category=split-poster", label: "Split Posters" },
+  { href: "/shop/split-poster", label: "Split Posters" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];

@@ -15,11 +15,11 @@ Work phases in order. Within a phase, top to bottom.
 
 ## Phase 2 — SEO & rendering core
 - [x] S1 Product page server-rendered + generateMetadata — `product/[id]/page.tsx` (server, ISR 5m, real 404) + `ProductDetails.tsx` (client); `src/lib/server-api.ts`; titles trimmed to ~60 chars; add-to-cart toast removed
-- [~] S4 Metadata — static metadata done; shop `?category=` titles come with S6
+- [x] S4 Metadata — static metadata + category titles via S6
 - [x] P1 Home sections fetched server-side — home page ISR 5m; FeaturedGrid/CategoryShowcase/SplitPosterShowcase take props
 - [x] P2 Split CATEGORIES — `src/lib/categories.ts` (data.ts re-exports); client components import it
 - [x] S5 Dynamic sitemap — from API (fallback data.ts), BASE_URL, product images
-- [ ] S6 Category landing pages
+- [x] S6 Category landing pages — `/shop/[category]` (8 static pages, ISR 5m, unique H1/intro/meta, breadcrumb JSON-LD, noindex when empty); all nav links updated; `/shop?category=x` → 308; added to sitemap
 - [x] S9 Product JSON-LD — sku, image array, AggregateOffer (low/high by size)
 
 ## Phase 3 — Conversion & functionality
@@ -65,3 +65,4 @@ _(one line per session: date · IDs done · notes)_
 - 2026-11-24 · Phase 1 done (S2 S7 F10 X2 C2 F8 X1-short S3) · tsc + build pass; lint errors only pre-existing in admin (C4). S4 partly done: static metadata added; shop category titles + product metadata pending (S6/S1).
 - 2026-11-24 · Decisions applied: S8 U1 done; F1 F7 U2 partial/blocked · tsc + eslint clean
 - 2026-11-24 · Phase 2: S1 P1 P2 S5 S9 done · removed `(store)/loading.tsx` (it forced HTTP 200 on notFound) · build + SSR checks pass. Next: S6 (+ rest of S4).
+- 2026-11-24 · S6 + S4 done; default title says "Free Shipping over ₹499" · build + SSR checks pass. Phase 2 complete. Football category has 0 products (noindexed).

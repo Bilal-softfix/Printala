@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { PRODUCTS } from "@/lib/data";
+import { CATEGORIES } from "@/lib/categories";
 import { BASE_URL } from "@/lib/seo";
 import { getProducts } from "@/lib/server-api";
 
@@ -15,6 +16,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/contact`, changeFrequency: "monthly", priority: 0.5 },
   ];
 
+  const categoryPages: MetadataRoute.Sitemap = CATEGORIES.map((c) => ({
+    url: `${BASE_URL}/shop/${c.slug}`,
+    changeFrequency: "daily",
+    priority: 0.85,
+  }));
+
   const productPages: MetadataRoute.Sitemap = products.map((p) => ({
     url: `${BASE_URL}/product/${p._id}`,
     lastModified: p.createdAt ? new Date(p.createdAt) : undefined,
@@ -23,5 +30,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     images: [p.image],
   }));
 
-  return [...staticPages, ...productPages];
+  return [...staticPages, ...categoryPages, ...productPages];
 }

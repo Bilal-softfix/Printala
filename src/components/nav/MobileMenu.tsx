@@ -69,7 +69,7 @@ export default function MobileMenu({
             {CATEGORIES.map((c) => (
               <li key={c.slug}>
                 <Link
-                  href={`/shop?category=${c.slug}`}
+                  href={`/shop/${c.slug}`}
                   onClick={onClose}
                   className="inline-flex rounded-full border border-white/15 px-3.5 py-2 text-sm text-cream/85"
                 >

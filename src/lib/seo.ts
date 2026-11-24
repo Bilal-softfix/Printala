@@ -1,4 +1,5 @@
 import { SITE } from "./site";
+import { CATEGORIES } from "./categories";
 import { Product } from "@/types";
 
 const abs = (url: string, baseUrl: string) =>
@@ -88,10 +89,15 @@ export function productBreadcrumbs(product: Product) {
   return [
     { name: "Home", url: "/" },
     { name: "Shop", url: "/shop" },
-    {
-      name: product.category.charAt(0).toUpperCase() + product.category.slice(1),
-      url: `/shop?category=${product.category}`,
-    },
+    (() => {
+      const cat = CATEGORIES.find((c) => c.slug === product.category);
+      return cat
+        ? { name: cat.name, url: `/shop/${cat.slug}` }
+        : {
+            name: product.category.charAt(0).toUpperCase() + product.category.slice(1),
+            url: `/shop?category=${product.category}`,
+          };
+    })(),
     { name: product.name, url: `/product/${product._id}` },
   ];
 }

@@ -1,6 +1,17 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Old filter URLs → category landing pages (S6).
+  async redirects() {
+    return [
+      {
+        source: "/shop",
+        has: [{ type: "query", key: "category", value: "(?<cat>[a-z-]+)" }],
+        destination: "/shop/:cat",
+        permanent: true,
+      },
+    ];
+  },
   images: {
     formats: ["image/avif", "image/webp"],
      remotePatterns: [

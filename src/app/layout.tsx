@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
     default:
-      "Printala — Premium Posters, Split Wall Art & More | Free Shipping in India",
+      "Printala — Premium Posters, Split Wall Art & More | Free Shipping over ₹499",
     template: "%s | Printala",
   },
   description:

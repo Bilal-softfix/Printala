@@ -69,7 +69,7 @@ export default function ClosingStatement() {
             </span>
           </Link>
           <Link
-            href="/shop?category=split-poster"
+            href="/shop/split-poster"
             className="border-b border-white/25 pb-1 text-sm text-cream/80 transition-colors hover:border-accent hover:text-cream"
           >
             Explore split posters
@@ -80,7 +80,7 @@ export default function ClosingStatement() {
       {/* Fan of prints rising from below */}
       <div className="relative mx-auto mt-16 flex h-[clamp(14rem,34vw,26rem)] max-w-5xl items-end justify-center md:mt-20">
         {FAN.map((c, i) => (
-          <FanPrint key={c.slug} src={c.image} href={`/shop?category=${c.slug}`} name={c.name} i={i} progress={scrollYProgress} />
+          <FanPrint key={c.slug} src={c.image} href={`/shop/${c.slug}`} name={c.name} i={i} progress={scrollYProgress} />
         ))}
       </div>
     </section>

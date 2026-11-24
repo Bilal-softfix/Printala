@@ -44,7 +44,7 @@ export default function CollectionsMenu({
           <div className="mt-8 flex flex-col gap-3 text-sm">
             {[
               { href: "/shop", label: "All posters" },
-              { href: "/shop?category=split-poster", label: "Split posters" },
+              { href: "/shop/split-poster", label: "Split posters" },
               { href: "/shop?sort=bestseller", label: "Trending now" },
             ].map((l) => (
               <Link
@@ -73,7 +73,7 @@ export default function CollectionsMenu({
               transition={{ delay: 0.04 * i, duration: 0.4, ease: EASE }}
             >
               <Link
-                href={`/shop?category=${c.slug}`}
+                href={`/shop/${c.slug}`}
                 onClick={onNavigate}
                 className="group flex items-center gap-4"
               >

@@ -144,7 +144,7 @@ export default function SplitPosterShowcase({ sets }: { sets: Product[] }) {
               </span>
             </Link>
             <Link
-              href="/shop?category=split-poster"
+              href="/shop/split-poster"
               className="border-b border-white/25 pb-1 text-sm text-cream/80 transition-colors hover:border-accent hover:text-cream"
             >
               All split posters

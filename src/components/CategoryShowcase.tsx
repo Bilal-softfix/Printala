@@ -119,7 +119,7 @@ function Tile({ slot, cat, index }: { slot: Slot; cat: Category; index: number }
       style={{ "--gc": slot.col, "--gr": slot.row } as React.CSSProperties}
     >
       <Link
-        href={`/shop?category=${cat.slug}`}
+        href={`/shop/${cat.slug}`}
         aria-label={`Shop ${cat.name} — ${cat.count} designs`}
         className="group absolute inset-0 block"
       >

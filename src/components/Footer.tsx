@@ -5,11 +5,11 @@ import { SITE } from "@/lib/site";
 
 /* Support/policy pages get added here as they are built (F7). */
 const COLUMNS = {
-  Collections: CATEGORIES.map((c) => ({ label: c.name, href: `/shop?category=${c.slug}` })),
+  Collections: CATEGORIES.map((c) => ({ label: c.name, href: `/shop/${c.slug}` })),
   Shop: [
     { label: "All posters", href: "/shop" },
     { label: "Trending", href: "/shop?sort=bestseller" },
-    { label: "Split posters", href: "/shop?category=split-poster" },
+    { label: "Split posters", href: "/shop/split-poster" },
     { label: "Cart", href: "/cart" },
   ],
   Company: [
