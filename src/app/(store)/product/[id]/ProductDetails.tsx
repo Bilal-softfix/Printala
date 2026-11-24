@@ -7,7 +7,7 @@ import { HiMinus, HiPlus } from "react-icons/hi";
 import { HiCheck, HiOutlineShoppingBag } from "react-icons/hi2";
 import { useCartStore, MAX_QTY } from "@/store/cartStore";
 import { Product, Size } from "@/types";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, isOrderableId } from "@/lib/utils";
 import { FREE_SHIPPING_MIN, rupees } from "@/lib/cart";
 import ProductCard from "@/components/ProductCard";
 import ProductGallery from "@/components/product/ProductGallery";
@@ -211,7 +211,7 @@ export default function ProductDetails({
                   type="button"
                   whileTap={{ scale: 0.97 }}
                   onClick={handleAddToCart}
-                  disabled={!product.inStock}
+                  disabled={!product.inStock || !isOrderableId(product._id)}
                   className={`relative flex h-14 flex-1 items-center justify-center gap-3 overflow-hidden text-sm font-medium text-cream transition-colors duration-500 disabled:cursor-not-allowed disabled:bg-ink-text/40 ${
                     added ? "bg-accent" : "bg-ink-text hover:bg-accent"
                   }`}
@@ -225,7 +225,9 @@ export default function ProductDetails({
                       transition={{ duration: 0.3, ease: EASE }}
                       className="flex items-center gap-2.5"
                     >
-                      {!product.inStock ? (
+                      {!isOrderableId(product._id) ? (
+                        "Unavailable right now"
+                      ) : !product.inStock ? (
                         "Sold out"
                       ) : added ? (
                         <>

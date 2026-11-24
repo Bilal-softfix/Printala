@@ -8,3 +8,7 @@ export function getErrorMessage(err: unknown, fallback: string): string {
       ?.message || fallback
   );
 }
+
+/** Real catalog products have MongoDB ObjectIds; static fallback items don't
+ *  (e.g. "anime-1") and can't be ordered. */
+export const isOrderableId = (id: string) => /^[a-f0-9]{24}$/i.test(id);

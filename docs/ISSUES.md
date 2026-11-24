@@ -67,6 +67,11 @@ Fix: Owner decision D2. If yes: integrate Razorpay Checkout with server-created 
 Files: `src/app/(store)/product/[id]/page.tsx` (`/shop?search=${tag}`)
 Fix: `encodeURIComponent(tag)`.
 
+### F11 · P0 · "Invalid ID" when ordering from an old cart (fixed)
+Files: `src/store/cartStore.ts`, `src/app/(store)/checkout/page.tsx`, `src/lib/server-api.ts`, `src/lib/utils.ts`
+Problem: When the API cold-starts, static fallback products (ids `anime-1`…) are shown and can be added to the persisted cart; the API rejects them with HTTP 400 "Invalid ID format" at checkout.
+Fix: `isOrderableId()` (24-hex ObjectId) guards add-to-cart, cart persist `version: 1` migration drops bad items, `refreshItems` treats 400/404 as removed, checkout re-validates before `createOrder`.
+
 ---
 
 ## 2. SEO

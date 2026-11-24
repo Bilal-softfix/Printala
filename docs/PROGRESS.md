@@ -34,6 +34,8 @@ Work phases in order. Within a phase, top to bottom.
 - [x] U1 Copy consistency — all Hinglish strings → English (store + admin)
 - [~] U3 Product page — WhatsApp question link, toast removed; size guide + delivery estimate need D7
 
+- [x] F11 "Invalid ID" at checkout for old carts — fallback products (ids like `anime-1`) could enter the cart; API returns 400. Fixed: `isOrderableId`, cart migration v1, refresh treats 400 as gone, checkout re-validates before ordering, fallback products not addable, server treats 400 as not found
+
 ## Phase 4 — Polish
 - [x] A1 Contrast — store text /45,/55 → /70 (≈6:1), 10–11px → 12px
 - [x] A2 Native radio size selector (sr-only input, focus ring on label)
@@ -70,3 +72,4 @@ _(one line per session: date · IDs done · notes)_
 - 2026-11-24 · S6 + S4 done; default title says "Free Shipping over ₹499" · build + SSR checks pass. Phase 2 complete. Football category has 0 products (noindexed).
 - 2026-11-24 · Phase 3: F1 F2 F3 F4 F5 done; F6 U3 partial · build + route smoke tests pass. Remaining: F7 (D7), F6 pagination, U3 rest (D7).
 - 2026-11-24 · Phase 4: A1 A2 A3 A4 U4 P3 C1 C3 C4 done · `npm run check` + build + smoke tests pass. Remaining: U2 (real reviews), S10 (D4), F9 (D2), U5, P4, F7 (D7), F6 pagination.
+- 2026-11-24 · F11 fixed (invalid id in persisted cart) · check + build + 404 test pass · pushed.

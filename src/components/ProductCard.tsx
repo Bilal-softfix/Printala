@@ -9,6 +9,7 @@ import { useCartStore } from "@/store/cartStore";
 import { formatPrice } from "@/lib/utils";
 import { EASE } from "@/lib/motion";
 import toast from "react-hot-toast";
+import { isOrderableId } from "@/lib/utils";
 import TiltCard from "./TiltCard";
 import SplitPosterPreview from "@/components/SplitPosterPreview";
 
@@ -31,6 +32,8 @@ export default function ProductCard({
     : 0;
 
   const handleQuickAdd = () => {
+    if (!isOrderableId(product._id))
+      return toast.error("This poster is unavailable right now. Please refresh and try again.");
     addItem(product, product.sizes[0]);
     toast.success(`${product.name} added to cart!`);
   };

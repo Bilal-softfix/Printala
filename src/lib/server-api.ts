@@ -15,7 +15,8 @@ async function get<T>(path: string, params?: Record<string, string>): Promise<T>
     next: { revalidate: REVALIDATE },
     signal: AbortSignal.timeout(20000),
   });
-  if (res.status === 404) throw new NotFoundError();
+  // 400 = malformed id ("Invalid ID format"), 404 = deleted: both mean "no such product".
+  if (res.status === 404 || res.status === 400) throw new NotFoundError();
   if (!res.ok) throw new Error(`API ${res.status} ${path}`);
   const json = await res.json();
   return json.data as T;

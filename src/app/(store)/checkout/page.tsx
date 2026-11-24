@@ -72,7 +72,7 @@ const FIELDS: {
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, totalPrice, clearCart } = useCartStore();
+  const { items, totalPrice, clearCart, refreshItems } = useCartStore();
   useCartRefresh();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState(EMPTY);
@@ -88,8 +88,22 @@ export default function CheckoutPage() {
 
     setLoading(true);
     try {
+      // Re-validate against the API right before ordering: drops deleted,
+      // sold-out or invalid (fallback) products and refreshes prices.
+      const removed = await refreshItems();
+      if (removed.length) {
+        toast.error(
+          `Removed (no longer available): ${removed.join(", ")}. Please review your order.`,
+          { duration: 7000 },
+        );
+        return;
+      }
+      const cart = useCartStore.getState();
+      const fresh = cartTotals(cart.totalPrice());
+      if (!cart.items.length) return toast.error("Your cart is empty.");
+
       const orderData = {
-        items: items.map((item) => ({
+        items: cart.items.map((item) => ({
           product: item.product._id,
           size: item.selectedSize.label,
           quantity: item.quantity,
@@ -116,14 +130,14 @@ export default function CheckoutPage() {
             `order:${orderNumber}`,
             JSON.stringify({
               orderNumber,
-              items: items.map((i) => ({
+              items: cart.items.map((i) => ({
                 name: i.product.name,
                 size: i.selectedSize.label,
                 quantity: i.quantity,
                 price: i.product.price + i.selectedSize.priceModifier,
               })),
-              shippingCost: shipping,
-              total,
+              shippingCost: fresh.shipping,
+              total: fresh.total,
             }),
           );
         } catch {}

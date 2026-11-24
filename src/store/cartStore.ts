@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { Product, CartItem, Size } from "@/types";
 import { fetchProductById } from "@/lib/api";
+import { isOrderableId } from "@/lib/utils";
 
 export const MAX_QTY = 10;
 const clampQty = (n: number) => Math.min(MAX_QTY, Math.max(1, n));
@@ -33,6 +34,7 @@ export const useCartStore = create<CartStore>()(
       toggleCart: () => set((s) => ({ isOpen: !s.isOpen })),
 
       addItem: (product, size, quantity = 1) => {
+        if (!isOrderableId(product._id)) return; // fallback/demo product
         const items = get().items;
         const idx = items.findIndex(
           (i) => i.product._id === product._id && i.selectedSize.label === size.label
@@ -69,8 +71,7 @@ export const useCartStore = create<CartStore>()(
       clearCart: () => set({ items: [] }),
 
       refreshItems: async () => {
-        const ids = [...new Set(get().items.map((i) => i.product._id))];
-        if (!ids.length) return [];
+        const ids = [...new Set(get().items.map((i) => i.product._id))].filter(isOrderableId);
         const results = await Promise.allSettled(ids.map((id) => fetchProductById(id)));
         // undefined = couldn't check (keep item), null = gone (remove item)
         const fresh = new Map<string, Product | null>();
@@ -78,13 +79,19 @@ export const useCartStore = create<CartStore>()(
           if (r.status === "fulfilled" && r.value?.data) fresh.set(ids[i], r.value.data);
           else if (
             r.status === "rejected" &&
-            (r.reason as { response?: { status?: number } })?.response?.status === 404
+            [400, 404].includes(
+              (r.reason as { response?: { status?: number } })?.response?.status ?? 0,
+            )
           )
             fresh.set(ids[i], null);
         });
 
         const removed: string[] = [];
         const items = get().items.flatMap((it) => {
+          if (!isOrderableId(it.product._id)) {
+            removed.push(it.product.name);
+            return [];
+          }
           if (!fresh.has(it.product._id)) return [it];
           const p = fresh.get(it.product._id);
           const size = p?.sizes.find((s) => s.label === it.selectedSize.label);
@@ -108,6 +115,12 @@ export const useCartStore = create<CartStore>()(
     }),
     {
       name: "printala-cart",
+      version: 1,
+      // v0 carts could contain fallback products with non-Mongo ids → drop them.
+      migrate: (state) => {
+        const s = state as { items?: CartItem[] };
+        return { items: (s.items ?? []).filter((i) => isOrderableId(i.product._id)) };
+      },
       // Persist only the cart contents, never UI state (sidebar would reopen on reload)
       partialize: (s) => ({ items: s.items }),
     }
