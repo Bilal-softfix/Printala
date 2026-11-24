@@ -24,8 +24,7 @@ export default function SplitPosterShowcase() {
       try {
         const result = await fetchProducts({ type: "split-poster", limit: "3" });
         setSets(result.data && result.data.length > 0 ? result.data : fallback());
-      } catch (err) {
-        console.log("SplitPosterShowcase: Using fallback", err);
+      } catch {
         setSets(fallback());
       } finally {
         setLoading(false);

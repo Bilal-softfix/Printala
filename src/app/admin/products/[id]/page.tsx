@@ -81,7 +81,7 @@ export default function ProductFormPage() {
             isNew: p.isNew || false,
           });
         } catch {
-          toast.error("Product load nahi ho paya");
+          toast.error("Couldn't load product.");
           router.push("/admin/products");
         } finally {
           setLoading(false);

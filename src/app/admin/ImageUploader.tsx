@@ -35,7 +35,7 @@ export default function ImageUploader({
       // Validate file type
       const allowed = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
       if (!allowed.includes(file.type)) {
-        toast.error("Sirf JPG, PNG, WebP allowed hai!");
+        toast.error("Only JPG, PNG and WebP images are allowed.");
         return;
       }
 

@@ -8,7 +8,7 @@ import { HiOutlineSearch } from "react-icons/hi";
 import { HiXMark } from "react-icons/hi2";
 import { CATEGORIES } from "@/lib/data";
 
-const EASE = [0.22, 1, 0.36, 1] as const;
+import { EASE } from "@/lib/motion";
 
 /** Full-screen search. Submits to the existing /shop?search= flow. */
 export default function SearchOverlay({ onClose }: { onClose: () => void }) {

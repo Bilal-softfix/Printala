@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import { useCartStore } from "@/store/cartStore";
 import toast from "react-hot-toast";
 import { createOrder } from "@/lib/api";
+import { getErrorMessage } from "@/lib/utils";
 import { cartTotals, rupees } from "@/lib/cart";
 import { EASE } from "@/lib/motion";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -54,7 +55,7 @@ export default function CheckoutPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!items.length) return toast.error("Cart khali hai!");
+    if (!items.length) return toast.error("Your cart is empty.");
 
     setLoading(true);
     try {
@@ -84,9 +85,7 @@ export default function CheckoutPage() {
         router.push("/");
       }
     } catch (err) {
-      const message =
-        (err as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message || "Order place nahi ho paya. Try again.";
+      const message = getErrorMessage(err, "Couldn't place your order. Please try again.");
       toast.error(message);
     } finally {
       setLoading(false);

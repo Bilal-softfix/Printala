@@ -28,8 +28,7 @@ export default function FeaturedGrid() {
           limit: "6",
         });
         setProducts(result.data && result.data.length > 0 ? result.data : fallback());
-      } catch (err) {
-        console.log("FeaturedGrid: Using fallback data", err);
+      } catch {
         setProducts(fallback());
       } finally {
         setLoading(false);

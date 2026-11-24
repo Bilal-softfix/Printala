@@ -63,8 +63,7 @@ export default function CategoryShowcase() {
           });
           setCategories(merged);
         }
-      } catch (err) {
-        console.log("CategoryShowcase: Using fallback", err);
+      } catch {
       }
     };
     load();

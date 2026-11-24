@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { HiArrowRight, HiCheck } from "react-icons/hi2";
 import toast from "react-hot-toast";
+import { getErrorMessage } from "@/lib/utils";
 import { subscribeNewsletter } from "@/lib/api";
 
 /** Newsletter sign-up (lives in the footer). Uses the existing subscribe API. */
@@ -22,9 +23,7 @@ export default function Newsletter() {
       setDone(true);
       setTimeout(() => setDone(false), 2500);
     } catch (err) {
-      const msg =
-        (err as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message || "Subscribe nahi ho paya, try again!";
+      const msg = getErrorMessage(err, "Couldn't subscribe. Please try again.");
       toast.error(msg);
     } finally {
       setLoading(false);

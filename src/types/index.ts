@@ -31,17 +31,6 @@ export interface CartItem {
   selectedSize: Size;
 }
 
-export interface ShippingAddress {
-  fullName: string;
-  email: string;
-  phone: string;
-  address: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  country: string;
-}
-
 export interface Testimonial {
   id: string;
   name: string;

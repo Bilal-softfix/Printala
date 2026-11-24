@@ -3,14 +3,16 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
+import { getErrorMessage } from "@/lib/utils";
 import AnimateIn from "@/components/AnimateIn";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { sendContactMessage } from "@/lib/api";
+import { SITE } from "@/lib/site";
 
 const INFO = [
-  { label: "Email", value: "hello@printala.com", href: "mailto:hello@printala.com" },
-  { label: "Response time", value: "Within 24 hours" },
-  { label: "Hours", value: "Mon – Fri, 9am – 6pm EST" },
+  { label: "Call", value: SITE.phone, href: SITE.phoneHref },
+  { label: "WhatsApp", value: "Chat with us", href: SITE.whatsappHref },
+  { label: "Hours", value: SITE.hours },
 ];
 
 export default function ContactPage() {
@@ -25,12 +27,10 @@ export default function ContactPage() {
     setLoading(true);
     try {
       const result = await sendContactMessage(form);
-      toast.success(result.message || "Message bhej diya!");
+      toast.success(result.message || "Message sent! We'll get back to you soon.");
       setForm({ name: "", email: "", subject: "", message: "" });
     } catch (err) {
-      const msg =
-        (err as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message || "Message nahi gaya. Try again!";
+      const msg = getErrorMessage(err, "Couldn't send your message. Please try again.");
       toast.error(msg);
     } finally {
       setLoading(false);
@@ -53,7 +53,11 @@ export default function ContactPage() {
                   <dt className="text-[10.5px] uppercase tracking-[0.26em] text-ink-text/55">{item.label}</dt>
                   <dd className="text-right">
                     {item.href ? (
-                      <a href={item.href} className="transition-colors hover:text-accent">
+                      <a
+                        href={item.href}
+                        {...(item.href.startsWith("http") && { target: "_blank", rel: "noopener noreferrer" })}
+                        className="transition-colors hover:text-accent"
+                      >
                         {item.value}
                       </a>
                     ) : (

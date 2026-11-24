@@ -39,7 +39,7 @@ export default function AdminProductsPage() {
   }, [search]);
 
   const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`"${name}" delete karna hai? Ye wapas nahi aayega!`)) return;
+    if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
     setDeleting(id);
     try {
       await deleteProduct(id);

@@ -11,6 +11,7 @@ import { fetchProductById, fetchRelatedProducts } from "@/lib/api";
 import { PRODUCTS as FALLBACK } from "@/lib/data";
 import { Product, Size } from "@/types";
 import { formatPrice } from "@/lib/utils";
+import { FREE_SHIPPING_MIN, rupees } from "@/lib/cart";
 import {
   generateProductJsonLd,
   generateBreadcrumbJsonLd,
@@ -24,7 +25,7 @@ import toast from "react-hot-toast";
 
 /* Store-wide terms already shown on this page before the redesign. */
 const TRUST = [
-  { title: "Free shipping", text: "On orders of ₹499 and above" },
+  { title: "Free shipping", text: `On orders of ${rupees(FREE_SHIPPING_MIN)} and above` },
   { title: "Easy returns", text: "7-day return policy" },
   { title: "Cash on Delivery", text: "Pay when your poster arrives" },
 ];
@@ -54,8 +55,7 @@ export default function ProductPage() {
             // Related products failed — not critical
           }
         }
-      } catch (err) {
-        console.log("ProductPage: Using fallback", err);
+      } catch {
         const found = FALLBACK.find((p) => p._id === id);
         if (found) {
           setProduct(found);
@@ -95,13 +95,13 @@ export default function ProductPage() {
       <div className="flex min-h-screen flex-col items-center justify-center bg-paper px-5 pt-28 pb-20 text-center text-ink-text">
         <p className="text-[10.5px] uppercase tracking-[0.3em] text-ink-text/55">404</p>
         <h1 className="mt-4 font-display text-4xl font-bold uppercase tracking-[-0.04em] md:text-6xl">
-          Product nahi mila
+          Poster not found
         </h1>
         <Link
           href="/shop"
           className="mt-8 inline-flex rounded-full bg-ink-text px-7 py-3.5 text-sm font-medium text-cream transition-colors hover:bg-accent"
         >
-          Shop pe jao →
+          Browse posters →
         </Link>
       </div>
     );
@@ -357,7 +357,7 @@ export default function ProductPage() {
                   {product.tags.map((tag) => (
                     <li key={tag}>
                       <Link
-                        href={`/shop?search=${tag}`}
+                        href={`/shop?search=${encodeURIComponent(tag)}`}
                         className="inline-flex rounded-full border border-black/15 px-3 py-1.5 text-xs text-ink-text/70 transition-colors hover:border-ink-text hover:text-ink-text"
                       >
                         #{tag}

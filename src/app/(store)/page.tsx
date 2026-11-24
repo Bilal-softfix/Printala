@@ -9,7 +9,9 @@ import ClosingStatement from "@/components/ClosingStatement";
 import WhyPrintala from "./WhyPrintala";
 
 export const metadata: Metadata = {
-  title: "Printala — Anime, Gaming, Cars & Split Posters | Premium Wall Art",
+  title: {
+    absolute: "Printala — Anime, Gaming, Cars & Split Posters | Premium Wall Art",
+  },
   description:
     "Shop premium posters — anime, gaming, supercars, cricket, movies, sports & multi-panel split posters. Thick matte paper, vibrant colors, fast delivery. Starting at ₹149. COD available.",
   alternates: { canonical: "/" },

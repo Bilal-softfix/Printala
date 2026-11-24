@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { BASE_URL } from "@/lib/seo";
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -6,9 +7,9 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/checkout", "/api/"],
+        disallow: ["/admin", "/cart", "/checkout", "/api/"],
       },
     ],
-    sitemap: "https://printala.in/sitemap.xml",
+    sitemap: `${BASE_URL}/sitemap.xml`,
   };
 }

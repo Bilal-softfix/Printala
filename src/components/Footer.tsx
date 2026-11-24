@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { FaInstagram, FaXTwitter, FaPinterestP } from "react-icons/fa6";
 import Newsletter from "./Newsletter";
 import { CATEGORIES } from "@/lib/data";
+import { SITE } from "@/lib/site";
 
-/* Existing placeholder links ("#") are kept until real pages exist. */
+/* Support/policy pages get added here as they are built (F7). */
 const COLUMNS = {
   Collections: CATEGORIES.map((c) => ({ label: c.name, href: `/shop?category=${c.slug}` })),
   Shop: [
@@ -15,21 +15,8 @@ const COLUMNS = {
   Company: [
     { label: "About", href: "/about" },
     { label: "Contact", href: "/contact" },
-    { label: "Blog", href: "#" },
-  ],
-  Support: [
-    { label: "Shipping Info", href: "#" },
-    { label: "Returns", href: "#" },
-    { label: "Size Guide", href: "#" },
-    { label: "FAQ", href: "#" },
   ],
 };
-
-const SOCIAL = [
-  { label: "Instagram", icon: FaInstagram },
-  { label: "X (Twitter)", icon: FaXTwitter },
-  { label: "Pinterest", icon: FaPinterestP },
-];
 
 export default function Footer() {
   return (
@@ -39,28 +26,39 @@ export default function Footer() {
           <div>
             <Newsletter />
             <div className="mt-12 space-y-2 text-sm">
-              <p className="text-[10.5px] uppercase tracking-[0.26em] text-mute">Say hello</p>
-              <a href="mailto:hello@printala.com" className="block text-cream/85 transition-colors hover:text-accent">
-                hello@printala.com
+              <p className="text-[10.5px] uppercase tracking-[0.26em] text-mute">Talk to us</p>
+              <a href={SITE.phoneHref} className="block text-cream/85 transition-colors hover:text-accent">
+                {SITE.phone}
               </a>
-              <p className="text-mute">Replies within 24 hours</p>
+              <a
+                href={SITE.whatsappHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-cream/85 transition-colors hover:text-accent"
+              >
+                WhatsApp us
+              </a>
+              <p className="text-mute">{SITE.hours}</p>
             </div>
-            <ul className="mt-8 flex gap-2">
-              {SOCIAL.map(({ label, icon: Icon }) => (
-                <li key={label}>
-                  <a
-                    href="#"
-                    aria-label={`Printala on ${label}`}
-                    className="grid h-10 w-10 place-items-center rounded-full border border-white/15 text-cream/75 transition-colors hover:border-accent hover:bg-accent hover:text-white"
-                  >
-                    <Icon size={15} aria-hidden="true" />
-                  </a>
-                </li>
-              ))}
-            </ul>
+            {SITE.socials.length > 0 && (
+              <ul className="mt-8 flex gap-2">
+                {SITE.socials.map((s) => (
+                  <li key={s.label}>
+                    <a
+                      href={s.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-cream/75 transition-colors hover:text-cream"
+                    >
+                      {s.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
-          <div className="grid grid-cols-2 gap-10 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-10 sm:grid-cols-3">
             {Object.entries(COLUMNS).map(([title, links]) => (
               <nav key={title} aria-label={`${title} links`}>
                 <h3 className="text-[10.5px] uppercase tracking-[0.26em] text-mute">{title}</h3>
@@ -92,15 +90,6 @@ export default function Footer() {
 
       <div className="container-main flex flex-col items-center justify-between gap-4 border-t border-white/10 py-7 text-xs text-mute md:flex-row">
         <p>© {new Date().getFullYear()} Printala. Premium posters &amp; split wall art, made in India.</p>
-        <ul className="flex gap-6">
-          {["Privacy", "Terms", "Cookies"].map((p) => (
-            <li key={p}>
-              <a href="#" className="transition-colors hover:text-cream">
-                {p}
-              </a>
-            </li>
-          ))}
-        </ul>
       </div>
     </footer>
   );

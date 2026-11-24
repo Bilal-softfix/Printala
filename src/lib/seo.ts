@@ -1,3 +1,4 @@
+import { SITE } from "./site";
 import { Product } from "@/types";
 
 export function generateProductJsonLd(product: Product, baseUrl: string) {
@@ -46,16 +47,14 @@ export function generateOrganizationJsonLd(baseUrl: string) {
     "@type": "Organization",
     name: "Printala",
     url: baseUrl,
-    logo: `${baseUrl}/logo.svg`,
-    sameAs: [
-      "https://instagram.com/printala",
-      "https://twitter.com/printala",
-      "https://pinterest.com/printala",
-    ],
+    logo: `${baseUrl}/logo.png`,
+    ...(SITE.socials.length && { sameAs: SITE.socials.map((s) => s.href) }),
     contactPoint: {
       "@type": "ContactPoint",
-      email: "hancysaksham@gmail.com",
+      telephone: SITE.phone,
       contactType: "customer service",
+      areaServed: "IN",
+      availableLanguage: ["English", "Hindi"],
     },
   };
 }

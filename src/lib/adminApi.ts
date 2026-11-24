@@ -85,13 +85,6 @@ export const uploadImage = (file: File) => {
 
   return ADMIN_API.post("/upload", formData, {
     headers: { "Content-Type": "multipart/form-data" },
-    onUploadProgress: (progressEvent) => {
-      // You can track upload progress here if needed
-      const percent = Math.round(
-        (progressEvent.loaded * 100) / (progressEvent.total || 1),
-      );
-      console.log(`Upload progress: ${percent}%`);
-    },
   }).then((r) => r.data);
 };
 

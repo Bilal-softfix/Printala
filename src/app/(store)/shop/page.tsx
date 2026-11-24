@@ -45,8 +45,7 @@ function ShopContent() {
       } else {
         setProducts([]);
       }
-    } catch (err) {
-      console.log("Shop: Using fallback data", err);
+    } catch {
       // Fallback to static data
       setProducts(FALLBACK_PRODUCTS);
     } finally {
