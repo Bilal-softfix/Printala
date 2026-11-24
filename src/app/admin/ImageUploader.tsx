@@ -41,36 +41,23 @@ export default function ImageUploader({
 
       // Validate file size (10MB)
       if (file.size > 10 * 1024 * 1024) {
-        toast.error("File 10MB se chhoti honi chahiye!");
+        toast.error("Image must be under 10 MB.");
         return;
       }
 
       setUploading(true);
       setProgress(0);
 
-      // Simulate progress (actual progress is in the API call)
-      const progressInterval = setInterval(() => {
-        setProgress((prev) => {
-          if (prev >= 90) {
-            clearInterval(progressInterval);
-            return 90;
-          }
-          return prev + 10;
-        });
-      }, 200);
-
       try {
-        const result = await uploadImage(file);
+        const result = await uploadImage(file, (p) => setProgress(Math.min(p, 99)));
 
-        clearInterval(progressInterval);
         setProgress(100);
         if (result.success && result.data?.url) {
           onChange(result.data.url);
           setImageUrl(result.data.url);
-          toast.success(`Image uploaded! (${result.data.size})`);
+          toast.success("Image uploaded");
         }
       } catch (err) {
-        clearInterval(progressInterval);
         const msg =
           getErrorMessage(err, "Upload failed. Please try again.");
         toast.error(msg);
@@ -116,9 +103,9 @@ export default function ImageUploader({
 
   return (
     <div>
-      <label className="block text-white/50 text-xs font-bold uppercase mb-2">
+      <p className="mb-2 block text-xs font-semibold uppercase tracking-wide text-white/55">
         {label}
-      </label>
+      </p>
 
       <AnimatePresence mode="wait">
         {value ? (
@@ -189,6 +176,15 @@ export default function ImageUploader({
               onDragOver={handleDrag}
               onDrop={handleDrop}
               onClick={() => !uploading && inputRef.current?.click()}
+              role="button"
+              tabIndex={0}
+              aria-label="Upload image: click or drop a file"
+              onKeyDown={(e) => {
+                if ((e.key === "Enter" || e.key === " ") && !uploading) {
+                  e.preventDefault();
+                  inputRef.current?.click();
+                }
+              }}
               className={`relative aspect-[3/4] max-w-[280px] rounded-2xl border-2 border-dashed
                          cursor-pointer transition-all duration-300 flex flex-col items-center
                          justify-center gap-4 overflow-hidden

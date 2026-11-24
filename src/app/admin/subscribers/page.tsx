@@ -1,98 +1,80 @@
 "use client";
 
+import { HiOutlineDownload, HiOutlineClipboardCopy } from "react-icons/hi";
+import toast from "react-hot-toast";
 import type { Subscriber } from "@/types/admin";
-import { useEffect, useState } from "react";
 import { getSubscribers } from "@/lib/adminApi";
-import { HiOutlineMail } from "react-icons/hi";
+import { Card, EmptyState, ErrorState, LoadingBlock, PageHeader, Tag, btnGhost, fmtDate, useAdminData } from "../ui";
 
 export default function AdminSubscribersPage() {
-  const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { state, data, reload: load } = useAdminData<Subscriber[]>("subscribers", () =>
+    getSubscribers().then((r) => r.data || []),
+  );
+  const subscribers = data ?? [];
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const result = await getSubscribers();
-        setSubscribers(result.data || []);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
-  }, []);
+  const active = subscribers.filter((s) => s.active);
 
-  const activeCount = subscribers.filter((s) => s.active).length;
+  const exportCsv = () => {
+    const rows = [["email", "status", "subscribed_on"], ...subscribers.map((s) => [s.email, s.active ? "active" : "inactive", s.createdAt])];
+    const csv = rows.map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const url = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+    const a = Object.assign(document.createElement("a"), { href: url, download: `printala-subscribers-${new Date().toISOString().slice(0, 10)}.csv` });
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const copyEmails = () =>
+    navigator.clipboard
+      .writeText(active.map((s) => s.email).join(", "))
+      .then(() => toast.success(`${active.length} emails copied`));
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-white text-2xl font-bold">
-            Newsletter Subscribers
-          </h1>
-          <p className="text-white/40 text-sm">
-            {activeCount} active / {subscribers.length} total
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title="Subscribers"
+        subtitle={state === "ok" ? `${active.length} active · ${subscribers.length} total` : undefined}
+        actions={
+          subscribers.length > 0 && (
+            <>
+              <button type="button" onClick={copyEmails} className={btnGhost}>
+                <HiOutlineClipboardCopy size={16} aria-hidden="true" /> Copy active emails
+              </button>
+              <button type="button" onClick={exportCsv} className={btnGhost}>
+                <HiOutlineDownload size={16} aria-hidden="true" /> Export CSV
+              </button>
+            </>
+          )
+        }
+      />
 
-      <div className="bg-[#1A1A1D] border border-white/5 rounded-2xl overflow-hidden">
-        {loading ? (
-          <div className="py-12 text-center">
-            <div className="w-8 h-8 border-3 border-magenta/30 border-t-magenta rounded-full animate-spin mx-auto" />
-          </div>
+      <Card className="overflow-hidden">
+        {state === "loading" ? (
+          <LoadingBlock />
+        ) : state === "error" ? (
+          <ErrorState onRetry={load} message="Couldn't load subscribers." />
         ) : subscribers.length === 0 ? (
-          <div className="py-12 text-center text-white/30">
-            No subscribers yet
-          </div>
+          <EmptyState title="No subscribers yet" hint="Newsletter sign-ups from the footer appear here." />
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-white/40 text-xs uppercase tracking-wider border-b border-white/5">
-                  <th className="text-left px-6 py-4">#</th>
-                  <th className="text-left px-6 py-4">Email</th>
-                  <th className="text-left px-6 py-4">Status</th>
-                  <th className="text-left px-6 py-4">Subscribed On</th>
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-white/[0.06] text-left text-xs uppercase tracking-wide text-white/45">
+                <th scope="col" className="px-5 py-3 font-semibold">Email</th>
+                <th scope="col" className="px-5 py-3 font-semibold">Status</th>
+                <th scope="col" className="px-5 py-3 font-semibold">Subscribed</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/[0.06]">
+              {subscribers.map((s) => (
+                <tr key={s._id} className="hover:bg-white/[0.02]">
+                  <td className="px-5 py-3 font-medium">{s.email}</td>
+                  <td className="px-5 py-3">{s.active ? <Tag tone="green">Active</Tag> : <Tag>Unsubscribed</Tag>}</td>
+                  <td className="px-5 py-3 text-white/55">{fmtDate(s.createdAt)}</td>
                 </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5">
-                {subscribers.map((sub, i) => (
-                  <tr key={sub._id} className="hover:bg-white/[0.02]">
-                    <td className="px-6 py-3 text-white/30">{i + 1}</td>
-                    <td className="px-6 py-3">
-                      <span className="flex items-center gap-2 text-white">
-                        <HiOutlineMail size={14} className="text-magenta" />
-                        {sub.email}
-                      </span>
-                    </td>
-                    <td className="px-6 py-3">
-                      <span
-                        className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                          sub.active
-                            ? "bg-green-500/10 text-green-400"
-                            : "bg-red-500/10 text-red-400"
-                        }`}
-                      >
-                        {sub.active ? "Active" : "Unsubscribed"}
-                      </span>
-                    </td>
-                    <td className="px-6 py-3 text-white/40">
-                      {new Date(sub.createdAt).toLocaleDateString("en-IN", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      })}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
         )}
-      </div>
+      </Card>
     </div>
   );
 }

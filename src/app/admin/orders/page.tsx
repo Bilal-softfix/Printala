@@ -1,270 +1,330 @@
 "use client";
 
-import type { AdminOrder, AdminOrderItem } from "@/types/admin";
-import { getErrorMessage } from "@/lib/utils";
-import { useCallback, useEffect, useState } from "react";
-import { getAdminOrders, updateOrderStatus } from "@/lib/adminApi";
-import { formatPrice } from "@/lib/utils";
+import { Suspense, useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { HiOutlineSearch, HiOutlinePhone, HiChevronDown } from "react-icons/hi";
+import { FaWhatsapp } from "react-icons/fa6";
 import toast from "react-hot-toast";
+import type { AdminOrder } from "@/types/admin";
+import { getAdminOrders, updateOrderStatus } from "@/lib/adminApi";
+import { formatPrice, getErrorMessage } from "@/lib/utils";
+import {
+  Card,
+  EmptyState,
+  ErrorState,
+  LoadingBlock,
+  ORDER_STATUSES,
+  PageHeader,
+  StatusBadge,
+  btnGhost,
+  btnPrimary,
+  fmtDate,
+  inputCls,
+  useAdminData,
+} from "../ui";
 
-const STATUSES = [
-  "placed",
-  "confirmed",
-  "processing",
-  "shipped",
-  "delivered",
-  "cancelled",
-];
+function OrdersContent() {
+  const router = useRouter();
+  const params = useSearchParams();
+  const status = params.get("status") ?? "";
+  const q = params.get("q") ?? "";
 
-export default function AdminOrdersPage() {
-  const [orders, setOrders] = useState<AdminOrder[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [filterStatus, setFilterStatus] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [search, setSearch] = useState(q);
 
-  const load = useCallback(async () => {
-    try {
-      const params: Record<string, string> = { limit: "50" };
-      if (filterStatus) params.status = filterStatus;
-      const result = await getAdminOrders(params);
-      setOrders(result.data || []);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  }, [filterStatus]);
+  const setParam = (key: string, value: string) => {
+    const next = new URLSearchParams(params.toString());
+    if (value) next.set(key, value);
+    else next.delete(key);
+    router.replace(`/admin/orders${next.size ? `?${next}` : ""}`, { scroll: false });
+  };
 
+  const { state, data, reload: load, mutate } = useAdminData<AdminOrder[]>(`orders:${status}`, () =>
+    getAdminOrders({ limit: "100", ...(status ? { status } : {}) }).then((r) => r.data || []),
+  );
+  const orders = useMemo(() => data ?? [], [data]);
+
+  // Debounced search → URL (so links like ?q=ORD123 deep-link to an order).
   useEffect(() => {
-    load();
-  }, [load]);
+    const t = setTimeout(() => {
+      if (search !== q) setParam("q", search.trim());
+    }, 300);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search]);
 
-  const handleStatusChange = async (orderId: string, newStatus: string) => {
+  const visible = useMemo(() => {
+    const term = q.toLowerCase();
+    if (!term) return orders;
+    return orders.filter((o) =>
+      [o.orderNumber, o.shipping?.fullName, o.shipping?.phone, o.shipping?.city, o.shipping?.pincode]
+        .filter(Boolean)
+        .some((v) => String(v).toLowerCase().includes(term)),
+    );
+  }, [orders, q]);
+
+  // Auto-open when the search pinpoints a single order.
+  const openId = expandedId ?? (visible.length === 1 && q ? visible[0]._id : null);
+
+  const changeStatus = async (order: AdminOrder, next: string, trackingNumber?: string) => {
+    if (next === "cancelled" && !confirm(`Cancel order ${order.orderNumber}?`)) return;
     try {
-      await updateOrderStatus(orderId, { orderStatus: newStatus });
-      setOrders(
-        orders.map((o) =>
-          o._id === orderId ? { ...o, orderStatus: newStatus } : o,
+      await updateOrderStatus(order._id, {
+        orderStatus: next,
+        ...(trackingNumber ? { trackingNumber } : {}),
+      });
+      mutate((list) =>
+        list.map((o) =>
+          o._id === order._id
+            ? { ...o, orderStatus: next, ...(trackingNumber ? { trackingNumber } : {}) }
+            : o,
         ),
       );
-      toast.success(`Status updated to "${newStatus}"`);
+      toast.success(`${order.orderNumber} → ${next}`);
     } catch (err) {
       toast.error(getErrorMessage(err, "Update failed"));
     }
   };
 
-  const statusColor: Record<string, string> = {
-    placed: "bg-blue-500/10 text-blue-400",
-    confirmed: "bg-cyan-500/10 text-cyan-400",
-    processing: "bg-yellow/10 text-yellow-600",
-    shipped: "bg-purple-500/10 text-purple-400",
-    delivered: "bg-green-500/10 text-green-400",
-    cancelled: "bg-red-500/10 text-red-400",
-  };
-
   return (
     <div>
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-        <div>
-          <h1 className="text-white text-2xl font-bold">Orders</h1>
-          <p className="text-white/40 text-sm">{orders.length} orders</p>
-        </div>
+      <PageHeader
+        title="Orders"
+        subtitle={state === "ok" ? `${visible.length} of ${orders.length} shown` : undefined}
+      />
 
-        <div className="flex gap-2 overflow-x-auto">
-          <button
-            onClick={() => setFilterStatus("")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors whitespace-nowrap ${
-              !filterStatus
-                ? "bg-magenta text-white"
-                : "bg-white/5 text-white/40 hover:text-white"
-            }`}
-          >
-            All
-          </button>
-          {STATUSES.map((s) => (
+      <div className="mb-5 flex flex-col gap-3 lg:flex-row lg:items-center">
+        <div className="relative lg:w-80">
+          <HiOutlineSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/35" size={17} aria-hidden="true" />
+          <input
+            type="search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Order no., name, phone, PIN…"
+            aria-label="Search orders"
+            className={`${inputCls} pl-10`}
+          />
+        </div>
+        <div className="-mx-4 flex gap-1.5 overflow-x-auto px-4 lg:mx-0 lg:px-0" role="group" aria-label="Filter by status">
+          {["", ...ORDER_STATUSES].map((s) => (
             <button
-              key={s}
-              onClick={() => setFilterStatus(s)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold capitalize transition-colors whitespace-nowrap ${
-                filterStatus === s
-                  ? "bg-magenta text-white"
-                  : "bg-white/5 text-white/40 hover:text-white"
+              key={s || "all"}
+              type="button"
+              aria-pressed={status === s}
+              onClick={() => setParam("status", s)}
+              className={`whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-semibold capitalize transition-colors ${
+                status === s ? "bg-magenta text-white" : "bg-white/[0.05] text-white/60 hover:text-white"
               }`}
             >
-              {s}
+              {s || "All"}
             </button>
           ))}
         </div>
       </div>
 
-      <div className="space-y-3">
-        {loading ? (
-          <div className="py-12 text-center">
-            <div className="w-8 h-8 border-3 border-magenta/30 border-t-magenta rounded-full animate-spin mx-auto" />
-          </div>
-        ) : orders.length === 0 ? (
-          <div className="py-12 text-center text-white/30 bg-[#1A1A1D] rounded-2xl border border-white/5">
-            No orders found
-          </div>
+      <Card className="overflow-hidden">
+        {state === "loading" ? (
+          <LoadingBlock />
+        ) : state === "error" ? (
+          <ErrorState onRetry={load} message="Couldn't load orders." />
+        ) : visible.length === 0 ? (
+          <EmptyState
+            title="No orders found"
+            hint={q || status ? "Try clearing the search or filter." : "New orders will appear here."}
+            action={
+              (q || status) && (
+                <button
+                  type="button"
+                  className={btnGhost}
+                  onClick={() => {
+                    setSearch("");
+                    router.replace("/admin/orders");
+                  }}
+                >
+                  Clear filters
+                </button>
+              )
+            }
+          />
         ) : (
-          orders.map((order) => (
-            <div
-              key={order._id}
-              className="bg-[#1A1A1D] border border-white/5 rounded-2xl overflow-hidden hover:border-white/10 transition-colors"
-            >
-              {/* Order Header */}
-              <div
-                className="px-6 py-4 flex items-center justify-between cursor-pointer"
-                onClick={() =>
-                  setExpandedId(expandedId === order._id ? null : order._id)
-                }
-              >
-                <div className="flex items-center gap-6 flex-wrap">
-                  <div>
-                    <p className="text-magenta font-bold text-sm">
-                      {order.orderNumber}
-                    </p>
-                    <p className="text-white/30 text-xs">
-                      {new Date(order.createdAt).toLocaleDateString("en-IN", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      })}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-white font-medium text-sm">
-                      {order.shipping?.fullName}
-                    </p>
-                    <p className="text-white/30 text-xs">
-                      {order.shipping?.city}, {order.shipping?.state}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <span className="text-white font-bold">
-                    {formatPrice(order.total)}
-                  </span>
-                  <span
-                    className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase ${statusColor[order.orderStatus] || ""}`}
-                  >
-                    {order.orderStatus}
-                  </span>
-                  <span className="text-white/20">
-                    {expandedId === order._id ? "▲" : "▼"}
-                  </span>
-                </div>
-              </div>
-
-              {/* Expanded Details */}
-              {expandedId === order._id && (
-                <div className="px-6 pb-6 border-t border-white/5 pt-4">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {/* Items */}
-                    <div>
-                      <h3 className="text-white/40 text-xs font-bold uppercase mb-3">
-                        Items
-                      </h3>
-                      <div className="space-y-2">
-                        {order.items?.map((item: AdminOrderItem, i: number) => (
-                          <div key={i} className="flex justify-between text-sm">
-                            <span className="text-white/70">
-                              {item.name} ({item.size}) ×{item.quantity}
-                            </span>
-                            <span className="text-white font-medium">
-                              {formatPrice(item.price * item.quantity)}
-                            </span>
-                          </div>
-                        ))}
-                        <div className="border-t border-white/5 pt-2 mt-2 flex justify-between">
-                          <span className="text-white/40 text-sm">
-                            Shipping
-                          </span>
-                          <span className="text-white text-sm">
-                            {order.shippingCost === 0
-                              ? "Free"
-                              : formatPrice(order.shippingCost)}
-                          </span>
-                        </div>
-                        <div className="flex justify-between font-bold">
-                          <span className="text-white">Total</span>
-                          <span className="text-magenta">
-                            {formatPrice(order.total)}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Shipping */}
-                    <div>
-                      <h3 className="text-white/40 text-xs font-bold uppercase mb-3">
-                        Shipping
-                      </h3>
-                      <div className="text-white/60 text-sm space-y-1">
-                        <p className="text-white font-medium">
-                          {order.shipping?.fullName}
-                        </p>
-                        <p>{order.shipping?.address}</p>
-                        <p>
-                          {order.shipping?.city}, {order.shipping?.state} —{" "}
-                          {order.shipping?.pincode}
-                        </p>
-                        <p>{order.shipping?.phone}</p>
-                        <p>{order.shipping?.email}</p>
-                      </div>
-                    </div>
-
-                    {/* Update Status */}
-                    <div>
-                      <h3 className="text-white/40 text-xs font-bold uppercase mb-3">
-                        Update Status
-                      </h3>
-                      <div className="space-y-2">
-                        {STATUSES.map((s) => (
-                          <button
-                            key={s}
-                            onClick={() => handleStatusChange(order._id, s)}
-                            disabled={order.orderStatus === s}
-                            className={`w-full text-left px-4 py-2 rounded-lg text-sm font-medium capitalize transition-colors
-                              ${
-                                order.orderStatus === s
-                                  ? "bg-magenta/10 text-magenta border border-magenta/20"
-                                  : "bg-white/5 text-white/40 hover:text-white hover:bg-white/10"
-                              } disabled:cursor-default`}
-                          >
-                            {s === order.orderStatus ? `✓ ${s}` : s}
-                          </button>
-                        ))}
-                      </div>
-                      <div className="mt-3">
-                        <p className="text-white/40 text-xs mb-1">
-                          Payment:{" "}
-                          <span className="text-white uppercase">
-                            {order.paymentMethod}
-                          </span>
-                        </p>
-                        <p className="text-white/40 text-xs">
-                          Status:{" "}
-                          <span
-                            className={
-                              order.paymentStatus === "paid"
-                                ? "text-green-400"
-                                : "text-yellow-400"
-                            }
-                          >
-                            {order.paymentStatus}
-                          </span>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          ))
+          <ul className="divide-y divide-white/[0.06]">
+            {visible.map((order) => (
+              <OrderRow
+                key={order._id}
+                order={order}
+                open={openId === order._id}
+                onToggle={() => setExpandedId(openId === order._id ? "" : order._id)}
+                onStatus={changeStatus}
+              />
+            ))}
+          </ul>
         )}
-      </div>
+      </Card>
     </div>
+  );
+}
+
+function OrderRow({
+  order,
+  open,
+  onToggle,
+  onStatus,
+}: {
+  order: AdminOrder;
+  open: boolean;
+  onToggle: () => void;
+  onStatus: (o: AdminOrder, s: string, tracking?: string) => void;
+}) {
+  const [tracking, setTracking] = useState(order.trackingNumber ?? "");
+  const s = order.shipping ?? {};
+  const phone = (s.phone ?? "").replace(/\D/g, "").slice(-10);
+  const address = [s.fullName, s.address, `${s.city ?? ""}, ${s.state ?? ""} ${s.pincode ?? ""}`, s.phone]
+    .filter(Boolean)
+    .join("\n");
+
+  return (
+    <li>
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={open}
+        className="flex w-full items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-white/[0.03]"
+      >
+        <div className="min-w-0 flex-1 sm:flex sm:items-center sm:gap-8">
+          <div className="sm:w-40">
+            <p className="text-sm font-semibold text-pink-300">{order.orderNumber}</p>
+            <p className="text-xs text-white/45">{fmtDate(order.createdAt)}</p>
+          </div>
+          <div className="mt-1 min-w-0 sm:mt-0">
+            <p className="truncate text-sm font-medium">{s.fullName || "—"}</p>
+            <p className="truncate text-xs text-white/45">
+              {[s.city, s.state].filter(Boolean).join(", ")} · {order.items?.length ?? 0} item(s)
+            </p>
+          </div>
+        </div>
+        <span className="hidden text-sm font-semibold sm:block">{formatPrice(order.total)}</span>
+        <StatusBadge status={order.orderStatus} />
+        <HiChevronDown
+          size={18}
+          aria-hidden="true"
+          className={`shrink-0 text-white/40 transition-transform ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+
+      {open && (
+        <div className="grid gap-6 border-t border-white/[0.06] bg-white/[0.015] px-5 py-5 md:grid-cols-3">
+          <section>
+            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-white/45">Items</h3>
+            <ul className="space-y-2 text-sm">
+              {order.items?.map((item, i) => (
+                <li key={i} className="flex justify-between gap-3">
+                  <span className="text-white/80">
+                    {item.name} <span className="text-white/45">· {item.size} × {item.quantity}</span>
+                  </span>
+                  <span className="shrink-0">{formatPrice(item.price * item.quantity)}</span>
+                </li>
+              ))}
+            </ul>
+            <dl className="mt-3 space-y-1 border-t border-white/[0.06] pt-3 text-sm">
+              <div className="flex justify-between text-white/60">
+                <dt>Shipping</dt>
+                <dd>{order.shippingCost ? formatPrice(order.shippingCost) : "Free"}</dd>
+              </div>
+              <div className="flex justify-between font-semibold">
+                <dt>Total</dt>
+                <dd className="text-pink-300">{formatPrice(order.total)}</dd>
+              </div>
+              <div className="flex justify-between text-xs text-white/50">
+                <dt>Payment</dt>
+                <dd className="uppercase">
+                  {order.paymentMethod}
+                  {order.paymentStatus && ` · ${order.paymentStatus}`}
+                </dd>
+              </div>
+            </dl>
+          </section>
+
+          <section>
+            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-white/45">Customer</h3>
+            <address className="whitespace-pre-line text-sm not-italic leading-relaxed text-white/75">{address}</address>
+            {s.email && <p className="mt-1 text-sm text-white/55">{s.email}</p>}
+            <div className="mt-3 flex flex-wrap gap-2">
+              {phone && (
+                <>
+                  <a href={`tel:+91${phone}`} className={`${btnGhost} px-3 py-1.5 text-xs`}>
+                    <HiOutlinePhone size={14} aria-hidden="true" /> Call
+                  </a>
+                  <a
+                    href={`https://wa.me/91${phone}?text=${encodeURIComponent(
+                      `Hi ${s.fullName ?? ""}, this is Printala about your order ${order.orderNumber}.`,
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`${btnGhost} px-3 py-1.5 text-xs`}
+                  >
+                    <FaWhatsapp size={14} aria-hidden="true" /> WhatsApp
+                  </a>
+                </>
+              )}
+              <button
+                type="button"
+                className={`${btnGhost} px-3 py-1.5 text-xs`}
+                onClick={() => navigator.clipboard.writeText(address).then(() => toast.success("Address copied"))}
+              >
+                Copy address
+              </button>
+            </div>
+          </section>
+
+          <section>
+            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-white/45">Status</h3>
+            <label htmlFor={`status-${order._id}`} className="sr-only">
+              Order status
+            </label>
+            <select
+              id={`status-${order._id}`}
+              value={order.orderStatus}
+              onChange={(e) => onStatus(order, e.target.value, e.target.value === "shipped" ? tracking.trim() : undefined)}
+              className={`${inputCls} capitalize`}
+            >
+              {ORDER_STATUSES.map((st) => (
+                <option key={st} value={st} className="bg-[#151518]">
+                  {st}
+                </option>
+              ))}
+            </select>
+
+            <label htmlFor={`track-${order._id}`} className="mt-4 mb-1.5 block text-xs text-white/50">
+              Courier tracking number
+            </label>
+            <div className="flex gap-2">
+              <input
+                id={`track-${order._id}`}
+                value={tracking}
+                onChange={(e) => setTracking(e.target.value)}
+                placeholder="e.g. AWB123456"
+                className={inputCls}
+              />
+              <button
+                type="button"
+                disabled={!tracking.trim()}
+                onClick={() => onStatus(order, "shipped", tracking.trim())}
+                className={`${btnPrimary} shrink-0 px-3`}
+              >
+                Mark shipped
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
+    </li>
+  );
+}
+
+export default function AdminOrdersPage() {
+  return (
+    <Suspense fallback={<LoadingBlock />}>
+      <OrdersContent />
+    </Suspense>
   );
 }

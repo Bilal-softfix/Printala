@@ -79,12 +79,14 @@ export const getSubscribers = () =>
   ADMIN_API.get("/admin/newsletter").then((r) => r.data);
 
 // ─── Image Upload ───
-export const uploadImage = (file: File) => {
+export const uploadImage = (file: File, onProgress?: (percent: number) => void) => {
   const formData = new FormData();
   formData.append("image", file);
 
   return ADMIN_API.post("/upload", formData, {
     headers: { "Content-Type": "multipart/form-data" },
+    onUploadProgress: (e) =>
+      onProgress?.(Math.round((e.loaded * 100) / (e.total || file.size || 1))),
   }).then((r) => r.data);
 };
 

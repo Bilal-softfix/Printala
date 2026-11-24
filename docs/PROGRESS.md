@@ -52,6 +52,18 @@ Work phases in order. Within a phase, top to bottom.
 - [ ] F9 Online payments (needs D2)
 - [ ] P4 fetch vs axios (optional)
 
+## Admin panel (2026-11-24)
+- [x] A-1 Product edit overwrote custom sizes with defaults on every save → sizes editor, real sizes preserved
+- [x] A-2 Editing name silently changed slug → auto-slug only for new products
+- [x] A-3 Flag cards used dynamic Tailwind classes (never styled) → static classes
+- [x] A-4 Shared admin UI kit `src/app/admin/ui.tsx` (Card, PageHeader, StatusBadge, inputs, states, `useAdminData`)
+- [x] A-5 Orders: URL filters + search (deep links from dashboard), keyboard rows, cancel confirm, tracking no., call/WhatsApp/copy address, error retry
+- [x] A-6 Products: debounced search, category/stock filters, labelled icon buttons, view in store
+- [x] A-7 Dashboard: revenue chart (dailyRevenue), clickable cards, per-order links, error retry
+- [x] A-8 Messages list/detail + encoded mailto; Subscribers CSV export + copy emails; Settings/Login labels, autocomplete, show password, cold-start hint
+- [x] A-9 Image upload: real progress (axios onUploadProgress), keyboard-accessible drop zone, English copy
+- [ ] A-10 Test logged-in flows with an admin account (not done — no credentials)
+
 ## Decisions received
 - D1: free shipping ≥ ₹499, else ₹59
 - D3: phone/WhatsApp +91 8858424768; no public email; hours Mon–Sat 10–7 IST; no socials yet
@@ -73,3 +85,4 @@ _(one line per session: date · IDs done · notes)_
 - 2026-11-24 · Phase 3: F1 F2 F3 F4 F5 done; F6 U3 partial · build + route smoke tests pass. Remaining: F7 (D7), F6 pagination, U3 rest (D7).
 - 2026-11-24 · Phase 4: A1 A2 A3 A4 U4 P3 C1 C3 C4 done · `npm run check` + build + smoke tests pass. Remaining: U2 (real reviews), S10 (D4), F9 (D2), U5, P4, F7 (D7), F6 pagination.
 - 2026-11-24 · F11 fixed (invalid id in persisted cart) · check + build + 404 test pass · pushed.
+- 2026-11-24 · Admin panel redesign + fixes (A-1…A-9) · check + build + route smoke tests pass; logged-in flows untested.

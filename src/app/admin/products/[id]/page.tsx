@@ -1,152 +1,162 @@
 "use client";
 
-import { getErrorMessage } from "@/lib/utils";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
+import { HiOutlineArrowLeft, HiOutlineExternalLink, HiOutlinePlus, HiOutlineTrash } from "react-icons/hi";
+import toast from "react-hot-toast";
 import { createProduct, updateProduct } from "@/lib/adminApi";
 import { fetchProductById } from "@/lib/api";
-// import ImageUploader from "@/components/admin/ImageUploader";
-import toast from "react-hot-toast";
+import { CATEGORIES } from "@/lib/categories";
+import { formatPrice, getErrorMessage } from "@/lib/utils";
+import { Size } from "@/types";
 import ImageUploader from "../../ImageUploader";
+import { Card, Field, LoadingBlock, PageHeader, btnGhost, btnPrimary, inputCls } from "../../ui";
 
-const CATEGORIES = [
-  "anime",
-  "gaming",
-  "cricket",
-  "cars",
-  "bollywood",
-  "football",
-  "anime-girls",
-  "sports",
-  "music",
-  "split-poster",
+/* Store categories + legacy ones some products may still use. */
+const CATEGORY_OPTIONS = [
+  ...CATEGORIES.map((c) => ({ value: c.slug, label: c.name })),
+  { value: "sports", label: "Sports" },
+  { value: "music", label: "Music" },
 ];
 
-const DEFAULT_SIZES = [
+const POSTER_SIZES: Size[] = [
   { label: "A4", dimensions: "21 × 29.7 cm", priceModifier: 0 },
   { label: "A3", dimensions: "29.7 × 42 cm", priceModifier: 100 },
   { label: "A2", dimensions: "42 × 59.4 cm", priceModifier: 250 },
   { label: "A1", dimensions: "59.4 × 84.1 cm", priceModifier: 450 },
 ];
 
-const SPLIT_SIZES = [
+const SPLIT_SIZES: Size[] = [
   { label: "Small", dimensions: "Each panel 20 × 40 cm", priceModifier: 0 },
   { label: "Medium", dimensions: "Each panel 30 × 60 cm", priceModifier: 400 },
   { label: "Large", dimensions: "Each panel 40 × 80 cm", priceModifier: 800 },
 ];
 
+const FLAGS = [
+  { key: "inStock", label: "In stock", desc: "Can be purchased" },
+  { key: "featured", label: "Featured", desc: "Shown on homepage" },
+  { key: "bestseller", label: "Bestseller", desc: "Bestseller badge" },
+  { key: "isNew", label: "New", desc: "NEW badge" },
+] as const;
+
+const slugify = (s: string) =>
+  s
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+
+const EMPTY = {
+  name: "",
+  slug: "",
+  description: "",
+  price: "",
+  comparePrice: "",
+  image: "",
+  category: "anime",
+  tags: "",
+  type: "poster" as "poster" | "split-poster",
+  panels: "3",
+  inStock: true,
+  featured: false,
+  bestseller: false,
+  isNew: false,
+};
+
 export default function ProductFormPage() {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const isNew = id === "new";
-
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
-  const [form, setForm] = useState({
-    name: "",
-    slug: "",
-    description: "",
-    price: "",
-    comparePrice: "",
-    image: "",
-    category: "anime",
-    tags: "",
-    type: "poster",
-    panels: "3",
-    inStock: true,
-    featured: false,
-    bestseller: false,
-    isNew: false,
-  });
+  const [form, setForm] = useState(EMPTY);
+  const [sizes, setSizes] = useState<Size[]>(POSTER_SIZES);
+  const [slugTouched, setSlugTouched] = useState(!isNew);
 
   useEffect(() => {
-    if (!isNew) {
-      const load = async () => {
-        try {
-          const result = await fetchProductById(id as string);
-          const p = result.data;
-          setForm({
-            name: p.name,
-            slug: p.slug,
-            description: p.description,
-            price: p.price.toString(),
-            comparePrice: p.comparePrice?.toString() || "",
-            image: p.image,
-            category: p.category,
-            tags: p.tags?.join(", ") || "",
-            type: p.type,
-            panels: p.panels?.toString() || "3",
-            inStock: p.inStock,
-            featured: p.featured,
-            bestseller: p.bestseller || false,
-            isNew: p.isNew || false,
-          });
-        } catch {
-          toast.error("Couldn't load product.");
-          router.push("/admin/products");
-        } finally {
-          setLoading(false);
-        }
-      };
-      load();
-    }
+    if (isNew) return;
+    fetchProductById(id)
+      .then((result) => {
+        const p = result.data;
+        setForm({
+          name: p.name,
+          slug: p.slug ?? "",
+          description: p.description ?? "",
+          price: String(p.price),
+          comparePrice: p.comparePrice ? String(p.comparePrice) : "",
+          image: p.image,
+          category: p.category,
+          tags: p.tags?.join(", ") || "",
+          type: p.type,
+          panels: String(p.panels ?? 3),
+          inStock: p.inStock,
+          featured: p.featured,
+          bestseller: !!p.bestseller,
+          isNew: !!p.isNew,
+        });
+        // Keep the product's own sizes (previously overwritten on every save).
+        setSizes(p.sizes?.length ? p.sizes : p.type === "split-poster" ? SPLIT_SIZES : POSTER_SIZES);
+      })
+      .catch(() => {
+        toast.error("Couldn't load product.");
+        router.push("/admin/products");
+      })
+      .finally(() => setLoading(false));
   }, [id, isNew, router]);
 
-  const generateSlug = (name: string) => {
-    return name
-      .toLowerCase()
-      .replace(/[^a-z0-9\s-]/g, "")
-      .replace(/\s+/g, "-")
-      .replace(/-+/g, "-")
-      .trim();
+  const set = <K extends keyof typeof EMPTY>(key: K, value: (typeof EMPTY)[K]) =>
+    setForm((f) => ({ ...f, [key]: value }));
+
+  const setType = (type: "poster" | "split-poster") => {
+    set("type", type);
+    // Swap presets only for new products, so existing custom sizes are never lost.
+    if (isNew) setSizes(type === "split-poster" ? SPLIT_SIZES : POSTER_SIZES);
   };
 
-  const handleNameChange = (name: string) => {
-    setForm({ ...form, name, slug: generateSlug(name) });
-  };
+  const updateSize = (i: number, patch: Partial<Size>) =>
+    setSizes((list) => list.map((s, j) => (j === i ? { ...s, ...patch } : s)));
+
+  const price = Number(form.price) || 0;
+  const compare = Number(form.comparePrice) || 0;
+  const categoryOptions = CATEGORY_OPTIONS.some((c) => c.value === form.category)
+    ? CATEGORY_OPTIONS
+    : [...CATEGORY_OPTIONS, { value: form.category, label: form.category }];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!form.image) {
-      toast.error("Please upload an image first.");
-      return;
-    }
+    if (!form.image) return toast.error("Please upload an image first.");
+    if (compare && compare <= price) return toast.error("Compare-at price must be higher than the price.");
+    const cleanSizes = sizes
+      .map((s) => ({ ...s, label: s.label.trim(), dimensions: s.dimensions.trim(), priceModifier: Number(s.priceModifier) || 0 }))
+      .filter((s) => s.label);
+    if (!cleanSizes.length) return toast.error("Add at least one size.");
+    if (new Set(cleanSizes.map((s) => s.label.toLowerCase())).size !== cleanSizes.length)
+      return toast.error("Size names must be unique.");
 
     setSaving(true);
-
     try {
-      const sizes = form.type === "split-poster" ? SPLIT_SIZES : DEFAULT_SIZES;
-
-      const productData = {
-        name: form.name,
-        slug: form.slug,
+      const data = {
+        name: form.name.trim(),
+        slug: form.slug || slugify(form.name),
         description: form.description,
-        price: parseFloat(form.price),
-        comparePrice: form.comparePrice ? parseFloat(form.comparePrice) : null,
+        price,
+        comparePrice: compare || null,
         image: form.image,
         category: form.category,
-        tags: form.tags
-          .split(",")
-          .map((t) => t.trim())
-          .filter(Boolean),
-        sizes,
+        tags: form.tags.split(",").map((t) => t.trim()).filter(Boolean),
+        sizes: cleanSizes,
         type: form.type,
-        panels: form.type === "split-poster" ? parseInt(form.panels) : null,
+        panels: form.type === "split-poster" ? Number(form.panels) : null,
         inStock: form.inStock,
         featured: form.featured,
         bestseller: form.bestseller,
         isNew: form.isNew,
       };
-
-      if (isNew) {
-        await createProduct(productData);
-        toast.success("Product created.");
-      } else {
-        await updateProduct(id as string, productData);
-        toast.success("Product updated.");
-      }
-
+      if (isNew) await createProduct(data);
+      else await updateProduct(id, data);
+      toast.success(isNew ? "Product created" : "Product updated");
       router.push("/admin/products");
     } catch (err) {
       toast.error(getErrorMessage(err, "Save failed"));
@@ -155,382 +165,245 @@ export default function ProductFormPage() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="w-8 h-8 border-3 border-magenta/30 border-t-magenta rounded-full animate-spin" />
-      </div>
-    );
-  }
+  if (loading) return <LoadingBlock />;
 
   return (
-    <div className="max-w-5xl">
-      <h1 className="text-white text-2xl font-bold mb-8">
-        {isNew ? "Add New Product" : "Edit Product"}
-      </h1>
+    <div>
+      <Link href="/admin/products" className="mb-4 inline-flex items-center gap-1.5 text-sm text-white/55 hover:text-white">
+        <HiOutlineArrowLeft size={15} aria-hidden="true" /> All products
+      </Link>
+      <PageHeader
+        title={isNew ? "Add product" : "Edit product"}
+        actions={
+          !isNew && (
+            <a href={`/product/${id}`} target="_blank" rel="noopener noreferrer" className={btnGhost}>
+              View in store <HiOutlineExternalLink size={14} aria-hidden="true" />
+            </a>
+          )
+        }
+      />
 
-      <form onSubmit={handleSubmit}>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* ── Left Column: Image ── */}
-          <div className="lg:col-span-1">
-            <div className="bg-[#1A1A1D] border border-white/5 rounded-2xl p-6 sticky top-28">
-              <ImageUploader
-                value={form.image}
-                onChange={(url) => setForm({ ...form, image: url })}
-                label="Product Image"
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-1">
+          <Card className="p-5 lg:sticky lg:top-20">
+            <ImageUploader value={form.image} onChange={(url) => set("image", url)} label="Main image" />
+          </Card>
+        </div>
+
+        <div className="space-y-6 lg:col-span-2">
+          <Card className="space-y-5 p-5 sm:p-6">
+            <h2 className="font-semibold">Details</h2>
+            <Field id="name" label="Product name *">
+              <input
+                id="name"
+                required
+                value={form.name}
+                onChange={(e) => {
+                  const name = e.target.value;
+                  setForm((f) => ({ ...f, name, ...(slugTouched ? {} : { slug: slugify(name) }) }));
+                }}
+                placeholder="e.g. Naruto Sage Mode"
+                className={inputCls}
               />
+            </Field>
+            <div className="grid gap-5 sm:grid-cols-2">
+              <Field id="slug" label="URL slug" hint={isNew ? "Generated from the name" : "Changing it may break old links"}>
+                <input
+                  id="slug"
+                  value={form.slug}
+                  onChange={(e) => {
+                    setSlugTouched(true);
+                    set("slug", slugify(e.target.value));
+                  }}
+                  className={inputCls}
+                />
+              </Field>
+              <Field id="category" label="Category *">
+                <select
+                  id="category"
+                  value={form.category}
+                  onChange={(e) => set("category", e.target.value)}
+                  className={inputCls}
+                >
+                  {categoryOptions.map((c) => (
+                    <option key={c.value} value={c.value} className="bg-[#151518]">
+                      {c.label}
+                    </option>
+                  ))}
+                </select>
+              </Field>
             </div>
-          </div>
+            <Field id="description" label="Description">
+              <textarea
+                id="description"
+                rows={4}
+                value={form.description}
+                onChange={(e) => set("description", e.target.value)}
+                placeholder="What makes this poster special? Shown on the product page and in Google results."
+                className={`${inputCls} resize-y`}
+              />
+            </Field>
+            <Field id="tags" label="Tags" hint="Comma separated, e.g. naruto, anime, orange">
+              <input id="tags" value={form.tags} onChange={(e) => set("tags", e.target.value)} className={inputCls} />
+            </Field>
+          </Card>
 
-          {/* ── Right Column: Form Fields ── */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Basic Info */}
-            <div className="bg-[#1A1A1D] border border-white/5 rounded-2xl p-6 space-y-5">
-              <h2 className="text-white font-bold flex items-center gap-2">
-                Basic Info
-              </h2>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div className="md:col-span-2">
-                  <label className="block text-white/50 text-xs font-bold uppercase mb-2">
-                    Product Name *
-                  </label>
-                  <input
-                    value={form.name}
-                    onChange={(e) => handleNameChange(e.target.value)}
-                    required
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white
-                               focus:outline-none focus:border-magenta transition-colors"
-                    placeholder="Naruto Sage Mode Poster"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-white/50 text-xs font-bold uppercase mb-2">
-                    Slug (URL)
-                  </label>
-                  <input
-                    value={form.slug}
-                    onChange={(e) => setForm({ ...form, slug: e.target.value })}
-                    required
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white
-                               focus:outline-none focus:border-magenta transition-colors font-mono text-sm"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-white/50 text-xs font-bold uppercase mb-2">
-                    Category *
-                  </label>
-                  <select
-                    value={form.category}
-                    onChange={(e) =>
-                      setForm({ ...form, category: e.target.value })
-                    }
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white
-                               focus:outline-none focus:border-magenta transition-colors"
-                  >
-                    {CATEGORIES.map((c) => (
-                      <option key={c} value={c} className="bg-[#1A1A1D]">
-                        {c.charAt(0).toUpperCase() +
-                          c.slice(1).replace("-", " ")}
+          <Card className="space-y-5 p-5 sm:p-6">
+            <h2 className="font-semibold">Pricing &amp; format</h2>
+            <div className="grid gap-5 sm:grid-cols-2">
+              <Field id="price" label="Base price (₹) *" hint="Price of the smallest size">
+                <input
+                  id="price"
+                  type="number"
+                  min={1}
+                  required
+                  inputMode="numeric"
+                  value={form.price}
+                  onChange={(e) => set("price", e.target.value)}
+                  className={inputCls}
+                />
+              </Field>
+              <Field
+                id="comparePrice"
+                label="Compare-at price (₹)"
+                hint={compare > price && price ? `Shows ${Math.round(((compare - price) / compare) * 100)}% off` : "Optional, original price"}
+              >
+                <input
+                  id="comparePrice"
+                  type="number"
+                  min={0}
+                  inputMode="numeric"
+                  value={form.comparePrice}
+                  onChange={(e) => set("comparePrice", e.target.value)}
+                  className={inputCls}
+                />
+              </Field>
+              <Field id="type" label="Type">
+                <select
+                  id="type"
+                  value={form.type}
+                  onChange={(e) => setType(e.target.value as "poster" | "split-poster")}
+                  className={inputCls}
+                >
+                  <option value="poster" className="bg-[#151518]">Single poster</option>
+                  <option value="split-poster" className="bg-[#151518]">Split poster</option>
+                </select>
+              </Field>
+              {form.type === "split-poster" && (
+                <Field id="panels" label="Panels">
+                  <select id="panels" value={form.panels} onChange={(e) => set("panels", e.target.value)} className={inputCls}>
+                    {["2", "3", "4", "5"].map((n) => (
+                      <option key={n} value={n} className="bg-[#151518]">
+                        {n} panels
                       </option>
                     ))}
                   </select>
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="block text-white/50 text-xs font-bold uppercase mb-2">
-                    Description *
-                  </label>
-                  <textarea
-                    value={form.description}
-                    onChange={(e) =>
-                      setForm({ ...form, description: e.target.value })
-                    }
-                    required
-                    rows={4}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white
-                               focus:outline-none focus:border-magenta transition-colors resize-none"
-                    placeholder="Describe the poster in detail..."
-                  />
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="block text-white/50 text-xs font-bold uppercase mb-2">
-                    Tags (comma separated)
-                  </label>
-                  <input
-                    value={form.tags}
-                    onChange={(e) => setForm({ ...form, tags: e.target.value })}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white
-                               focus:outline-none focus:border-magenta transition-colors"
-                    placeholder="naruto, anime, shonen, hokage"
-                  />
-                  {form.tags && (
-                    <div className="flex flex-wrap gap-1.5 mt-2">
-                      {form.tags
-                        .split(",")
-                        .filter(Boolean)
-                        .map((tag) => (
-                          <span
-                            key={tag.trim()}
-                            className="px-2 py-0.5 bg-magenta/10 text-magenta text-xs rounded-md font-medium"
-                          >
-                            #{tag.trim()}
-                          </span>
-                        ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Pricing */}
-            <div className="bg-[#1A1A1D] border border-white/5 rounded-2xl p-6 space-y-5">
-              <h2 className="text-white font-bold flex items-center gap-2">
-                Pricing & Type
-              </h2>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                <div>
-                  <label className="block text-white/50 text-xs font-bold uppercase mb-2">
-                    Price (₹) *
-                  </label>
-                  <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30">
-                      ₹
-                    </span>
-                    <input
-                      type="number"
-                      value={form.price}
-                      onChange={(e) =>
-                        setForm({ ...form, price: e.target.value })
-                      }
-                      required
-                      min="0"
-                      className="w-full pl-8 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white
-                                 focus:outline-none focus:border-magenta transition-colors"
-                      placeholder="199"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-white/50 text-xs font-bold uppercase mb-2">
-                    Compare Price (₹)
-                  </label>
-                  <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30">
-                      ₹
-                    </span>
-                    <input
-                      type="number"
-                      value={form.comparePrice}
-                      onChange={(e) =>
-                        setForm({ ...form, comparePrice: e.target.value })
-                      }
-                      min="0"
-                      className="w-full pl-8 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white
-                                 focus:outline-none focus:border-magenta transition-colors"
-                      placeholder="399 (strikethrough price)"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-white/50 text-xs font-bold uppercase mb-2">
-                    Type
-                  </label>
-                  <select
-                    value={form.type}
-                    onChange={(e) =>
-                      setForm({
-                        ...form,
-                        type: e.target.value,
-                        category:
-                          e.target.value === "split-poster"
-                            ? "split-poster"
-                            : form.category === "split-poster"
-                              ? "anime"
-                              : form.category,
-                      })
-                    }
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white
-                               focus:outline-none focus:border-magenta transition-colors"
-                  >
-                    <option value="poster" className="bg-[#1A1A1D]">
-                      Single Poster
-                    </option>
-                    <option value="split-poster" className="bg-[#1A1A1D]">
-                      Split Poster
-                    </option>
-                  </select>
-                </div>
-
-                {form.type === "split-poster" && (
-                  <div>
-                    <label className="block text-white/50 text-xs font-bold uppercase mb-2">
-                      Panels
-                    </label>
-                    <select
-                      value={form.panels}
-                      onChange={(e) =>
-                        setForm({ ...form, panels: e.target.value })
-                      }
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white
-                                 focus:outline-none focus:border-magenta transition-colors"
-                    >
-                      <option value="3" className="bg-[#1A1A1D]">
-                        3 Panels
-                      </option>
-                      <option value="5" className="bg-[#1A1A1D]">
-                        5 Panels
-                      </option>
-                    </select>
-                  </div>
-                )}
-              </div>
-
-              {/* Price Preview */}
-              {form.price && (
-                <div className="bg-white/5 rounded-xl p-4 border border-white/5">
-                  <p className="text-white/40 text-xs font-bold uppercase mb-2">
-                    Price Preview
-                  </p>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-magenta font-bold text-2xl">
-                      ₹{parseInt(form.price).toLocaleString("en-IN")}
-                    </span>
-                    {form.comparePrice && (
-                      <>
-                        <span className="text-white/30 line-through">
-                          ₹{parseInt(form.comparePrice).toLocaleString("en-IN")}
-                        </span>
-                        <span className="text-green-400 text-sm font-bold">
-                          {Math.round(
-                            ((parseInt(form.comparePrice) -
-                              parseInt(form.price)) /
-                              parseInt(form.comparePrice)) *
-                              100,
-                          )}
-                          % OFF
-                        </span>
-                      </>
-                    )}
-                  </div>
-                  <div className="flex gap-3 mt-2 text-xs text-white/30">
-                    {(form.type === "split-poster"
-                      ? SPLIT_SIZES
-                      : DEFAULT_SIZES
-                    ).map((s) => (
-                      <span key={s.label}>
-                        {s.label}: ₹
-                        {(
-                          parseInt(form.price || "0") + s.priceModifier
-                        ).toLocaleString("en-IN")}
-                      </span>
-                    ))}
-                  </div>
-                </div>
+                </Field>
               )}
             </div>
 
-            {/* Flags */}
-            <div className="bg-[#1A1A1D] border border-white/5 rounded-2xl p-6">
-              <h2 className="text-white font-bold mb-4 flex items-center gap-2">
-                Flags & Badges
-              </h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {[
-                  {
-                    key: "inStock",
-                    label: "In Stock",
-                    desc: "Product available for purchase",
-                    color: "green",
-                  },
-                  {
-                    key: "featured",
-                    label: "Featured",
-                    desc: "Shows on homepage",
-                    color: "yellow",
-                  },
-                  {
-                    key: "bestseller",
-                    label: "Bestseller",
-                    desc: "Shows bestseller badge",
-                    color: "magenta",
-                  },
-                  {
-                    key: "isNew",
-                    label: "New Badge",
-                    desc: "Shows NEW tag",
-                    color: "sky",
-                  },
-                ].map((flag) => {
-                  const isChecked = form[
-                    flag.key as keyof typeof form
-                  ] as boolean;
-                  return (
-                    <label
-                      key={flag.key}
-                      className={`flex flex-col p-4 rounded-xl border-2 cursor-pointer transition-all duration-200
-                        ${
-                          isChecked
-                            ? `border-${flag.color === "magenta" ? "magenta" : flag.color === "yellow" ? "yellow" : flag.color === "sky" ? "sky" : "green-500"}/40 bg-${flag.color === "magenta" ? "magenta" : flag.color === "yellow" ? "yellow" : flag.color === "sky" ? "sky" : "green-500"}/5`
-                            : "border-white/10 bg-transparent hover:border-white/20"
-                        }`}
-                    >
-                      <div className="flex items-center gap-2 mb-1">
-                        <input
-                          type="checkbox"
-                          checked={isChecked}
-                          onChange={(e) =>
-                            setForm({ ...form, [flag.key]: e.target.checked })
-                          }
-                          className="w-4 h-4 rounded accent-magenta"
-                        />
-                        <span className="text-white text-sm font-bold">
-                          {flag.label}
-                        </span>
-                      </div>
-                      <span className="text-white/30 text-xs">{flag.desc}</span>
-                    </label>
-                  );
-                })}
+            <div>
+              <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-white/55">Sizes</h3>
+                <div className="flex gap-2">
+                  <button type="button" className={`${btnGhost} px-3 py-1.5 text-xs`} onClick={() => setSizes(POSTER_SIZES)}>
+                    Use A4–A1
+                  </button>
+                  <button type="button" className={`${btnGhost} px-3 py-1.5 text-xs`} onClick={() => setSizes(SPLIT_SIZES)}>
+                    Use split presets
+                  </button>
+                </div>
               </div>
-            </div>
-
-            {/* Submit */}
-            <div className="flex gap-4 pt-2">
-              <button
-                type="submit"
-                disabled={saving || !form.image}
-                className="px-8 py-3.5 bg-magenta text-white font-bold rounded-xl
-                           hover:bg-magenta-light transition-colors disabled:opacity-50
-                           flex items-center gap-2"
-              >
-                {saving ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Saving...
-                  </>
-                ) : isNew ? (
-                  "Create Product"
-                ) : (
-                  "Update Product"
-                )}
-              </button>
-
+              <div className="space-y-2">
+                <div className="hidden grid-cols-[1fr_1.6fr_7rem_6rem_2.25rem] gap-2 px-1 text-xs text-white/45 sm:grid">
+                  <span>Name</span>
+                  <span>Dimensions</span>
+                  <span>+ Price (₹)</span>
+                  <span>Final</span>
+                  <span />
+                </div>
+                {sizes.map((s, i) => (
+                  <div key={i} className="grid grid-cols-2 gap-2 rounded-xl bg-white/[0.02] p-2 sm:grid-cols-[1fr_1.6fr_7rem_6rem_2.25rem] sm:items-center sm:bg-transparent sm:p-0">
+                    <input
+                      aria-label={`Size ${i + 1} name`}
+                      value={s.label}
+                      onChange={(e) => updateSize(i, { label: e.target.value })}
+                      placeholder="A3"
+                      className={inputCls}
+                    />
+                    <input
+                      aria-label={`Size ${i + 1} dimensions`}
+                      value={s.dimensions}
+                      onChange={(e) => updateSize(i, { dimensions: e.target.value })}
+                      placeholder="29.7 × 42 cm"
+                      className={inputCls}
+                    />
+                    <input
+                      aria-label={`Size ${i + 1} extra price`}
+                      type="number"
+                      min={0}
+                      value={s.priceModifier}
+                      onChange={(e) => updateSize(i, { priceModifier: Number(e.target.value) })}
+                      className={inputCls}
+                    />
+                    <span className="px-1 text-sm font-semibold">{formatPrice(price + (Number(s.priceModifier) || 0))}</span>
+                    <button
+                      type="button"
+                      onClick={() => setSizes((list) => list.filter((_, j) => j !== i))}
+                      disabled={sizes.length === 1}
+                      aria-label={`Remove size ${s.label || i + 1}`}
+                      className="justify-self-end rounded-lg p-2 text-white/45 hover:bg-red-500/10 hover:text-red-300 disabled:opacity-30"
+                    >
+                      <HiOutlineTrash size={16} />
+                    </button>
+                  </div>
+                ))}
+              </div>
               <button
                 type="button"
-                onClick={() => router.push("/admin/products")}
-                className="px-8 py-3.5 bg-white/5 text-white/60 font-bold rounded-xl
-                           hover:bg-white/10 transition-colors"
+                onClick={() => setSizes((list) => [...list, { label: "", dimensions: "", priceModifier: 0 }])}
+                className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-pink-300 hover:underline"
               >
-                Cancel
+                <HiOutlinePlus size={15} aria-hidden="true" /> Add size
               </button>
             </div>
+          </Card>
+
+          <Card className="p-5 sm:p-6">
+            <h2 className="mb-4 font-semibold">Visibility &amp; badges</h2>
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+              {FLAGS.map((f) => {
+                const on = form[f.key];
+                return (
+                  <label
+                    key={f.key}
+                    className={`flex cursor-pointer flex-col rounded-xl border p-4 transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-magenta/40 ${
+                      on ? "border-magenta/50 bg-magenta/10" : "border-white/10 hover:border-white/25"
+                    }`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={on}
+                        onChange={(e) => set(f.key, e.target.checked)}
+                        className="h-4 w-4 accent-magenta"
+                      />
+                      <span className="text-sm font-semibold">{f.label}</span>
+                    </span>
+                    <span className="mt-1 text-xs text-white/45">{f.desc}</span>
+                  </label>
+                );
+              })}
+            </div>
+          </Card>
+
+          <div className="flex flex-wrap gap-3">
+            <button type="submit" disabled={saving || !form.image} className={btnPrimary}>
+              {saving ? "Saving…" : isNew ? "Create product" : "Save changes"}
+            </button>
+            <Link href="/admin/products" className={btnGhost}>
+              Cancel
+            </Link>
           </div>
         </div>
       </form>

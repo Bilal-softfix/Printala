@@ -1,115 +1,83 @@
 "use client";
 
+import { useState } from "react";
+import { HiOutlineMail } from "react-icons/hi";
 import type { ContactMessage } from "@/types/admin";
-import { useEffect, useState } from "react";
 import { getContacts } from "@/lib/adminApi";
-import { HiOutlineMail, HiOutlineClock } from "react-icons/hi";
+import { Card, EmptyState, ErrorState, LoadingBlock, PageHeader, Tag, btnPrimary, fmtDate, useAdminData } from "../ui";
 
 export default function AdminContactsPage() {
-  const [contacts, setContacts] = useState<ContactMessage[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [selected, setSelected] = useState<ContactMessage | null>(null);
+  const { state, data, reload: load } = useAdminData<ContactMessage[]>("contacts", () =>
+    getContacts().then((r) => r.data || []),
+  );
+  const contacts = data ?? [];
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const result = await getContacts();
-        setContacts(result.data || []);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
-  }, []);
+  const selected = contacts.find((c) => c._id === selectedId) ?? null;
+  const unread = contacts.filter((c) => c.status === "new").length;
 
   return (
     <div>
-      <h1 className="text-white text-2xl font-bold mb-8">Contact Messages</h1>
+      <PageHeader
+        title="Messages"
+        subtitle={state === "ok" ? `${contacts.length} total · ${unread} new` : undefined}
+      />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Messages List */}
-        <div className="lg:col-span-1 space-y-2 max-h-[75vh] overflow-y-auto">
-          {loading ? (
-            <div className="py-12 text-center">
-              <div className="w-8 h-8 border-3 border-magenta/30 border-t-magenta rounded-full animate-spin mx-auto" />
-            </div>
-          ) : contacts.length === 0 ? (
-            <div className="py-12 text-center text-white/30 bg-[#1A1A1D] rounded-2xl border border-white/5">
-              No messages yet
-            </div>
-          ) : (
-            contacts.map((c) => (
-              <button
-                key={c._id}
-                onClick={() => setSelected(c)}
-                className={`w-full text-left p-4 rounded-xl border transition-colors ${
-                  selected?._id === c._id
-                    ? "bg-magenta/10 border-magenta/20"
-                    : "bg-[#1A1A1D] border-white/5 hover:border-white/10"
-                }`}
-              >
-                <div className="flex items-start justify-between mb-1">
-                  <p className="text-white font-medium text-sm truncate">
-                    {c.name}
-                  </p>
-                  {c.status === "new" && (
-                    <span className="w-2 h-2 rounded-full bg-magenta shrink-0 mt-1.5" />
-                  )}
-                </div>
-                <p className="text-white/40 text-xs truncate">{c.subject}</p>
-                <p className="text-white/20 text-[10px] mt-1 flex items-center gap-1">
-                  <HiOutlineClock size={10} />
-                  {new Date(c.createdAt).toLocaleDateString("en-IN")}
+      {state === "loading" ? (
+        <Card><LoadingBlock /></Card>
+      ) : state === "error" ? (
+        <Card><ErrorState onRetry={load} message="Couldn't load messages." /></Card>
+      ) : contacts.length === 0 ? (
+        <Card><EmptyState title="No messages yet" hint="Messages from the contact form appear here." /></Card>
+      ) : (
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
+          <Card className="overflow-hidden">
+            <ul className="max-h-[70vh] divide-y divide-white/[0.06] overflow-y-auto">
+              {contacts.map((c) => (
+                <li key={c._id}>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedId(c._id)}
+                    aria-current={selectedId === c._id ? "true" : undefined}
+                    className={`w-full px-5 py-4 text-left transition-colors ${
+                      selectedId === c._id ? "bg-magenta/10" : "hover:bg-white/[0.03]"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="truncate font-medium">{c.name}</span>
+                      <span className="shrink-0 text-xs text-white/40">{fmtDate(c.createdAt)}</span>
+                    </div>
+                    <div className="mt-1 flex items-center gap-2">
+                      {c.status === "new" && <Tag tone="pink">New</Tag>}
+                      <span className="truncate text-sm text-white/55">{c.subject || "(no subject)"}</span>
+                    </div>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </Card>
+
+          <Card className="p-6">
+            {selected ? (
+              <article>
+                <h2 className="text-lg font-semibold">{selected.subject || "(no subject)"}</h2>
+                <p className="mt-1 text-sm text-white/55">
+                  {selected.name} · {selected.email} · {fmtDate(selected.createdAt)}
                 </p>
-              </button>
-            ))
-          )}
-        </div>
-
-        {/* Message Detail */}
-        <div className="lg:col-span-2">
-          {selected ? (
-            <div className="bg-[#1A1A1D] border border-white/5 rounded-2xl p-6">
-              <div className="flex items-start justify-between mb-6">
-                <div>
-                  <h2 className="text-white text-xl font-bold">
-                    {selected.subject}
-                  </h2>
-                  <p className="text-white/40 text-sm mt-1">
-                    From: <span className="text-white">{selected.name}</span>{" "}
-                    &lt;{selected.email}&gt;
-                  </p>
-                </div>
-                <p className="text-white/20 text-xs">
-                  {new Date(selected.createdAt).toLocaleString("en-IN")}
-                </p>
-              </div>
-
-              <div className="bg-white/5 rounded-xl p-5">
-                <p className="text-white/70 leading-relaxed whitespace-pre-wrap">
-                  {selected.message}
-                </p>
-              </div>
-
-              <div className="mt-4 flex gap-3">
+                <p className="mt-6 whitespace-pre-wrap leading-relaxed text-white/85">{selected.message}</p>
                 <a
-                  href={`mailto:${selected.email}?subject=Re: ${selected.subject}`}
-                  className="flex items-center gap-2 px-4 py-2 bg-magenta text-white rounded-xl text-sm font-bold
-                             hover:bg-magenta-light transition-colors"
+                  href={`mailto:${selected.email}?subject=${encodeURIComponent(`Re: ${selected.subject || "Your message to Printala"}`)}`}
+                  className={`${btnPrimary} mt-8`}
                 >
-                  <HiOutlineMail size={16} /> Reply via Email
+                  <HiOutlineMail size={16} aria-hidden="true" /> Reply by email
                 </a>
-              </div>
-            </div>
-          ) : (
-            <div className="bg-[#1A1A1D] border border-white/5 rounded-2xl p-12 text-center text-white/30">
-              Select a message to view
-            </div>
-          )}
+              </article>
+            ) : (
+              <EmptyState title="Select a message" hint="Choose a message on the left to read it." />
+            )}
+          </Card>
         </div>
-      </div>
+      )}
     </div>
   );
 }

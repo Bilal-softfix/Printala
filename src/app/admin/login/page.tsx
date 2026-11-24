@@ -1,17 +1,21 @@
 "use client";
 
-import { getErrorMessage } from "@/lib/utils";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
-import { adminLogin } from "@/lib/adminApi";
-import { useAdminStore } from "@/store/adminStore";
 import toast from "react-hot-toast";
+import { adminLogin } from "@/lib/adminApi";
+import { getErrorMessage } from "@/lib/utils";
+import { useAdminStore } from "@/store/adminStore";
+import logo from "../../assets/logo.png";
+import { Field, btnPrimary, inputCls } from "../ui";
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPw, setShowPw] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [slow, setSlow] = useState(false);
   const { login, isAuthenticated, loadFromStorage } = useAdminStore();
   const router = useRouter();
 
@@ -20,92 +24,83 @@ export default function AdminLoginPage() {
   }, [loadFromStorage]);
 
   useEffect(() => {
-    if (isAuthenticated) router.push("/admin");
+    if (isAuthenticated) router.replace("/admin");
   }, [isAuthenticated, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    // Render's free tier sleeps; tell the user why the first login is slow.
+    const timer = setTimeout(() => setSlow(true), 4000);
     try {
-      const result = await adminLogin(email, password);
+      const result = await adminLogin(email.trim(), password);
       login(result.data.admin, result.data.token);
       toast.success("Welcome back!");
-      router.push("/admin");
+      router.replace("/admin");
     } catch (err) {
-      toast.error(getErrorMessage(err, "Login failed"));
+      toast.error(getErrorMessage(err, "Login failed. Check your email and password."));
     } finally {
+      clearTimeout(timer);
+      setSlow(false);
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#0F0F10] flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md"
-      >
-        {/* Logo */}
-        <div className="text-center mb-10">
-          <div
-            className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center"
-            style={{ background: "linear-gradient(135deg, #E10F80, #5FAAC6)" }}
-          >
-            <span className="text-white font-bold text-2xl">P</span>
-          </div>
-          <h1 className="text-white text-2xl font-bold">Printala Admin</h1>
-          <p className="text-white/40 text-sm mt-1">
-            Login to manage your store
-          </p>
+    <div className="flex min-h-screen items-center justify-center bg-[#0E0E10] p-4 text-white">
+      <div className="w-full max-w-sm">
+        <div className="mb-8 text-center">
+          <Image src={logo} alt="" width={56} height={56} className="mx-auto mb-4 h-14 w-14 object-contain" priority />
+          <h1 className="text-2xl font-bold">Printala Admin</h1>
+          <p className="mt-1 text-sm text-white/50">Sign in to manage your store</p>
         </div>
 
-        {/* Form */}
         <form
           onSubmit={handleSubmit}
-          className="bg-[#1A1A1D] border border-white/10 rounded-2xl p-8 space-y-5"
+          className="space-y-5 rounded-2xl border border-white/[0.08] bg-[#151518] p-6 sm:p-8"
         >
-          <div>
-            <label className="block text-white/60 text-xs font-bold uppercase tracking-wider mb-2">
-              Email
-            </label>
+          <Field id="email" label="Email">
             <input
+              id="email"
               type="email"
+              required
+              autoComplete="username"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required
-              placeholder="admin@printala.in"
-              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl
-                         text-white placeholder-white/30 focus:outline-none focus:border-magenta
-                         transition-colors"
+              className={inputCls}
             />
-          </div>
-
-          <div>
-            <label className="block text-white/60 text-xs font-bold uppercase tracking-wider mb-2">
-              Password
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              placeholder="••••••••"
-              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl
-                         text-white placeholder-white/30 focus:outline-none focus:border-magenta
-                         transition-colors"
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3.5 bg-magenta text-white font-bold rounded-xl
-                       hover:bg-magenta-light transition-colors disabled:opacity-50"
-          >
-            {loading ? "Logging in..." : "Login →"}
+          </Field>
+          <Field id="password" label="Password">
+            <div className="relative">
+              <input
+                id="password"
+                type={showPw ? "text" : "password"}
+                required
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className={`${inputCls} pr-16`}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPw((v) => !v)}
+                aria-pressed={showPw}
+                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md px-2 py-1 text-xs text-white/55 hover:text-white"
+              >
+                {showPw ? "Hide" : "Show"}
+              </button>
+            </div>
+          </Field>
+          <button type="submit" disabled={loading} className={`${btnPrimary} w-full py-3`}>
+            {loading ? "Signing in…" : "Sign in"}
           </button>
+          {slow && (
+            <p role="status" className="text-center text-xs text-white/50">
+              Server is waking up — this can take up to a minute.
+            </p>
+          )}
         </form>
-      </motion.div>
+      </div>
     </div>
   );
 }

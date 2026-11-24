@@ -1,42 +1,31 @@
 "use client";
 
-import { getErrorMessage } from "@/lib/utils";
 import { useState } from "react";
-import { changePassword } from "@/lib/adminApi";
-import { useAdminStore } from "@/store/adminStore";
 import toast from "react-hot-toast";
+import { changePassword } from "@/lib/adminApi";
+import { getErrorMessage } from "@/lib/utils";
+import { useAdminStore } from "@/store/adminStore";
+import { Card, Field, PageHeader, btnPrimary, inputCls } from "../ui";
 
 export default function AdminSettingsPage() {
   const { user } = useAdminStore();
   const [loading, setLoading] = useState(false);
-  const [passwords, setPasswords] = useState({
-    current: "",
-    newPass: "",
-    confirm: "",
-  });
+  const [pw, setPw] = useState({ current: "", next: "", confirm: "" });
 
-  const handleChangePassword = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (passwords.newPass !== passwords.confirm) {
-      return toast.error("New passwords don't match!");
-    }
-
-    if (passwords.newPass.length < 6) {
-      return toast.error("Password must be at least 6 characters");
-    }
+    if (pw.next !== pw.confirm) return toast.error("New passwords don't match.");
+    if (pw.next.length < 8) return toast.error("Use at least 8 characters.");
+    if (pw.next === pw.current) return toast.error("New password must be different.");
 
     setLoading(true);
     try {
-      const result = await changePassword(passwords.current, passwords.newPass);
-      // Update token
-      if (result.data?.token) {
-        localStorage.setItem("admin_token", result.data.token);
-      }
-      toast.success("Password changed!");
-      setPasswords({ current: "", newPass: "", confirm: "" });
+      const result = await changePassword(pw.current, pw.next);
+      if (result.data?.token) localStorage.setItem("admin_token", result.data.token);
+      toast.success("Password changed");
+      setPw({ current: "", next: "", confirm: "" });
     } catch (err) {
-      toast.error(getErrorMessage(err, "Failed to change password"));
+      toast.error(getErrorMessage(err, "Couldn't change password"));
     } finally {
       setLoading(false);
     }
@@ -44,87 +33,70 @@ export default function AdminSettingsPage() {
 
   return (
     <div className="max-w-2xl">
-      <h1 className="text-white text-2xl font-bold mb-8">Settings</h1>
+      <PageHeader title="Settings" />
 
-      {/* Profile */}
-      <div className="bg-[#1A1A1D] border border-white/5 rounded-2xl p-6 mb-6">
-        <h2 className="text-white font-bold mb-4">Profile</h2>
-        <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-magenta/20 flex items-center justify-center">
-            <span className="text-magenta text-xl font-bold">
-              {user?.name?.charAt(0)}
-            </span>
+      <Card className="mb-6 p-5 sm:p-6">
+        <h2 className="mb-4 font-semibold">Account</h2>
+        <dl className="grid gap-4 text-sm sm:grid-cols-3">
+          <div>
+            <dt className="text-xs text-white/45">Name</dt>
+            <dd className="mt-1 font-medium">{user?.name}</dd>
           </div>
           <div>
-            <p className="text-white font-bold">{user?.name}</p>
-            <p className="text-white/40 text-sm">{user?.email}</p>
-            <p className="text-magenta text-xs uppercase tracking-wider mt-0.5">
-              {user?.role}
-            </p>
+            <dt className="text-xs text-white/45">Email</dt>
+            <dd className="mt-1 font-medium">{user?.email}</dd>
           </div>
-        </div>
-      </div>
+          <div>
+            <dt className="text-xs text-white/45">Role</dt>
+            <dd className="mt-1 font-medium capitalize">{user?.role}</dd>
+          </div>
+        </dl>
+      </Card>
 
-      {/* Change Password */}
-      <div className="bg-[#1A1A1D] border border-white/5 rounded-2xl p-6">
-        <h2 className="text-white font-bold mb-4">Change Password</h2>
-        <form onSubmit={handleChangePassword} className="space-y-4">
-          <div>
-            <label className="block text-white/50 text-xs font-bold uppercase mb-2">
-              Current Password
-            </label>
+      <Card className="p-5 sm:p-6">
+        <h2 className="mb-4 font-semibold">Change password</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Hidden username helps password managers save the right account. */}
+          <input type="email" autoComplete="username" value={user?.email ?? ""} readOnly hidden />
+          <Field id="current" label="Current password">
             <input
+              id="current"
               type="password"
-              value={passwords.current}
-              onChange={(e) =>
-                setPasswords({ ...passwords, current: e.target.value })
-              }
               required
-              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white
-                         focus:outline-none focus:border-magenta transition-colors"
+              autoComplete="current-password"
+              value={pw.current}
+              onChange={(e) => setPw({ ...pw, current: e.target.value })}
+              className={inputCls}
             />
-          </div>
-          <div>
-            <label className="block text-white/50 text-xs font-bold uppercase mb-2">
-              New Password
-            </label>
+          </Field>
+          <Field id="next" label="New password" hint="At least 8 characters">
             <input
+              id="next"
               type="password"
-              value={passwords.newPass}
-              onChange={(e) =>
-                setPasswords({ ...passwords, newPass: e.target.value })
-              }
               required
-              minLength={6}
-              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white
-                         focus:outline-none focus:border-magenta transition-colors"
+              minLength={8}
+              autoComplete="new-password"
+              value={pw.next}
+              onChange={(e) => setPw({ ...pw, next: e.target.value })}
+              className={inputCls}
             />
-          </div>
-          <div>
-            <label className="block text-white/50 text-xs font-bold uppercase mb-2">
-              Confirm New Password
-            </label>
+          </Field>
+          <Field id="confirm" label="Confirm new password">
             <input
+              id="confirm"
               type="password"
-              value={passwords.confirm}
-              onChange={(e) =>
-                setPasswords({ ...passwords, confirm: e.target.value })
-              }
               required
-              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white
-                         focus:outline-none focus:border-magenta transition-colors"
+              autoComplete="new-password"
+              value={pw.confirm}
+              onChange={(e) => setPw({ ...pw, confirm: e.target.value })}
+              className={inputCls}
             />
-          </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="px-6 py-3 bg-magenta text-white font-bold rounded-xl
-                       hover:bg-magenta-light transition-colors disabled:opacity-50"
-          >
-            {loading ? "Changing..." : "Change Password"}
+          </Field>
+          <button type="submit" disabled={loading} className={btnPrimary}>
+            {loading ? "Updating…" : "Update password"}
           </button>
         </form>
-      </div>
+      </Card>
     </div>
   );
 }

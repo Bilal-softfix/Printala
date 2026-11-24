@@ -23,6 +23,7 @@ export interface AdminOrder {
     pincode?: string;
   };
   shippingCost: number;
+  trackingNumber?: string;
   total: number;
   createdAt: string;
 }
