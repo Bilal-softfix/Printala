@@ -36,6 +36,11 @@ Add real marketplace reviews and your store links in `src/lib/reviews.ts`. The h
 ## Track monthly (Search Console → Performance)
 Queries, clicks, average position for: `anime posters`, `anime posters india`, `split posters`, `cricket posters`, `car posters`, `wall posters online`. Expect movement in **4–12 weeks**, not days.
 
+## AI assistants (ChatGPT, Claude, Perplexity, Gemini)
+- `/llms.txt` and `/llms-full.txt` describe the store and full catalog from live data; AI crawlers are explicitly allowed in robots.txt.
+- AI answers lean on what other sites say about you: Reddit threads, YouTube/Instagram reviews, "best poster sites in India" listicles, marketplace listings. Getting mentioned there matters as much as on-site work.
+- Check monthly: ask ChatGPT/Perplexity "best site to buy anime posters in India" and see whether Printala appears.
+
 ## Already done in code
 - Server-rendered pages: home, shop, 8 category pages, every product page.
 - Unique titles/descriptions/canonicals; keyword H1 on home; breadcrumbs.

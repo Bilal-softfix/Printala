@@ -72,6 +72,9 @@ Work phases in order. Within a phase, top to bottom.
 - [x] Admin product form "Search visibility" checklist
 - [x] Order flow: save-order card (copy / WhatsApp to self / copy link), orders remembered on device, `/track` lists recent orders, `/track?order=` links, nav "Track Order", `/track-order` etc. redirect
 - [x] Blog: `/blog` + 4 posts (size guide, split posters, hang without damage, anime room decor), BlogPosting schema, sitemap, footer link, size-guide links on product pages
+- [x] Blog: +6 posts (anime gifts, gaming setup, cricket, cars, gym/study motivation, matte vs glossy) → 10 total
+- [x] AI discoverability: `/llms.txt`, `/llms-full.txt` (live catalog), robots allows AI crawlers (GPTBot, ClaudeBot, PerplexityBot…), `<link rel=alternate>` in head
+- [!] Dummy marketplace ratings — declined (fake reviews; CCPA). Badges appear when real data is added to `src/lib/reviews.ts`
 - [~] Reviews: `src/lib/reviews.ts` (marketplace links + real reviews replace placeholders) — waiting for store URLs/reviews (Flipkart/Amazon listings not found via web search)
 - [ ] Owner: follow `docs/SEO_PLAYBOOK.md` (Search Console, Merchant Center, product content)
 
@@ -99,3 +102,4 @@ _(one line per session: date · IDs done · notes)_
 - 2026-11-24 · Admin panel redesign + fixes (A-1…A-9) · check + build + route smoke tests pass; logged-in flows untested.
 - 2026-11-24 · SEO push + order tracking UX · check + build + SSR/feed checks pass.
 - 2026-11-24 · Blog + reviews plumbing · check + build + page checks pass.
+- 2026-11-24 · +6 blog posts, llms.txt/llms-full.txt, AI crawler robots rules · check + build + output checks pass.

@@ -94,6 +94,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${syne.variable} ${inter.variable}`}>
       <head>
+        <link rel="alternate" type="text/markdown" title="Printala for AI assistants" href="/llms.txt" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

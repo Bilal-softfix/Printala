@@ -1,0 +1,9 @@
+import { llmsFullTxt } from "@/lib/llms";
+
+export const revalidate = 3600;
+
+export async function GET() {
+  return new Response(await llmsFullTxt(), {
+    headers: { "Content-Type": "text/markdown; charset=utf-8" },
+  });
+}
